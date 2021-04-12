@@ -13,7 +13,10 @@ echo -e "\n>>Instalando paquetes necesarios"
 pacman -noconfirm -Sy archiso >>/tmp/Salida.txt 2>&1
 echo -e "\n>>Creando ficheros de configuracion de la ISO"
 mkdir /ISO
-cp -r /usr/share/archiso/configs/releng /ISO/porfile && cp $RUTA /ISO/porfile/airootfs/usr/local/bin/cambon_install && chmod 777 /ISO/porfile/airootfs/usr/local/bin/cambon_install
+cp -r /usr/share/archiso/configs/releng /ISO/porfile
+cp $RUTA /ISO/porfile/airootfs/usr/local/bin/cambon_install
+chown root:root /ISO/porfile/airootfs/usr/local/bin/cambon_install
+chmod 755 /ISO/porfile/airootfs/usr/local/bin/cambon_install
 echo -e "neovim" >>/ISO/profile/packages.x86_64
 echo -e "\n>>Creando la ISO"
 mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile
