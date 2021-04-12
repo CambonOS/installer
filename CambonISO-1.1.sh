@@ -17,7 +17,7 @@ cp -r /usr/share/archiso/configs/releng /ISO/porfile
 cp $RUTA /ISO/porfile/airootfs/usr/local/bin/cambon_install
 chown root:root /ISO/porfile/airootfs/usr/local/bin/cambon_install
 chmod 755 /ISO/porfile/airootfs/usr/local/bin/cambon_install
-echo -e "neovim" >>/ISO/profile/packages.x86_64
+echo -e "neovim\ngit" >>/ISO/profile/packages.x86_64
 echo -e "\n>>Creando la ISO"
 mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile
 echo -e "\n>>Eliminado ficheros/paquetes innecesarios"
