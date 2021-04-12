@@ -139,7 +139,7 @@ echo "
 	echo -e '127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$DOMINIO $NOMBRE' >/etc/hosts
 	
 	echo -e '\n>>Configurando red'
-	systemctl enable NetworkManager.service >>/root/salida 2>&1
+	systemctl enable NetworkManager.service >>$SALIDA 2>&1
 	
 	echo -e '\n>>Configurando grub'
 	case $GRUB in
@@ -147,7 +147,7 @@ echo "
 			grub-install --target=i386-pc $DISCO >>$SALIDA 2>&1 
 		;;
 		uefi) 
-			grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+			grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB >>$SALIDA 2>&1
 		;;
 	esac
 	grub-mkconfig -o /boot/grub/grub.cfg >>$SALIDA 2>&1 	
@@ -156,7 +156,7 @@ echo "
 		terminal) 
 		;;
 		gnome) 
-			systemctl enable gdm.service
+			systemctl enable gdm.service >>$SALIDA 2>&1
 		;;
 	esac
 
