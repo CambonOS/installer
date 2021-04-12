@@ -61,11 +61,11 @@ esac
 
 echo -e "\n>>Formateando y montando sistemas de archivos"
 case $GRUB in
-	uefi) 
-		echo -e "\n" | mkfs.ext4 $BOOT >>$SALIDA 2>&1
-	;;
 	bios) 
-		echo -e "\n" | mkfs.fat -F32 $BOOT >>$SALIDA 2>&1
+		mkfs.ext4 $BOOT >>$SALIDA 2>&1
+	;;
+	uefi) 
+		mkfs.fat -F32 $BOOT >>$SALIDA 2>&1
 	;;
 esac
 
