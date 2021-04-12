@@ -14,17 +14,16 @@ echo -e "\n\n>>Listando discos\n" && lsblk
 echo -e "\n\n>>En que disco quieres instalar el sistema? \c" && read -e -i "/dev/sd" DISCO
 echo -e "\n\n>>Formato del disco?(mbr/gpt) \c" && read TDISCO
 echo -e "\n\n>>Nombre del equipo? \c" && read NOMBRE
-echo -e "\n\n>>Dominio?\ \c" && read DOMINIO
+echo -e "\n\n>>Dominio? \c" && read -e -i '$NOMBRE.cambon.local' DOMINIO
 echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
-echo -e "\n\n>>Graficos?(nvidea/amd/vmware) \c" && read GPU
+echo -e "\n\n>>Graficos?(nvidia/amd/vmware) \c" && read GPU
 echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
 echo -e "\n\n>>Contraseña del root? \c" && read -s PASS
 
-NULL=">/dev/null 2>&1"
-BOOT="$DISCO \b1"
-SWAP="$DISCO \b2"
-RAIZ="$DISCO \b3"
-HOME="$DISCO \b4"
+BOOT=$(echo -e "$DISCO \b1")
+SWAP=$(echo -e "$DISCO \b2")
+RAIZ=$(echo -e "$DISCO \b3")
+HOME=$(echo -e "$DISCO \b4")
 OUEFI="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\nEF\nt\n2\n82\nt\n3\n83\nt\n4\n83\nw\n"
 OBIOS="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\n83\nt\n2\n82\nt\n3\n83\nt\n4\n83\nw\n"
 GUEFI="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\n1\nt\n2\n19\nt\n3\n23\nt\n4\n28\nw\n"
@@ -33,7 +32,9 @@ GBIOS="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\n
 clear
 
 echo -e "\n>>Actualizando reloj"
-timedatectl set-ntp true >>$SALIDA 2>&1 echo -e "\n>>Particionando disco"
+timedatectl set-ntp true >>$SALIDA 2>&1 
+
+echo -e "\n>>Particionando disco"
 case $TDISCO in
 	gpt) case $GRUB in
 		uefi) echo -e $GUEFI | fdisk $DISCO >>$SALIDA 2>&1 ;; 
