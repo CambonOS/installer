@@ -19,5 +19,5 @@ echo -e "\n>>Creando la ISO"
 mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile
 echo -e "\n>>Eliminado ficheros/paquetes innecesarios"
 rm -rf /ISO
-pacman -Rns archiso >>/tmp/Salida.txt 2>&1
+pacman -noconfirm -Rns archiso >>/tmp/Salida.txt 2>&1
 echo -e "\n\n***********DONE***********\n\n"
