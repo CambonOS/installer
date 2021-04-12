@@ -62,10 +62,10 @@ esac
 echo -e "\n>>Formateando y montando sistemas de archivos"
 case $GRUB in
 	uefi) 
-		mkfs.ext4 $BOOT
+		mkfs.ext4 $BOOT >>$SALIDA 2>&1
 	;;
 	bios) 
-		mkfs.fat -F32 $BOOT
+		mkfs.fat -F32 $BOOT >>$SALIDA 2>&1
 	;;
 esac
 
@@ -89,7 +89,7 @@ echo -e "\n>>Instalando base del sistema"
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel >>$SALIDA 2>&1 
 case $GRUB in
 	uefi)
-		pacstrap /mnt efibootmgr
+		pacstrap /mnt efibootmgr >>$SALIDA 2>&1
 	;;
 	bios)
 	;;
@@ -98,16 +98,16 @@ esac
 echo -e "\n>>Instalando drivers graficos"
 case $GPU in
 	amd) 
-		pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader
+		pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1
 	;;
 	nvidia) 
-		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidea-dkms vulkan-icd-loader lib32-vulkan-icd-loader
+		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidea-dkms vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1
 	;;
 	intel) 
-		pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader
+		pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1
 	;;
 	vmware) 
-		pacstrap /mnt xf86-video-vesa xf86-video-vmware lib32-mesa mesa
+		pacstrap /mnt xf86-video-vesa xf86-video-vmware lib32-mesa mesa >>$SALIDA 2>&1
 	;;
 esac
 
@@ -116,7 +116,7 @@ case $GDM in
 	terminal) 
 	;;
 	gnome) 
-		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweak-tool 
+		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweak-tool >>$SALIDA 2>&1
 	;;
 esac
 
@@ -168,6 +168,8 @@ echo "
 
 	echo -e '\n>>Creando grupo sudo'
 	groupadd -g 513 sudo
+	cp /etc/sudoers /etc/sudoers.bk
+	echo '%sudo ALL=(ALL) ALL' >>/etc/sudoers.bk
 	echo '%sudo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
 	useradd -m -s /bin/bash -g sudo sysop
 	
@@ -181,6 +183,7 @@ echo "
 	' | su - sysop
 	
 	usedel -r sysop >>$SALIDA 2>&1 
+	mv /etc/sudoers.bk /etc/sudoers
 
 	exit
 " | arch-chroot /mnt
