@@ -20,10 +20,10 @@ echo -e "\n\n>>Graficos?(nvidia/amd/vmware) \c" && read GPU
 echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
 echo -e "\n\n>>Contraseña del root? \c" && read -s PASS
 
-BOOT=$(echo -e $DISCO\ \b1)
-SWAP=$(echo -e $DISCO\ \b2)
-RAIZ=$(echo -e $DISCO\ \b3)
-HOME=$(echo -e $DISCO\ \b4)
+echo 1 | read -e -i $DISCO BOOT
+echo 2 | read -e -i $DISCO SWAP
+echo 3 | read -e -i $DISCO RAIZ
+echo 4 | read -e -i $DISCO HOME
 OUEFI="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\nEF\nt\n2\n82\nt\n3\n83\nt\n4\n83\nw\n"
 OBIOS="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\n83\nt\n2\n82\nt\n3\n83\nt\n4\n83\nw\n"
 GUEFI="g\nn\n1\n\n+512M\nn\n2\n\n+4G\nn\n3\n\n+40G\nn\n4\n\n\nt\n1\n1\nt\n2\n19\nt\n3\n23\nt\n4\n28\nw\n"
