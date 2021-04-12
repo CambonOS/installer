@@ -40,20 +40,20 @@ case $TDISCO in
 	gpt) 
 		case $GRUB in
 			uefi) 
-				echo -e $GUEFI | fdisk $DISCO >>$SALIDA 2>&1
+				echo -e $GUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1
 			;; 
 			bios) 
-				echo -e $GBIOS | fdisk $DISCO >>$SALIDA 2>&1
+				echo -e $GBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1
 			;;
 		esac
 	;;
 	mbr) 
 		case $GRUB in
 			uefi) 
-				echo -e $OUEFI | fdisk $DISCO >>$SALIDA 2>&1
+				echo -e $OUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1
 			;;
 			bios)
-				echo -e $OBIOS | fdisk $DISCO >>$SALIDA 2>&1
+				echo -e $OBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1
 			;;
 		esac
 	;;
@@ -62,10 +62,10 @@ esac
 echo -e "\n>>Formateando y montando sistemas de archivos"
 case $GRUB in
 	uefi) 
-		mkfs.ext4 $BOOT >>$SALIDA 2>&1
+		echo -e "\n" | mkfs.ext4 $BOOT >>$SALIDA 2>&1
 	;;
 	bios) 
-		mkfs.fat -F32 $BOOT >>$SALIDA 2>&1
+		echo -e "\n" | mkfs.fat -F32 $BOOT >>$SALIDA 2>&1
 	;;
 esac
 
