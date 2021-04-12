@@ -83,7 +83,7 @@ echo -e "\n>>Configurando pacman.conf"
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n\nColor\nCheckSpace\nTotalDownload\nILoveCandy\n" >>/etc/pacman.conf
 
 echo -e "\n>>Seleccionando replicas"
-reflector -f 20 --save /etc/pacman.d/mirrorlist >>$SALIDA 2>&1 
+reflector --contry Spain --sort rate --save /etc/pacman.d/mirrorlist >>$SALIDA 2>&1 
 
 echo -e "\n>>Instalando base del sistema"
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel >>$SALIDA 2>&1 
