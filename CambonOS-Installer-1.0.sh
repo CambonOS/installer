@@ -36,20 +36,36 @@ timedatectl set-ntp true >>$SALIDA 2>&1
 
 echo -e "\n>>Particionando disco"
 case $TDISCO in
-	gpt) case $GRUB in
-		uefi) echo -e $GUEFI | fdisk $DISCO >>$SALIDA 2>&1 ;; 
-		bios) echo -e $GBIOS | fdisk $DISCO >>$SALIDA 2>&1 ;;
-	esac ;;
-	mbr) case $GRUB in
-		uefi) echo -e $OUEFI | fdisk $DISCO >>$SALIDA 2>&1 ;;
-		bios) echo -e $OBIOS | fdisk $DISCO >>$SALIDA 2>&1 ;;
-	esac ;;
+	gpt) 
+		case $GRUB in
+			uefi) 
+				echo -e $GUEFI | fdisk $DISCO >>$SALIDA 2>&1
+			;; 
+			bios) 
+				echo -e $GBIOS | fdisk $DISCO >>$SALIDA 2>&1
+			;;
+		esac
+	;;
+	mbr) 
+		case $GRUB in
+			uefi) 
+				echo -e $OUEFI | fdisk $DISCO >>$SALIDA 2>&1
+			;;
+			bios)
+				echo -e $OBIOS | fdisk $DISCO >>$SALIDA 2>&1
+			;;
+		esac
+	;;
 esac
 
 echo -e "\n>>Formateando y montando sistemas de archivos"
 case $GRUB in
-	uefi) mkfs.ext4 $BOOT;;
-	bios) mkfs.fat -F32 $BOOT;;
+	uefi) 
+		mkfs.ext4 $BOOT
+	;;
+	bios) 
+		mkfs.fat -F32 $BOOT
+	;;
 esac
 
 mkswap $SWAP >>$SALIDA 2>&1 
@@ -71,22 +87,36 @@ reflector -f 20 --save /etc/pacman.d/mirrorlist >>$SALIDA 2>&1
 echo -e "\n>>Instalando base del sistema"
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel >>$SALIDA 2>&1 
 case $GRUB in
-	uefi) pacstrap /mnt efibootmgr;;
-	bios);;
+	uefi)
+		pacstrap /mnt efibootmgr
+	;;
+	bios)
+	;;
 esac
 
 echo -e "\n>>Instalando drivers graficos"
 case $GPU in
-	amd) pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader;;
-	nvidia) pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidea-dkms vulkan-icd-loader lib32-vulkan-icd-loader;;
-	intel) pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader;;
-	vmware) pacstrap /mnt xf86-video-vesa xf86-video-vmware lib32-mesa mesa;;
+	amd) 
+		pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader
+	;;
+	nvidia) 
+		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidea-dkms vulkan-icd-loader lib32-vulkan-icd-loader
+	;;
+	intel) 
+		pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader
+	;;
+	vmware) 
+		pacstrap /mnt xf86-video-vesa xf86-video-vmware lib32-mesa mesa
+	;;
 esac
 
 echo -e "\n>>Instalando entorno grafico seleccionado"
 case $GDM in
-	terminal) ;;
-	gnome) pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweak-tool ;;
+	terminal) 
+	;;
+	gnome) 
+		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweak-tool 
+	;;
 esac
 
 echo -e "\n>>Generando archivo fstab"
@@ -112,14 +142,21 @@ echo "
 	
 	echo -e '\n>>Configurando grub'
 	case $GRUB in
-		bios) grub-install --target=i386-pc $DISCO >>$SALIDA 2>&1 ;;
-		uefi) grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB ;;
+		bios) 
+			grub-install --target=i386-pc $DISCO >>$SALIDA 2>&1 
+		;;
+		uefi) 
+			grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+		;;
 	esac
 	grub-mkconfig -o /boot/grub/grub.cfg >>$SALIDA 2>&1 	
 	echo -e '\n>>Activando entorno grafico'
 	case $GDM in
-		terminal) ;;
-		gnome) systemctl enable gdm.service ;;
+		terminal) 
+		;;
+		gnome) 
+			systemctl enable gdm.service
+		;;
 	esac
 
 	echo -e '\n>>Configurando root'
