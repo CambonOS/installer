@@ -14,7 +14,7 @@ echo -e "\n\n>>Listando discos\n" && lsblk
 echo -e "\n\n>>En que disco quieres instalar el sistema? \c" && read -e -i "/dev/sd" DISCO
 echo -e "\n\n>>Formato del disco?(mbr/gpt) \c" && read TDISCO
 echo -e "\n\n>>Nombre del equipo? \c" && read NOMBRE
-echo -e "\n\n>>Dominio? \c" && read -e -i '$NOMBRE.cambon.local' DOMINIO
+echo -e "\n\n>>Dominio? \c" && read -e -i "$NOMBRE.cambon.local" DOMINIO
 echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
 echo -e "\n\n>>Graficos?(nvidia/amd/vmware) \c" && read GPU
 echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
