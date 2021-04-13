@@ -1,10 +1,5 @@
 #!/bin/bash
-if [[ $EUID -ne 0 ]]
-then
-	echo -e "\nEJECUTAR CON PRIVILEGIOS\n"
-	exit
-fi
-
+#
 NOCOLOR='\033[0m'
 RED='\033[1;31m'
 GREEN='\033[1;32m'
@@ -61,27 +56,27 @@ GBIOS="g\nn\n1\n\n+512M\nn\n2\n\n+4G\nn\n3\n\n+40G\nn\n4\n\n\nt\n1\n4\nt\n2\n19\
 HEAD
 
 echo -e "\n>>Actualizando reloj\c"
-timedatectl set-ntp true >>$SALIDA 2>&1 && DONE || ERROR
+timedatectl set-ntp true && DONE || ERROR
 
 echo -e "\n>>Particionando disco\c"
 case $TDISCO in
 	gpt) 
 		case $GRUB in
-			uefi)
-				(echo -e $GUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
+			uefi) 
+				(echo -e $GUEFI | fdisk -w always $DISCO) || STOP
 			;; 
-			bios)
-				(echo -e $GBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
+			bios) 
+				(echo -e $GBIOS | fdisk -w always $DISCO) || STOP
 			;;
 		esac
 	;;
 	mbr) 
 		case $GRUB in
-			uefi)
-				(echo -e $OUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
+			uefi) 
+				(echo -e $OUEFI | fdisk -w always $DISCO) || STOP
 			;;
 			bios)
-				(echo -e $OBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
+				(echo -e $OBIOS | fdisk -w always $DISCO) || STOP
 			;;
 		esac
 	;;
@@ -90,36 +85,36 @@ DONE
 
 echo -e "\n>>Formateando y montando sistemas de archivos\c"
 case $GRUB in
-	bios)
-		mkfs.ext4 $BOOT >>$SALIDA 2>&1 || STOP
+	bios) 
+		mkfs.ext4 $BOOT || STOP
 	;;
-	uefi)
-		mkfs.fat -F32 $BOOT >>$SALIDA 2>&1 || STOP
+	uefi) 
+		mkfs.fat -F32 $BOOT || STOP
 	;;
 esac
-mkswap $SWAP >>$SALIDA 2>&1 || STOP
-mkfs.ext4 $RAIZ >>$SALIDA 2>&1 || STOP
-mkfs.ext4 $HOME >>$SALIDA 2>&1 || STOP
-swapon $SWAP >>$SALIDA 2>&1 || STOP
-mount $RAIZ /mnt >>$SALIDA 2>&1 || STOP
-mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-mount $HOME /mnt/home >>$SALIDA 2>&1 || STOP
-mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
-mount $BOOT /mnt/boot >>$SALIDA 2>&1 || STOP
+mkswap $SWAP || STOP
+mkfs.ext4 $RAIZ || STOP
+mkfs.ext4 $HOME || STOP
+swapon $SWAP || STOP
+mount $RAIZ /mnt || STOP
+mkdir /mnt/home || STOP
+mount $HOME /mnt/home || STOP
+mkdir /mnt/boot || STOP
+mount $BOOT /mnt/boot || STOP
 DONE
 
 echo -e "\n>>Configurando pacman.conf\c"
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n\nColor\nCheckSpace\nTotalDownload\nILoveCandy\n" >>/etc/pacman.conf && DONE || ERROR
 
 echo -e "\n>>Seleccionando replicas\c"
-reflector --contry Spain --sort rate --save /etc/pacman.d/mirrorlist >>$SALIDA 2>&1 || STOP
+reflector --contry Spain --sort rate --save /etc/pacman.d/mirrorlist || STOP
 DONE
 
 echo -e "\n>>Instalando base del sistema\c"
-pacstrap /mnt linux-zen linux-zen-headers linux-firmware base nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo >>$SALIDA 2>&1 || STOP
+pacstrap /mnt linux-zen linux-zen-headers linux-firmware base nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo || STOP
 case $GRUB in
 	uefi)
-		pacstrap /mnt efibootmgr >>$SALIDA 2>&1 || STOP
+		pacstrap /mnt efibootmgr || STOP
 	;;
 	bios)
 	;;
@@ -128,27 +123,27 @@ DONE
 
 echo -e "\n>>Instalando drivers graficos\c"
 case $GPU in
-	amd)
-		pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
+	amd) 
+		pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader && DONE || ERROR
 	;;
-	nvidia)
-		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidea-dkms vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
+	nvidia) 
+		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidea-dkms vulkan-icd-loader lib32-vulkan-icd-loader && DONE || ERROR
 	;;
-	intel)
-		pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
+	intel) 
+		pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader && DONE || ERROR
 	;;
-	vmware)
-		pacstrap /mnt xf86-video-vesa xf86-video-vmware lib32-mesa mesa >>$SALIDA 2>&1 && DONE || ERROR
+	vmware) 
+		pacstrap /mnt xf86-video-vesa xf86-video-vmware lib32-mesa mesa && DONE || ERROR
 	;;
 esac
 
 echo -e "\n>>Instalando entorno grafico seleccionado\c"
 case $GDM in
-	terminal)
+	terminal) 
 		DONE
 	;;
-	gnome)
-		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweak-tool >>$SALIDA 2>&1 && DONE || ERROR
+	gnome) 
+		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweak-tool && DONE || ERROR
 	;;
 esac
 
@@ -169,35 +164,34 @@ echo "
 		echo -e "${RED} [ERROR] ${NOCOLOR}"
 		sleep 3
 	}
-
 	echo -e '\n>>Estableciendo zona horaria\c'
 	ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc && DONE || ERROR
 	
 	echo -e '\n>>Cambiando idioma del sistema\c'
-	echo 'es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8' >> /etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e 'LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8' >/etc/locale.conf && echo -e 'KEYMAP=es' >/etc/vconsole.conf && DONE || ERROR
+	echo 'es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8' >> /etc/locale.gen && locale-gen && echo -e 'LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8' >/etc/locale.conf && echo -e 'KEYMAP=es' >/etc/vconsole.conf && DONE || ERROR
 	
 	echo -e '\n>>Creando archivos host\c'
 	echo -e '$NOMBRE' >/etc/hostname && echo -e '127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$DOMINIO $NOMBRE' >/etc/hosts && DONE || ERROR
 	
 	echo -e '\n>>Configurando red\c'
-	systemctl enable NetworkManager.service >>$SALIDA 2>&1 && DONE || ERROR
+	systemctl enable NetworkManager.service && DONE || ERROR
 	
 	echo -e '\n>>Configurando grub\c'
 	case $GRUB in
-		bios)
-			grub-install --target=i386-pc $DISCO >>$SALIDA 2>&1 || exit 1
+		bios) 
+			grub-install --target=i386-pc $DISCO || exit 1
 		;;
-		uefi)
-			grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB >>$SALIDA 2>&1 || exit 1
+		uefi) 
+			grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB || exit 1
 		;;
-	esac && grub-mkconfig -o /boot/grub/grub.cfg >>$SALIDA 2>&1 && DONE || exit 1
+	esac && grub-mkconfig -o /boot/grub/grub.cfg && DONE || exit 1
 	
 	echo -e '\n>>Activando entorno grafico\c'
 	case $GDM in
 		terminal)
 		;;
 		gnome)
-			systemctl enable gdm.service >>$SALIDA 2>&1 || ERROR
+			systemctl enable gdm.service || ERROR
 		;;
 	esac
 	DONE
@@ -207,23 +201,21 @@ echo "
 	
 	echo -e '\n>>Editando skel\c'
 	echo -e '\nneofetch' >/etc/skel/.bashrc && DONE || ERROR
-
 	echo -e '\n>>Creando grupo sudo\c'
 	groupadd -g 513 sudo && cp /etc/sudoers /etc/sudoers.bk && echo '%sudo ALL=(ALL) ALL' >>/etc/sudoers.bk && echo '%sudo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers && useradd -m -s /bin/bash -g sudo sysop && DONE || exit 1
 	
 	echo -e '\n>>Instalando trizen\c'
 	echo '
-		cd /tmp && git clone https://aur.archlinux.org/trizen.git >>$SALIDA 2>&1 && cd trizen && makepkg -si >>$SALIDA 2>&1 && exit || exit 1
+		cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg -si && exit || exit 1
 	' | su - sysop && DONE || ERROR
 	
-	usedel -r sysop >>$SALIDA 2>&1
+	usedel -r sysop 
 	mv /etc/sudoers.bk /etc/sudoers
-
 	exit
 " | arch-chroot /mnt || STOP
 
 echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c"
-cd /tmp && git clone https://github.com/CambonOS/Scripts.git >>$SALIDA 2>&1 && bash Scripts/cmd.sh && DONE || ERROR
+cd /tmp && git clone https://github.com/CambonOS/Scripts.git && bash Scripts/cmd.sh && DONE || ERROR
 
 echo -e "\n*******************************************************************************************************"
 echo "************************************** INSTALLED ******************************************************"
