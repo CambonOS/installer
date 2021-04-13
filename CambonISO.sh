@@ -7,7 +7,7 @@ fi
 echo -e "\n>>Carpeta destino ISO:\c"
 read -e -i $(pwd) RUTAD
 echo -e "\n>>Instalando paquetes necesarios"
-pacman -noconfirm -Sy archiso git >>/tmp/Salida.txt 2>&1
+pacman -noconfirm -Sy archiso >>/tmp/Salida.txt 2>&1
 echo -e "\n>>Descargando el script de instalacion"
 cd /tmp
 git clone https://github.con/cambonos/scripts.git
