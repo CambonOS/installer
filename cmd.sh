@@ -18,3 +18,5 @@ chmod 755 /usr/bin/actualizar
 cp ./git-cambon.sh /usr/bin/git-cambon
 chown root:root /usr/bin/git-cambon
 chmod 755 /usr/bin/git-cambon
+
+echo -e "DONE"
