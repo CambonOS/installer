@@ -89,6 +89,7 @@ esac
 DONE
 
 echo -e "\n>>Formateando y montando sistemas de archivos\c"
+umount /mnt/boot >>$SALIDA 2>&1; umount /mnt/home >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; swapoff $SWAP >>$SALIDA 2>&1; rm -rf /mnt/* >>$SALIDA 2>&1
 case $GRUB in
 	bios)
 		mkfs.ext4 $BOOT >>$SALIDA 2>&1 || STOP
