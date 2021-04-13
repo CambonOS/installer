@@ -1,6 +1,6 @@
 #!/bin/bash
 if [[ $EUID -ne 0 ]]
-then 
+then
 	echo -e "Debese ejecutar como usuario con privilejios"
 	exit
 fi
