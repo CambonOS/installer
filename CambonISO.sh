@@ -14,9 +14,9 @@ git clone https://github.con/cambonos/scripts.git
 echo -e "\n>>Creando ficheros de configuracion de la ISO"
 mkdir /ISO
 cp -r /usr/share/archiso/configs/releng /ISO/porfile
-cp /tmp/scripts/CambonOS-Installer.sh /ISO/porfile/airootfs/usr/local/bin/cambon_install
-chown root:root /ISO/porfile/airootfs/usr/local/bin/cambon_install
-chmod 755 /ISO/porfile/airootfs/usr/local/bin/cambon_install
+cp /tmp/scripts/CambonOS-Install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install
+chown root:root /ISO/porfile/airootfs/usr/local/bin/cambonos-install
+chmod 755 /ISO/porfile/airootfs/usr/local/bin/cambonos-install
 cp /tmp/scripts/iso/paquetes /ISO/profile/packages.x86_64
 echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 echo -e "\n>>Creando la ISO"
