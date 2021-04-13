@@ -1,6 +1,10 @@
 #!/bin/bash
 #
+NOCOLOR='\033[0m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
 SALIDA="/tmp/salida"
+
 HEAD () {
 	clear
 	echo "*******************************************************************************************************"
@@ -9,18 +13,24 @@ HEAD () {
 }
 
 DONE () {
-	echo -e "${\033[o;32m} [DONE] ${\033[0m}"
+	echo -e "${GREEN} [DONE] ${NOCOLOR}"
+	sleep 1
 }
 
 ERROR () {
-	echo -e "${\033[1;31m} [ERROR] ${\033[0m}"
+	echo -e "${RED} [ERROR] ${NOCOLOR}"
+	sleep 3
+}
+
+STOP () {
+	echo -e "${'\033[1;31m'} [ERROR FATAL] ${'\033[0m'}"
 	exit
 }
 
 HEAD
 
 echo -e "\n>>Iniciando instalacion\c"
-loadkeys es && ping -c 4 archlinux.org >$SALIDA 2>&1 || ERROR
+loadkeys es && ping -c 4 archlinux.org >$SALIDA 2>&1 || STOP
 DONE
 
 echo -e "\n>>Tipo de arranque?(uefi/bios) \c" && read GRUB
@@ -46,167 +56,169 @@ GBIOS="g\nn\n1\n\n+512M\nn\n2\n\n+4G\nn\n3\n\n+40G\nn\n4\n\n\nt\n1\n4\nt\n2\n19\
 HEAD
 
 echo -e "\n>>Actualizando reloj\c"
-timedatectl set-ntp true >>$SALIDA 2>&1 || ERROR
-DONE
+timedatectl set-ntp true >>$SALIDA 2>&1 && DONE || ERROR
 
 echo -e "\n>>Particionando disco\c"
 case $TDISCO in
 	gpt) 
 		case $GRUB in
 			uefi) 
-				(echo -e $GUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1) || ERROR
+				(echo -e $GUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
 			;; 
 			bios) 
-				(echo -e $GBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1) || ERROR
+				(echo -e $GBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
 			;;
 		esac
 	;;
 	mbr) 
 		case $GRUB in
 			uefi) 
-				(echo -e $OUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1) || ERROR
+				(echo -e $OUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
 			;;
 			bios)
-				(echo -e $OBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1) || ERROR
+				(echo -e $OBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
 			;;
 		esac
 	;;
 esac
 DONE
 
-echo -e "\n>>Formateando y montando sistemas de archivos"
+echo -e "\n>>Formateando y montando sistemas de archivos\c"
 case $GRUB in
 	bios) 
-		mkfs.ext4 $BOOT >>$SALIDA 2>&1
+		mkfs.ext4 $BOOT >>$SALIDA 2>&1 || STOP
 	;;
 	uefi) 
-		mkfs.fat -F32 $BOOT >>$SALIDA 2>&1
+		mkfs.fat -F32 $BOOT >>$SALIDA 2>&1 || STOP
 	;;
 esac
+mkswap $SWAP >>$SALIDA 2>&1 || STOP
+mkfs.ext4 $RAIZ >>$SALIDA 2>&1 || STOP
+mkfs.ext4 $HOME >>$SALIDA 2>&1 || STOP
+swapon $SWAP >>$SALIDA 2>&1 || STOP
+mount $RAIZ /mnt >>$SALIDA 2>&1 || STOP
+mkdir /mnt/home >>$SALIDA 2>&1 || STOP
+mount $HOME /mnt/home >>$SALIDA 2>&1 || STOP
+mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
+mount $BOOT /mnt/boot >>$SALIDA 2>&1 || STOP
+DONE
 
-mkswap $SWAP >>$SALIDA 2>&1 
-mkfs.ext4 $RAIZ >>$SALIDA 2>&1 
-mkfs.ext4 $HOME >>$SALIDA 2>&1 
-swapon $SWAP >>$SALIDA 2>&1 
-mount $RAIZ /mnt >>$SALIDA 2>&1 
-mkdir /mnt/home >>$SALIDA 2>&1 
-mount $HOME /mnt/home >>$SALIDA 2>&1 
-mkdir /mnt/boot >>$SALIDA 2>&1 
-mount $BOOT /mnt/boot >>$SALIDA 2>&1 
+echo -e "\n>>Configurando pacman.conf\c"
+echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n\nColor\nCheckSpace\nTotalDownload\nILoveCandy\n" >>/etc/pacman.conf && DONE || ERROR
 
-echo -e "\n>>Configurando pacman.conf"
-echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n\nColor\nCheckSpace\nTotalDownload\nILoveCandy\n" >>/etc/pacman.conf
+echo -e "\n>>Seleccionando replicas\c"
+reflector --contry Spain --sort rate --save /etc/pacman.d/mirrorlist >>$SALIDA 2>&1 || STOP
+DONE
 
-echo -e "\n>>Seleccionando replicas"
-reflector --contry Spain --sort rate --save /etc/pacman.d/mirrorlist >>$SALIDA 2>&1 
-
-echo -e "\n>>Instalando base del sistema"
-pacstrap /mnt linux-zen linux-zen-headers linux-firmware base nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel >>$SALIDA 2>&1 
+echo -e "\n>>Instalando base del sistema\c"
+pacstrap /mnt linux-zen linux-zen-headers linux-firmware base nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo >>$SALIDA 2>&1 || STOP
 case $GRUB in
 	uefi)
-		pacstrap /mnt efibootmgr >>$SALIDA 2>&1
+		pacstrap /mnt efibootmgr >>$SALIDA 2>&1 || STOP
 	;;
 	bios)
 	;;
 esac
+DONE
 
-echo -e "\n>>Instalando drivers graficos"
+echo -e "\n>>Instalando drivers graficos\c"
 case $GPU in
 	amd) 
-		pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1
+		pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 &&DONE || ERROR
 	;;
 	nvidia) 
-		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidea-dkms vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1
+		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidea-dkms vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 &&DONE || ERROR
 	;;
 	intel) 
-		pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1
+		pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 &&DONE || ERROR
 	;;
 	vmware) 
-		pacstrap /mnt xf86-video-vesa xf86-video-vmware lib32-mesa mesa >>$SALIDA 2>&1
+		pacstrap /mnt xf86-video-vesa xf86-video-vmware lib32-mesa mesa >>$SALIDA 2>&1 &&DONE || ERROR
 	;;
 esac
 
-echo -e "\n>>Instalando entorno grafico seleccionado"
+echo -e "\n>>Instalando entorno grafico seleccionado\c"
 case $GDM in
 	terminal) 
+		DONE
 	;;
 	gnome) 
-		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweak-tool >>$SALIDA 2>&1
+		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweak-tool >>$SALIDA 2>&1 &&DONE || ERROR
 	;;
 esac
 
-echo -e "\n>>Generando archivo fstab"
-genfstab -U /mnt >> /mnt/etc/fstab
+echo -e "\n>>Generando archivo fstab\c"
+genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
 echo "
-	echo -e '\n>>Estableciendo zona horaria'
-	ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime
-	hwclock --systohc
+	NOCOLOR='\033[0m'
+	RED='\033[1;31m'
+	GREEN='\033[1;32m'
 	
-	echo -e '\n>>Cambiando idioma del sistema'
-	echo 'es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8' >> /etc/locale.gen
-	locale-gen  >>$SALIDA 2>&1
-	echo -e 'LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8' >/etc/locale.conf
-	echo -e 'KEYMAP=es' >/etc/vconsole.conf
+	DONE () {
+		echo -e "${GREEN} [DONE] ${NOCOLOR}"
+		sleep 1
+	}
 	
-	echo -e '\n>>Creando archivos host'
-	echo -e '$NOMBRE' >/etc/hostname
-	echo -e '127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$DOMINIO $NOMBRE' >/etc/hosts
+	ERROR () {
+		echo -e "${RED} [ERROR] ${NOCOLOR}"
+		sleep 3
+	}
+
+	echo -e '\n>>Estableciendo zona horaria\c'
+	ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc && DONE || ERROR
 	
-	echo -e '\n>>Configurando red'
-	systemctl enable NetworkManager.service >>$SALIDA 2>&1
+	echo -e '\n>>Cambiando idioma del sistema\c'
+	echo 'es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8' >> /etc/locale.gen && locale-gen  >>$SALIDA 2>&1 && echo -e 'LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8' >/etc/locale.conf && echo -e 'KEYMAP=es' >/etc/vconsole.conf && DONE || ERROR
 	
-	echo -e '\n>>Configurando grub'
+	echo -e '\n>>Creando archivos host\c'
+	echo -e '$NOMBRE' >/etc/hostname && echo -e '127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$DOMINIO $NOMBRE' >/etc/hosts && DONE || ERROR
+	
+	echo -e '\n>>Configurando red\c'
+	systemctl enable NetworkManager.service >>$SALIDA 2>&1 && DONE || ERROR
+	
+	echo -e '\n>>Configurando grub\c'
 	case $GRUB in
 		bios) 
-			grub-install --target=i386-pc $DISCO >>$SALIDA 2>&1 
+			grub-install --target=i386-pc $DISCO >>$SALIDA 2>&1 || exit 1
 		;;
 		uefi) 
-			grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB >>$SALIDA 2>&1
+			grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB >>$SALIDA 2>&1 || exit 1
 		;;
-	esac
-	grub-mkconfig -o /boot/grub/grub.cfg >>$SALIDA 2>&1 	
-	echo -e '\n>>Activando entorno grafico'
+	esac && grub-mkconfig -o /boot/grub/grub.cfg >>$SALIDA 2>&1 && DONE || exit 1
+	
+	echo -e '\n>>Activando entorno grafico\c'
 	case $GDM in
 		terminal) 
 		;;
 		gnome) 
-			systemctl enable gdm.service >>$SALIDA 2>&1
+			systemctl enable gdm.service >>$SALIDA 2>&1 || ERROR
 		;;
 	esac
-
-	echo -e '\n>>Configurando root'
-	echo -e '$PASS\n$PASS' | passwd
+	DONE
 	
-	echo -e '\n>>Editando skel'
-	echo -e '\nneofetch' >/etc/skel/.bashrc
-
-	echo -e '\n>>Creando grupo sudo'
-	groupadd -g 513 sudo
-	cp /etc/sudoers /etc/sudoers.bk
-	echo '%sudo ALL=(ALL) ALL' >>/etc/sudoers.bk
-	echo '%sudo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
-	useradd -m -s /bin/bash -g sudo sysop
+	echo -e '\n>>Configurando root\c'
+	(echo -e '$PASS\n$PASS' | passwd) && DONE || exit 1
 	
-	echo -e '\n>>Instalando trizen'
+	echo -e '\n>>Editando skel\c'
+	echo -e '\nneofetch' >/etc/skel/.bashrc && DONE || ERROR
+
+	echo -e '\n>>Creando grupo sudo\c'
+	groupadd -g 513 sudo && cp /etc/sudoers /etc/sudoers.bk && echo '%sudo ALL=(ALL) ALL' >>/etc/sudoers.bk && echo '%sudo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers && useradd -m -s /bin/bash -g sudo sysop && DONE || exit 1
+	
+	echo -e '\n>>Instalando trizen\c'
 	echo '
-		cd /tmp
-		git clone https://aur.archlinux.org/trizen.git >>$SALIDA 2>&1 
-		cd trizen
-		makepkg -si >>$SALIDA 2>&1 
-		exit
-	' | su - sysop
+		cd /tmp && git clone https://aur.archlinux.org/trizen.git >>$SALIDA 2>&1 && cd trizen && makepkg -si >>$SALIDA 2>&1 && exit || exit 1
+	' | su - sysop && DONE || ERROR
 	
 	usedel -r sysop >>$SALIDA 2>&1 
 	mv /etc/sudoers.bk /etc/sudoers
 
 	exit
-" | arch-chroot /mnt
+" | arch-chroot /mnt || STOP
 
-echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh"
-cd /tmp
-git clone https://github.com/CambonOS/Scripts.git
-bash Scripts/cmd.sh
+echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c"
+cd /tmp && git clone https://github.com/CambonOS/Scripts.git >>$SALIDA 2>&1 && bash Scripts/cmd.sh && DONE || ERROR
 
 echo -e "\n*******************************************************************************************************"
 echo "************************************** INSTALLED ******************************************************"
