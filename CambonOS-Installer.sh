@@ -1,13 +1,27 @@
 #!/bin/bash
 #
 SALIDA="/tmp/salida"
-clear
-echo "*******************************************************************************************************"
-echo "********************************* CAMBON OS INSTALLER *************************************************"
-echo "*******************************************************************************************************"
+HEAD () {
+	clear
+	echo "*******************************************************************************************************"
+	echo "********************************* CAMBON OS INSTALLER *************************************************"
+	echo "*******************************************************************************************************"
+}
 
-echo -e "\n>>Iniciando instalacion"
-loadkeys es && ping -c 4 archlinux.org >$SALIDA 2>&1 || echo "NON HAY CONECXION A INTERNET"
+DONE () {
+	echo -e "${\033[o;32m} [DONE] ${\033[0m}"
+}
+
+ERROR () {
+	echo -e "${\033[1;31m} [ERROR] ${\033[0m}"
+	exit
+}
+
+HEAD
+
+echo -e "\n>>Iniciando instalacion\c"
+loadkeys es && ping -c 4 archlinux.org >$SALIDA 2>&1 || ERROR
+DONE
 
 echo -e "\n>>Tipo de arranque?(uefi/bios) \c" && read GRUB
 echo -e "\n\n>>Listando discos\n" && lsblk
@@ -20,44 +34,45 @@ echo -e "\n\n>>Graficos?(nvidia/amd/vmware) \c" && read GPU
 echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
 echo -e "\n\n>>Contraseña del root? \c" && read -s PASS
 
-1="1" ; 2="2" ; 3="3" ; 4="4"
-BOOT="$DISCO$1"
-SWAP="$DISCO$2"
-RAIZ="$DISCO$3"
-HOME="$DISCO$4"
+BOOT="$DISCO$(echo 1)"
+SWAP="$DISCO$(echo 2)"
+RAIZ="$DISCO$(echo 3)"
+HOME="$DISCO$(echo 4)"
 OUEFI="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\nEF\nt\n2\n82\nt\n3\n83\nt\n4\n83\nw\n"
 OBIOS="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\n83\nt\n2\n82\nt\n3\n83\nt\n4\n83\nw\n"
 GUEFI="g\nn\n1\n\n+512M\nn\n2\n\n+4G\nn\n3\n\n+40G\nn\n4\n\n\nt\n1\n1\nt\n2\n19\nt\n3\n23\nt\n4\n28\nw\n"
 GBIOS="g\nn\n1\n\n+512M\nn\n2\n\n+4G\nn\n3\n\n+40G\nn\n4\n\n\nt\n1\n4\nt\n2\n19\nt\n3\n23\nt\n4\n28\nw\n"
 
-clear
+HEAD
 
-echo -e "\n>>Actualizando reloj"
-timedatectl set-ntp true >>$SALIDA 2>&1 
+echo -e "\n>>Actualizando reloj\c"
+timedatectl set-ntp true >>$SALIDA 2>&1 || ERROR
+DONE
 
-echo -e "\n>>Particionando disco"
+echo -e "\n>>Particionando disco\c"
 case $TDISCO in
 	gpt) 
 		case $GRUB in
 			uefi) 
-				echo -e $GUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1
+				(echo -e $GUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1) || ERROR
 			;; 
 			bios) 
-				echo -e $GBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1
+				(echo -e $GBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1) || ERROR
 			;;
 		esac
 	;;
 	mbr) 
 		case $GRUB in
 			uefi) 
-				echo -e $OUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1
+				(echo -e $OUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1) || ERROR
 			;;
 			bios)
-				echo -e $OBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1
+				(echo -e $OBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1) || ERROR
 			;;
 		esac
 	;;
 esac
+DONE
 
 echo -e "\n>>Formateando y montando sistemas de archivos"
 case $GRUB in
