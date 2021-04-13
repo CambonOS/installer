@@ -1,28 +1,47 @@
 #!/bin/bash
 if [[ $EUID -ne 0 ]]
-then 
+then
 	echo -e "Debese ejecutar como usuario con privilejios"
 	exit
 fi
+
+NOCOLOR='\033[0m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+
+ERROR () {
+  echo -e "${RED} ERROR ${NOCOLOR}"
+  exit
+}
+
+DONE () {
+  echo -e "${GREEN} DONE ${NOCOLOR}"
+  sleep 1
+}
+
 echo -e "\n>>Carpeta destino ISO:\c"
 read -e -i $(pwd) RUTAD
-echo -e "\n>>Instalando paquetes necesarios"
-pacman -noconfirm -Sy archiso >>/tmp/Salida.txt 2>&1
-echo -e "\n>>Descargando el script de instalacion"
-cd /tmp
-git clone -b ManuCr19 https://github.con/cambonos/scripts.git
-echo -e "\n>>Creando ficheros de configuracion de la ISO"
-mkdir /ISO
-cp -r /usr/share/archiso/configs/releng /ISO/porfile
-cp /tmp/scripts/CambonOS-Installer.sh /ISO/porfile/airootfs/usr/local/bin/cambon_install
-chown root:root /ISO/porfile/airootfs/usr/local/bin/cambon_install
-chmod 755 /ISO/porfile/airootfs/usr/local/bin/cambon_install
-cp /tmp/scripts/iso/paquetes /ISO/profile/packages.x86_64
+
+echo -e "\n>>Instalando paquetes necesarios\c"
+pacman --noconfirm -Sy archiso >/tmp/Salida.txt 2>&1 && DONE || ERROR
+
+echo -e "\n>>Descargando el script de instalacion\c"
+cd /tmp && git clone -b ManuCr19 https://github.con/CambonOS/Scripts.git && DONE || ERROR
+
+echo -e "\n>>Creando ficheros de configuracion de la ISO\c"
+mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
+cp /tmp/Scripts/CambonOS-Install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install || ERROR
+chown root:root /ISO/porfile/airootfs/usr/local/bin/cambonos-install
+chmod 755 /ISO/porfile/airootfs/usr/local/bin/cambonos-install
+cp /tmp/Scripts/iso/paquetes /ISO/profile/packages.x86_64 || ERROR
 echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
-echo -e "\n>>Creando la ISO"
-mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile
-echo -e "\n>>Eliminado ficheros/paquetes innecesarios"
+DONE
+
+echo -e "\n>>Creando la ISO\c"
+mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile >>/tmp/Salida.txt 2>&1 && DONE || ERROR
+
+echo -e "\n>>Eliminado ficheros/paquetes innecesarios\c"
 rm -rf /ISO
-pacman -noconfirm -Rns archiso >>/tmp/Salida.txt 2>&1
+pacman --noconfirm -Rns archiso >>/tmp/Salida.txt 2>&1
 chmod 777 $RUTAD/archlinux*
-echo -e "\n\n***********DONE***********\n\n"
+echo -e "\n\n${GREEN}***********DONE***********\n\n${NOCOLOR}"
