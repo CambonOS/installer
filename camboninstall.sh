@@ -109,9 +109,6 @@ mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
 mount $BOOT /mnt/boot >>$SALIDA 2>&1 || STOP
 DONE
 
-echo -e "\n>>Configurando pacman.conf\c"
-echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n\nColor\nCheckSpace\nTotalDownload\nILoveCandy\n" >>/etc/pacman.conf && DONE || ERROR
-
 echo -e "\n>>Seleccionando replicas\c"
 reflector -c Spain --sort rate --save /etc/pacman.d/mirrorlist >>$SALIDA 2>&1 || STOP
 DONE
@@ -213,18 +210,22 @@ echo "
 	groupadd -g 513 sudo && cp /etc/sudoers /etc/sudoers.bk && echo '%sudo ALL=(ALL) ALL' >>/etc/sudoers.bk && echo '%sudo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers && useradd -m -s /bin/bash -g sudo sysop && DONE || exit 1
 	
 	echo -e '\n>>Instalando trizen\c'
-	echo '
-		cd /tmp && git clone https://aur.archlinux.org/trizen.git >>$SALIDA 2>&1 && cd trizen && makepkg -si >>$SALIDA 2>&1 && exit || exit 1
-	' | su - sysop && DONE || ERROR
+	echo -e 'cd /tmp && git clone https://aur.archlinux.org/trizen.git >>$SALIDA 2>&1 && cd trizen && makepkg -si >>$SALIDA 2>&1 && exit || exit 1' | su - sysop && DONE || ERROR
 	
 	usedel -r sysop >>$SALIDA 2>&1
 	mv /etc/sudoers.bk /etc/sudoers
-
+	
+	echo -e '\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c'
+	echo -e 'cd /tmp && git clone https://github.com/CambonOS/Scripts.git >>$SALIDA 2>&1 && bash Scripts/cmd.sh' > /usr/bin/actualizar-cmd
+	chmod 755 /usr/bin/actualizar-cmd
+	actualizar-cmd && DONE || ERROR
+	
 	exit
-" | arch-chroot /mnt || STOP
+" > /mnt/usr/bin/seguir
 
-echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c"
-cd /tmp && git clone https://github.com/CambonOS/Scripts.git >>$SALIDA 2>&1 && bash Scripts/cmd.sh && DONE || ERROR
+chmod 777 /mnt/usr/bin/seguir
+arch-chroot /mnt seguir || STOP
+rm -f /mnt/usr/bin/seguir
 
 echo -e "\n*******************************************************************************************************"
 echo "************************************** INSTALLED ******************************************************"
