@@ -29,6 +29,7 @@ ERROR () {
 
 STOP () {
 	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
+	umount /mnt/boot >>$SALIDA 2>&1; umount /mnt/home >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; swapoff $SWAP >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt
 	exit
 }
 
@@ -89,18 +90,17 @@ esac
 DONE
 
 echo -e "\n>>Formateando y montando sistemas de archivos\c"
-umount /mnt/boot >>$SALIDA 2>&1; umount /mnt/home >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; swapoff $SWAP >>$SALIDA 2>&1; rm -rf /mnt/* >>$SALIDA 2>&1
 case $GRUB in
 	bios)
-		mkfs.ext4 $BOOT >>$SALIDA 2>&1 || STOP
+		echo -e "y\n" | mkfs.ext4 $BOOT >>$SALIDA 2>&1 || STOP
 	;;
 	uefi)
-		mkfs.fat -F32 $BOOT >>$SALIDA 2>&1 || STOP
+		echo -e "y\n" | mkfs.fat -F32 $BOOT >>$SALIDA 2>&1 || STOP
 	;;
 esac
 mkswap $SWAP >>$SALIDA 2>&1 || STOP
-mkfs.ext4 $RAIZ >>$SALIDA 2>&1 || STOP
-mkfs.ext4 $HOME >>$SALIDA 2>&1 || STOP
+echo -e "y\n" | mkfs.ext4 $RAIZ >>$SALIDA 2>&1 || STOP
+echo -e "y\n" | mkfs.ext4 $HOME >>$SALIDA 2>&1 || STOP
 swapon $SWAP >>$SALIDA 2>&1 || STOP
 mount $RAIZ /mnt >>$SALIDA 2>&1 || STOP
 mkdir /mnt/home >>$SALIDA 2>&1 || STOP
