@@ -1,5 +1,10 @@
 #!/bin/bash
-#
+if [[ $EUID -ne 0 ]]
+then
+	echo -e "Debese ejecutar como usuario con privilejios"
+	exit
+fi
+
 NOCOLOR='\033[0m'
 RED='\033[1;31m'
 GREEN='\033[1;32m'
@@ -14,12 +19,12 @@ HEAD () {
 
 DONE () {
 	echo -e "${GREEN} [DONE] ${NOCOLOR}"
-	sleep 1
+	sleep 5
 }
 
 ERROR () {
 	echo -e "${RED} [ERROR] ${NOCOLOR}"
-	sleep 3
+	sleep 10
 }
 
 STOP () {
@@ -157,12 +162,12 @@ echo "
 	
 	DONE () {
 		echo -e "${GREEN} [DONE] ${NOCOLOR}"
-		sleep 1
+		sleep 5
 	}
 	
 	ERROR () {
 		echo -e "${RED} [ERROR] ${NOCOLOR}"
-		sleep 3
+		sleep 10
 	}
 	echo -e '\n>>Estableciendo zona horaria\c'
 	ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc && DONE || ERROR
