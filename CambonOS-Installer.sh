@@ -11,7 +11,7 @@ loadkeys es && ping -c 4 archlinux.org >$SALIDA 2>&1 || echo "NON HAY CONECXION 
 
 echo -e "\n>>Tipo de arranque?(uefi/bios) \c" && read GRUB
 echo -e "\n\n>>Listando discos\n" && lsblk
-echo -e "\n\n>>En que disco quieres instalar el sistema? \c" && read -e -i "/dev/sd" DISCO
+echo -e "\n>>En que disco quieres instalar el sistema? \c" && read -e -i "/dev/sd" DISCO
 echo -e "\n\n>>Formato del disco?(mbr/gpt) \c" && read TDISCO
 echo -e "\n\n>>Nombre del equipo? \c" && read NOMBRE
 echo -e "\n\n>>Dominio? \c" && read -e -i "$NOMBRE.cambon.local" DOMINIO
@@ -187,6 +187,11 @@ echo "
 
 	exit
 " | arch-chroot /mnt
+
+echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh"
+cd /tmp
+git clone https://github.com/CambonOS/Scripts.git
+bash Scripts/cmd.sh
 
 echo -e "\n*******************************************************************************************************"
 echo "************************************** INSTALLED ******************************************************"
