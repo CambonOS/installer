@@ -12,14 +12,14 @@ echo -e "\n>>Instalando paquetes necesarios"
 pacman -noconfirm -Sy archiso >>/tmp/Salida.txt 2>&1
 
 echo -e "\n>>Descargando el script de instalacion"
-cd /tmp && git clone https://github.con/cambonos/scripts.git
+cd /tmp && git clone https://github.con/CambonOS/Scripts.git
 
 echo -e "\n>>Creando ficheros de configuracion de la ISO"
 mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile
-cp /tmp/scripts/CambonOS-Install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install
+cp /tmp/Scripts/CambonOS-Install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install
 chown root:root /ISO/porfile/airootfs/usr/local/bin/cambonos-install
 chmod 755 /ISO/porfile/airootfs/usr/local/bin/cambonos-install
-cp /tmp/scripts/iso/paquetes /ISO/profile/packages.x86_64
+cp /tmp/Scripts/iso/paquetes /ISO/profile/packages.x86_64
 echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 
 echo -e "\n>>Creando la ISO"
