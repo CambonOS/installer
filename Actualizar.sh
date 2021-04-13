@@ -1,11 +1,15 @@
 #!/bin/bash
 
+NOCOLOR='\033[0m'
+RED='\033[1;31m'
+GREEN='\033[0;32m'
+
 ERROR () {
-  echo -e "${\033[1;31m} ERROR ${\033[0m}"
+  echo -e "${RED} ERROR ${NOCOLOR}"
 }
 
 DONE () {
-  echo -e "${\033[0;32m} ERROR ${\033[0m}"
+  echo -e "${GREEN} DONE ${NOCOLOR}"
 }
 
 clear
