@@ -18,6 +18,7 @@ cp /tmp/scripts/CambonOS-Installer.sh /ISO/porfile/airootfs/usr/local/bin/cambon
 chown root:root /ISO/porfile/airootfs/usr/local/bin/cambon_install
 chmod 755 /ISO/porfile/airootfs/usr/local/bin/cambon_install
 cp /tmp/scripts/iso/paquetes /ISO/profile/packages.x86_64
+echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 echo -e "\n>>Creando la ISO"
 mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile
 echo -e "\n>>Eliminado ficheros/paquetes innecesarios"
