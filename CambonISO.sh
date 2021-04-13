@@ -10,7 +10,7 @@ echo -e "\n>>Instalando paquetes necesarios"
 pacman -noconfirm -Sy archiso >>/tmp/Salida.txt 2>&1
 echo -e "\n>>Descargando el script de instalacion"
 cd /tmp
-git clone https://github.con/cambonos/scripts.git
+git clone -b ManuCr19 https://github.con/cambonos/scripts.git
 echo -e "\n>>Creando ficheros de configuracion de la ISO"
 mkdir /ISO
 cp -r /usr/share/archiso/configs/releng /ISO/porfile
