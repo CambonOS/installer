@@ -38,8 +38,8 @@ echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 mv /tmp/Scripts/iso/porfile /ISO/porfile/profiledef.sh
 DONE
 
-echo -e "\n>>Creando la ISO\c"
-mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile >>/tmp/Salida.txt 2>&1 && DONE || ERROR
+echo -e "\n>>Creando la ISO\n"
+mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile && DONE || ERROR
 
 echo -e "\n>>Eliminado ficheros/paquetes innecesarios\c"
 rm -rf /ISO
