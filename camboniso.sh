@@ -30,13 +30,14 @@ cd /tmp && git clone https://github.com/CambonOS/Scripts.git && DONE || ERROR
 
 echo -e "\n>>Creando ficheros de configuracion de la ISO\c"
 mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
-cp /tmp/Scripts/camboninstall.sh /ISO/porfile/airootfs/usr/local/bin/camboninstall || ERROR
+mv /tmp/Scripts/camboninstall.sh /ISO/porfile/airootfs/usr/local/bin/camboninstall || ERROR
 echo -e "chown root:root /ISO/porfile/airootfs/usr/local/bin/camboninstall\nchmod 755 /ISO/porfile/airootfs/usr/local/bin/camboninstall" >>/ISO/porfile/airootfs/root/.zshrc
 mv /tmp/Scripts/iso/paquetes /ISO/porfile/packages.x86_64 || ERROR
 echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/ISO/porfile/airootfs/etc/locale.conf
 echo -e "KEYMAP=es" >/ISO/porfile/airootfs/etc/vconsole.conf
 mv /tmp/Scripts/iso/porfile /ISO/porfile/profiledef.sh
+mv /tmp/Scripts/iso/confpacman /ISO/porfile/airootfs/etc/pacman.conf
 DONE
 
 echo -e "\n>>Creando la ISO\n"
