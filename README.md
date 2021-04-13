@@ -1,9 +1,7 @@
 # Cambon OS Scripts
 Conjunto de scriptts que permiten la creacion de una ISO ligera de Arch linux que contiene el comando "cambonos_install" que nos permite instalar el sistema operativo de forma sencilla
 
-
-
-# CambonISO
+# CambonISO.sh
 Script que permite crear la ISO con el comamdo de instalacion "cambonos_install"
 
 # CambonOS-Install
