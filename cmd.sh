@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [[ $EUID -ne 0 ]]
+then 
+	echo -e "Debese ejecutar como usuario con privilejios"
+	exit
+fi
+
 cd /tmp
 
 git clone https://github/CambonOS/Scripts.git
