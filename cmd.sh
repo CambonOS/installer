@@ -1,15 +1,11 @@
 #!/bin/bash
-
 if [[ $EUID -ne 0 ]]
 then 
 	echo -e "Debese ejecutar como usuario con privilejios"
 	exit
 fi
 
-cd /tmp
-
-git clone https://github/CambonOS/Scripts.git
-cd Scripts
+cd /tmp/Scripts
 
 cp ./CambonISO.sh /usr/bin/camboniso
 chown root:root /usr/bin/camboniso
@@ -18,7 +14,3 @@ chmod 755 /usr/bin/camboniso
 cp ./Actualizar.sh /usr/bin/actualizar
 chown root:root /usr/bin/actualizar
 chmod 755 /usr/bin/actualizar
-
-cp ./cmd.sh /usr/bin/actualizarcmd
-chown root:root /usr/bin/actualizarcmd
-chmod 755 /usr/bin/actualizarcmd
