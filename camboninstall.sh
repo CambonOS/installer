@@ -109,10 +109,6 @@ mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
 mount $BOOT /mnt/boot >>$SALIDA 2>&1 || STOP
 DONE
 
-echo -e "\n>>Seleccionando replicas\c"
-reflector -c Spain --sort rate --save /etc/pacman.d/mirrorlist >>$SALIDA 2>&1 || STOP
-DONE
-
 echo -e "\n>>Instalando base del sistema\c"
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo >>$SALIDA 2>&1 || STOP
 case $GRUB in
