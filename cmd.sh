@@ -7,14 +7,14 @@ fi
 
 cd /tmp/Scripts
 
-cp ./CambonISO.sh /usr/bin/camboniso
+cp ./camboniso.sh /usr/bin/camboniso
 chown root:root /usr/bin/camboniso
 chmod 755 /usr/bin/camboniso
 
-cp ./Actualizar.sh /usr/bin/actualizar
+cp ./actualizar.sh /usr/bin/actualizar
 chown root:root /usr/bin/actualizar
 chmod 755 /usr/bin/actualizar
 
-cp ./git-Cambon.sh /usr/bin/git-cambon
+cp ./git-cambon.sh /usr/bin/git-cambon
 chown root:root /usr/bin/git-cambon
 chmod 755 /usr/bin/git-cambon
