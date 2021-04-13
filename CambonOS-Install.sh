@@ -23,7 +23,7 @@ ERROR () {
 }
 
 STOP () {
-	echo -e "${'\033[1;31m'} [ERROR FATAL] ${'\033[0m'}"
+	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
 	exit
 }
 
