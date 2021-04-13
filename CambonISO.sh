@@ -33,8 +33,9 @@ mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
 cp /tmp/Scripts/CambonOS-Install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install || ERROR
 chown root:root /ISO/porfile/airootfs/usr/local/bin/cambonos-install
 chmod 755 /ISO/porfile/airootfs/usr/local/bin/cambonos-install
-cp /tmp/Scripts/iso/paquetes /ISO/porfile/packages.x86_64 || ERROR
+mv /tmp/Scripts/iso/paquetes /ISO/porfile/packages.x86_64 || ERROR
 echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
+mv /tmp/Scripts/iso/porfile /ISO/porfile/profiledef.sh
 DONE
 
 echo -e "\n>>Creando la ISO\c"
