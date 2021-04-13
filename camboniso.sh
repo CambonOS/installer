@@ -11,6 +11,7 @@ GREEN='\033[1;32m'
 
 ERROR () {
   echo -e "${RED} ERROR ${NOCOLOR}"
+  rm -rf /ISO
   exit
 }
 
