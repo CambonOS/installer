@@ -35,7 +35,7 @@ chown root:root /ISO/porfile/airootfs/usr/local/bin/cambonos-install
 chmod 755 /ISO/porfile/airootfs/usr/local/bin/cambonos-install
 mv /tmp/Scripts/iso/paquetes /ISO/porfile/packages.x86_64 || ERROR
 echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
-echo -e "LANG=es_ES.UTF-8" >/ISO/porfile/airootfs/etc/locale.conf
+echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/ISO/porfile/airootfs/etc/locale.conf
 mv /tmp/Scripts/iso/porfile /ISO/porfile/profiledef.sh
 DONE
 
