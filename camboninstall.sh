@@ -112,7 +112,7 @@ echo -e "\n>>Configurando pacman.conf\c"
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n\nColor\nCheckSpace\nTotalDownload\nILoveCandy\n" >>/etc/pacman.conf && DONE || ERROR
 
 echo -e "\n>>Seleccionando replicas\c"
-reflector --contry Spain --sort rate --save /etc/pacman.d/mirrorlist >>$SALIDA 2>&1 || STOP
+reflector -c Spain --sort rate --save /etc/pacman.d/mirrorlist >>$SALIDA 2>&1 || STOP
 DONE
 
 echo -e "\n>>Instalando base del sistema\c"
