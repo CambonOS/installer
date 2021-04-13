@@ -211,7 +211,7 @@ echo "
 		cd /tmp && git clone https://aur.archlinux.org/trizen.git >>$SALIDA 2>&1 && cd trizen && makepkg -si >>$SALIDA 2>&1 && exit || exit 1
 	' | su - sysop && DONE || ERROR
 	
-	usedel -r sysop >>$SALIDA 2>&1 
+	usedel -r sysop >>$SALIDA 2>&1
 	mv /etc/sudoers.bk /etc/sudoers
 
 	exit
