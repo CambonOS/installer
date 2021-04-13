@@ -1,5 +1,10 @@
 #!/bin/bash
-#
+if [[ $EUID -ne 0 ]]
+then
+	echo -e "\nEJECUTAR CON PRIVILEGIOS\n"
+	exit
+fi
+
 NOCOLOR='\033[0m'
 RED='\033[1;31m'
 GREEN='\033[1;32m'
