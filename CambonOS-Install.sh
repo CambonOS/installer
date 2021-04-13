@@ -62,17 +62,17 @@ echo -e "\n>>Particionando disco\c"
 case $TDISCO in
 	gpt) 
 		case $GRUB in
-			uefi) 
+			uefi)
 				(echo -e $GUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
 			;; 
-			bios) 
+			bios)
 				(echo -e $GBIOS | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
 			;;
 		esac
 	;;
 	mbr) 
 		case $GRUB in
-			uefi) 
+			uefi)
 				(echo -e $OUEFI | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
 			;;
 			bios)
@@ -85,10 +85,10 @@ DONE
 
 echo -e "\n>>Formateando y montando sistemas de archivos\c"
 case $GRUB in
-	bios) 
+	bios)
 		mkfs.ext4 $BOOT >>$SALIDA 2>&1 || STOP
 	;;
-	uefi) 
+	uefi)
 		mkfs.fat -F32 $BOOT >>$SALIDA 2>&1 || STOP
 	;;
 esac
@@ -123,26 +123,26 @@ DONE
 
 echo -e "\n>>Instalando drivers graficos\c"
 case $GPU in
-	amd) 
+	amd)
 		pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
 	;;
-	nvidia) 
+	nvidia)
 		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidea-dkms vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
 	;;
-	intel) 
+	intel)
 		pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
 	;;
-	vmware) 
+	vmware)
 		pacstrap /mnt xf86-video-vesa xf86-video-vmware lib32-mesa mesa >>$SALIDA 2>&1 && DONE || ERROR
 	;;
 esac
 
 echo -e "\n>>Instalando entorno grafico seleccionado\c"
 case $GDM in
-	terminal) 
+	terminal)
 		DONE
 	;;
-	gnome) 
+	gnome)
 		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweak-tool >>$SALIDA 2>&1 && DONE || ERROR
 	;;
 esac
@@ -169,7 +169,7 @@ echo "
 	ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc && DONE || ERROR
 	
 	echo -e '\n>>Cambiando idioma del sistema\c'
-	echo 'es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8' >> /etc/locale.gen && locale-gen  >>$SALIDA 2>&1 && echo -e 'LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8' >/etc/locale.conf && echo -e 'KEYMAP=es' >/etc/vconsole.conf && DONE || ERROR
+	echo 'es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8' >> /etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e 'LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8' >/etc/locale.conf && echo -e 'KEYMAP=es' >/etc/vconsole.conf && DONE || ERROR
 	
 	echo -e '\n>>Creando archivos host\c'
 	echo -e '$NOMBRE' >/etc/hostname && echo -e '127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$DOMINIO $NOMBRE' >/etc/hosts && DONE || ERROR
@@ -179,19 +179,19 @@ echo "
 	
 	echo -e '\n>>Configurando grub\c'
 	case $GRUB in
-		bios) 
+		bios)
 			grub-install --target=i386-pc $DISCO >>$SALIDA 2>&1 || exit 1
 		;;
-		uefi) 
+		uefi)
 			grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB >>$SALIDA 2>&1 || exit 1
 		;;
 	esac && grub-mkconfig -o /boot/grub/grub.cfg >>$SALIDA 2>&1 && DONE || exit 1
 	
 	echo -e '\n>>Activando entorno grafico\c'
 	case $GDM in
-		terminal) 
+		terminal)
 		;;
-		gnome) 
+		gnome)
 			systemctl enable gdm.service >>$SALIDA 2>&1 || ERROR
 		;;
 	esac
