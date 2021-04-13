@@ -216,9 +216,9 @@ echo "
 	mv /etc/sudoers.bk /etc/sudoers
 	
 	echo -e '\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c'
-	echo -e 'cd /tmp && git clone https://github.com/CambonOS/Scripts.git >>$SALIDA 2>&1 && bash Scripts/cmd.sh' > /usr/bin/actualizar-cmd
+	echo -e 'rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git >>$SALIDA 2>&1 && bash Scripts/cmd.sh && echo OK || echo FAIL' > /usr/bin/actualizar-cmd
 	chmod 755 /usr/bin/actualizar-cmd
-	actualizar-cmd && DONE || ERROR
+	actualizar-cmd
 	
 	exit
 " > /mnt/usr/bin/seguir
