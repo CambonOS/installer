@@ -26,7 +26,7 @@ echo -e "\n>>Instalando paquetes necesarios\c"
 pacman --noconfirm -Sy archiso >/tmp/Salida.txt 2>&1 && DONE || ERROR
 
 echo -e "\n>>Descargando el script de instalacion\c"
-cd /tmp && git clone https://github.con/CambonOS/Scripts.git && DONE || ERROR
+cd /tmp && git clone https://github.com/CambonOS/Scripts.git && DONE || ERROR
 
 echo -e "\n>>Creando ficheros de configuracion de la ISO\c"
 mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
