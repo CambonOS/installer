@@ -8,7 +8,7 @@ fi
 NOCOLOR='\033[0m'
 RED='\033[1;31m'
 GREEN='\033[1;32m'
-SALIDA="/tmp/salida"
+SALIDA="/home/salida"
 
 HEAD () {
 	clear
@@ -33,10 +33,18 @@ STOP () {
 	exit
 }
 
+ROOT () {
+	echo -e "\n\n>>Contraseña del root: \c" && read -s PASS
+	echo -e "\n>>Repetir contraseña: \c" && read -s PASS1
+	if $PASS=$PASS1
+		else ROOT
+	fi
+}
+
 HEAD
 
 echo -e "\n>>Iniciando instalacion\c"
-loadkeys es && ping -c 4 archlinux.org >$SALIDA 2>&1 || STOP
+reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >$SALIDA 2>&1 || STOP
 DONE
 
 echo -e "\n>>Tipo de arranque?(uefi/bios) \c" && read GRUB
@@ -48,7 +56,7 @@ echo -e "\n\n>>Dominio? \c" && read -e -i "$NOMBRE.cambon.local" DOMINIO
 echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
 echo -e "\n\n>>Graficos?(nvidia/amd/vmware) \c" && read GPU
 echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
-echo -e "\n\n>>Contraseña del root? \c" && read -s PASS
+ROOT
 
 BOOT="$DISCO$(echo 1)"
 SWAP="$DISCO$(echo 2)"
@@ -150,9 +158,9 @@ echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
 #Preparando Salida
-mount / /mnt/mnt >>$SALIDA 2<&1
+mount /home /mnt/mnt >>$SALIDA 2<&1
 
-(echo -e "NOCOLOR='\033[0m'\nRED='\033[1;31m'\nGREEN='\033[1;32m'\nSALIDA=/mnt$SALIDA\nDOMINIO=$DOMINIO\nNOMBRE=$NOMBRE\nGRUB=$GRUB\nDISCO=$DISCO\nGDM=$GDM\nPASS=$PASS" && echo '
+(echo -e "NOCOLOR='\033[0m'\nRED='\033[1;31m'\nGREEN='\033[1;32m'\nSALIDA=/mnt/salida\nDOMINIO=$DOMINIO\nNOMBRE=$NOMBRE\nGRUB=$GRUB\nDISCO=$DISCO\nGDM=$GDM\nPASS=$PASS" && echo '
 	
 	DONE () {
 		echo -e "${GREEN} [DONE] ${NOCOLOR}"
@@ -217,7 +225,10 @@ mount / /mnt/mnt >>$SALIDA 2<&1
 	actualizar-cmd
 	
 	exit
-') | arch-chroot /mnt || STOP
+') > /mnt/usr/bin/seguir
+chmod 777 /mnt/usr/bin/seguir
+arch-chroot /mnt seguir || STOP
+rm -f /mnt/usr/bin/seguir
 
 echo -e "\n***************************************************************************************************"
 echo "************************************** INSTALLED **************************************************"
