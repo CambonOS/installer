@@ -59,7 +59,7 @@ echo -e "\n\n>>Dominio? \c" && read -e -i "$NOMBRE.cambon.local" DOMINIO
 echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
 echo -e "\n\n>>Graficos?(nvidia/amd/vmware) \c" && read GPU
 echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
-echo -e "\n>>Escribe los programas adicionales: \c" && read -e -i "virtualbox virtualbox-ext-oracle steam wine-staging" ADD
+echo -e "\n>>Escribe los programas adicionales: \c" && read -e -i "brave-bin menulibre steam wine-staging virtualbox virtualbox-ext-oracle" ADD
 ROOT
 
 BOOT="$DISCO$(echo 1)"
@@ -154,7 +154,7 @@ case $GDM in
 		DONE
 	;;
 	gnome)
-		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweaks menulibre >>$SALIDA 2>&1 && DONE || ERROR
+		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweaks >>$SALIDA 2>&1 && DONE || ERROR
 	;;
 esac
 
@@ -228,7 +228,7 @@ genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 	echo -e "cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg -si && exit || exit 1" | su sysop >>$SALIDA 2>&1 && DONE || ERROR
 	
 	echo -e "\n>>Instalando programas adicionales\c"
-	echo -e "trizen --noconfirm -S brave-bin $ADD && exit || exit 1" | su sysop >>$SALIDA 2>&1 && DONE || ERROR
+	echo -e "trizen --noconfirm -S $ADD && exit || exit 1" | su sysop >>$SALIDA 2>&1 && DONE || ERROR
 	
 	userdel -r sysop >>$SALIDA 2>&1
 	mv /etc/sudoers.bk /etc/sudoers
