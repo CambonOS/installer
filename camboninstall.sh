@@ -126,7 +126,7 @@ case $GPU in
 		pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
 	;;
 	nvidia)
-		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidea-dkms vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
+		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
 	;;
 	intel)
 		pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
