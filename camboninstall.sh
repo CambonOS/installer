@@ -149,21 +149,7 @@ esac
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
-echo "
-	NOCOLOR='\033[0m'
-	RED='\033[1;31m'
-	GREEN='\033[1;32m'
-	
-	DONE () {
-		echo -e "${GREEN} [DONE] ${NOCOLOR}"
-		sleep 1
-	}
-	
-	ERROR () {
-		echo -e "${RED} [ERROR] ${NOCOLOR}"
-		sleep 3
-	}
-
+SEGUIR () {
 	echo -e '\n>>Estableciendo zona horaria\c'
 	ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc && DONE || ERROR
 	
@@ -217,11 +203,9 @@ echo "
 	actualizar-cmd
 	
 	exit
-" > /mnt/usr/bin/seguir
+}
 
-chmod 777 /mnt/usr/bin/seguir
-arch-chroot /mnt seguir || STOP
-rm -f /mnt/usr/bin/seguir
+arch-chroot /mnt SEGUIR || STOP
 
 echo -e "\n***************************************************************************************************"
 echo "************************************** INSTALLED **************************************************"
