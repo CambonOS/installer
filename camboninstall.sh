@@ -35,7 +35,7 @@ STOP () {
 
 ROOT () {
 	echo -e "\n\n>>Contraseña del root: \c" && read -s PASS
-	echo -e "\n>>Repetir contraseña: \c" && read -s PASS1
+	echo -e "\n\n\n>>Repetir contraseña: \c" && read -s PASS1
 	if [[ $PASS = $PASS1 ]]
 	then
 		sleep 1
@@ -59,7 +59,7 @@ echo -e "\n\n>>Dominio? \c" && read -e -i "$NOMBRE.cambon.local" DOMINIO
 echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
 echo -e "\n\n>>Graficos?(nvidia/amd/vmware) \c" && read GPU
 echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
-echo -e "\n>>Escribe los programas adicionales: \c" && read -e -i "brave-bin menulibre steam wine-staging virtualbox virtualbox-ext-oracle" ADD
+echo -e "\n\n>>Escribe los programas adicionales: \c" && read -e -i "brave-bin menulibre steam wine-staging virtualbox virtualbox-ext-oracle" ADD
 ROOT
 
 BOOT="$DISCO$(echo 1)"
@@ -226,7 +226,7 @@ genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 	groupadd -g 513 sudo && cp /etc/sudoers /etc/sudoers.bk && echo "%sudo ALL=(ALL) ALL" >>/etc/sudoers.bk && echo "%sudo ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers && useradd -m -s /bin/bash -g sudo sysop && DONE || exit 1
 	
 	echo -e "\n>>Instalando trizen\c"
-	echo -e "cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg -si && exit || exit 1" | su sysop >>$SALIDA 2>&1 && DONE || ERROR
+	echo -e "cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si && exit || exit 1" | su sysop >>$SALIDA 2>&1 && DONE || ERROR
 	
 	echo -e "\n>>Instalando programas adicionales\c"
 	echo -e "trizen --noconfirm -S $ADD && exit || exit 1" | su sysop >>$SALIDA 2>&1 && DONE || ERROR
