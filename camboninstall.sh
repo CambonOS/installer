@@ -157,11 +157,17 @@ esac
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
-#Preparando Salida
-mount /home /mnt/mnt >>$SALIDA 2<&1
-
-(echo -e "NOCOLOR='\033[0m'\nRED='\033[1;31m'\nGREEN='\033[1;32m'\nSALIDA=/mnt/salida\nDOMINIO=$DOMINIO\nNOMBRE=$NOMBRE\nGRUB=$GRUB\nDISCO=$DISCO\nGDM=$GDM\nPASS=$PASS" && echo '
-	
+(echo -e "
+	NOCOLOR='$NOCOLOR'
+	RED='$RED'
+	GREEN='$GREEN'
+	SALIDA='/salida'
+	DOMINIO='$DOMINIO'
+	NOMBRE='$NOMBRE'
+	GRUB='$GRUB'
+	DISCO='$DISCO'
+	GDM='$GDM'
+	PASS='$PASS'" && echo '	
 	DONE () {
 		echo -e "${GREEN} [DONE] ${NOCOLOR}"
 		sleep 1
@@ -225,10 +231,7 @@ mount /home /mnt/mnt >>$SALIDA 2<&1
 	actualizar-cmd
 	
 	exit
-') > /mnt/usr/bin/seguir
-chmod 777 /mnt/usr/bin/seguir
-arch-chroot /mnt seguir || STOP
-rm -f /mnt/usr/bin/seguir
+') > /mnt/usr/bin/seguir && chmod 777 /mnt/usr/bin/seguir && arch-chroot /mnt seguir && rm -f /mnt/usr/bin/seguir && DONE || STOP
 
 echo -e "\n***************************************************************************************************"
 echo "************************************** INSTALLED **************************************************"
