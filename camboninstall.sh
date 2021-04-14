@@ -208,12 +208,12 @@ genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 	echo -e "\n>>Activando entorno grafico\c"
 	case $GDM in
 		terminal)
+			DONE
 		;;
 		gnome)
-			systemctl enable gdm.service >>$SALIDA 2>&1 || ERROR
+			systemctl enable gdm.service >>$SALIDA 2>&1 && DONE || ERROR
 		;;
 	esac
-	DONE
 	
 	echo -e "\n>>Configurando root\c"
 	(echo -e "$PASS\n$PASS" | passwd >>$SALIDA 2>&1) && DONE || exit 1
