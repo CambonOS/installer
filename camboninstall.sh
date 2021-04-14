@@ -214,7 +214,7 @@ genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 	DONE
 	
 	echo -e "\n>>Configurando root\c"
-	(echo -e "$PASS\n$PASS" | passwd) && DONE || exit 1
+	(echo -e "$PASS\n$PASS" | passwd >>$SALIDA 2>&1) && DONE || exit 1
 	
 	echo -e "\n>>Editando skel\c"
 	echo -e "\nneofetch" >/etc/skel/.bashrc && DONE || ERROR
@@ -223,13 +223,13 @@ genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 	groupadd -g 513 sudo && cp /etc/sudoers /etc/sudoers.bk && echo "%sudo ALL=(ALL) ALL" >>/etc/sudoers.bk && echo "%sudo ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers && useradd -m -s /bin/bash -g sudo sysop && DONE || exit 1
 	
 	echo -e "\n>>Instalando trizen\c"
-	echo -e "cd /tmp && git clone https://aur.archlinux.org/trizen.git >>$SALIDA 2>&1 && cd trizen && makepkg -si >>$SALIDA 2>&1 && exit || exit 1" | su - sysop && DONE || ERROR
+	echo -e "cd /tmp && git clone https://aur.archlinux.org/trizen.git >/dev/null 2>&1 && cd trizen && makepkg -si >/dev/null 2>&1 && exit || exit 1" | su - sysop && DONE || ERROR
 	
 	usedel -r sysop >>$SALIDA 2>&1
 	mv /etc/sudoers.bk /etc/sudoers
 	
-	echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c"
-	echo -e "rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git >>$SALIDA 2>&1 && bash Scripts/cmd.sh && echo OK || echo FAIL" > /usr/bin/actualizar-cmd
+	echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh"
+	echo -e "rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git && bash Scripts/cmd.sh && echo OK || echo FAIL" > /usr/bin/actualizar-cmd
 	chmod 755 /usr/bin/actualizar-cmd
 	actualizar-cmd
 	
