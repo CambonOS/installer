@@ -36,8 +36,9 @@ STOP () {
 ROOT () {
 	echo -e "\n\n>>Contraseña del root: \c" && read -s PASS
 	echo -e "\n>>Repetir contraseña: \c" && read -s PASS1
-	if $PASS=$PASS1
-		else ROOT
+	if [[ $PASS = $PASS1 ]]
+	else
+		ROOT
 	fi
 }
 
