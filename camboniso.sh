@@ -39,7 +39,6 @@ echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 echo -e "KEYMAP=es" >/ISO/porfile/airootfs/etc/vconsole.conf
 mv /tmp/Scripts/iso/porfile /ISO/porfile/profiledef.sh
 mv /tmp/Scripts/iso/confpacman /ISO/porfile/airootfs/etc/pacman.conf
-mv /tmp/Scripts/iso/replicas /ISO/porfile/airootfs/etc/pacman.d/mirrorlist
 DONE
 
 echo -e "\n>>Creando la ISO\n"
