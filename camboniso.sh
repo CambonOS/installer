@@ -48,5 +48,6 @@ mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile && DONE || ERROR
 echo -e "\n>>Eliminado ficheros/paquetes innecesarios\c"
 rm -rf /ISO
 pacman --noconfirm -Rns archiso >>/tmp/Salida.txt 2>&1
-chmod 777 $RUTAD/archlinux*
+chmod 777 $RUTAD/cambonos-*
+
 echo -e "\n\n${GREEN}***********DONE***********\n\n${NOCOLOR}"
