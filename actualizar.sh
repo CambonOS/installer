@@ -32,4 +32,7 @@ echo -e "\n>>Actualizando GRUB\c"
 sudo grub-mkconfig -o /boot/grub/grub.cfg >>/tmp/Salida.txt 2>&1 || ERROR
 DONE
 
+echo -e "\n>>Estos paquetes no son necesarios para el sistema:"
+trizen -Qqet
+
 echo -e "******* SISTEMA ACTUALIZADO *******"
