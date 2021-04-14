@@ -149,10 +149,7 @@ esac
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
-echo "
-	NOCOLOR='\033[0m'
-	RED='\033[1;31m'
-	GREEN='\033[1;32m'
+(echo -e "NOCOLOR='\033[0m'\nRED='\033[1;31m'\nGREEN='\033[1;32m'\nSALIDA=/mnt$SALIDA\nDOMINIO=$DOMINIO\nNOMBRE=$NOMBRE\nGRUB=$GRUB\nDISCO=$DISCO\nGDM=$GDM\nPASS=$PASS" && echo '
 	
 	DONE () {
 		echo -e "${GREEN} [DONE] ${NOCOLOR}"
@@ -164,19 +161,19 @@ echo "
 		sleep 3
 	}
 
-	echo -e '\n>>Estableciendo zona horaria\c'
+	echo -e "\n>>Estableciendo zona horaria\c"
 	ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc && DONE || ERROR
 	
-	echo -e '\n>>Cambiando idioma del sistema\c'
-	echo 'es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8' >> /etc/locale.gen && locale-gen >$SALIDA 2>&1 && echo -e 'LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8' >/etc/locale.conf && echo -e 'KEYMAP=es' >/etc/vconsole.conf && DONE || ERROR
+	echo -e "\n>>Cambiando idioma del sistema\c"
+	echo "es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen >$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/etc/vconsole.conf && DONE || ERROR
 	
-	echo -e '\n>>Creando archivos host\c'
-	echo -e '$NOMBRE' >/etc/hostname && echo -e '127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$DOMINIO $NOMBRE' >/etc/hosts && DONE || ERROR
+	echo -e "\n>>Creando archivos host\c"
+	echo -e "$NOMBRE" >/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$DOMINIO $NOMBRE" >/etc/hosts && DONE || ERROR
 	
-	echo -e '\n>>Configurando red\c'
+	echo -e "\n>>Configurando red\c"
 	systemctl enable NetworkManager.service >>$SALIDA 2>&1 && DONE || ERROR
 	
-	echo -e '\n>>Configurando grub\c'
+	echo -e "\n>>Configurando grub\c"
 	case $GRUB in
 		bios)
 			grub-install --target=i386-pc $DISCO >>$SALIDA 2>&1 || exit 1
@@ -186,7 +183,7 @@ echo "
 		;;
 	esac && grub-mkconfig -o /boot/grub/grub.cfg >>$SALIDA 2>&1 && DONE || exit 1
 	
-	echo -e '\n>>Activando entorno grafico\c'
+	echo -e "\n>>Activando entorno grafico\c"
 	case $GDM in
 		terminal)
 		;;
@@ -196,32 +193,28 @@ echo "
 	esac
 	DONE
 	
-	echo -e '\n>>Configurando root\c'
-	(echo -e '$PASS\n$PASS' | passwd) && DONE || exit 1
+	echo -e "\n>>Configurando root\c"
+	(echo -e "$PASS\n$PASS" | passwd) && DONE || exit 1
 	
-	echo -e '\n>>Editando skel\c'
-	echo -e '\nneofetch' >/etc/skel/.bashrc && DONE || ERROR
+	echo -e "\n>>Editando skel\c"
+	echo -e "\nneofetch" >/etc/skel/.bashrc && DONE || ERROR
 
-	echo -e '\n>>Creando grupo sudo\c'
-	groupadd -g 513 sudo && cp /etc/sudoers /etc/sudoers.bk && echo '%sudo ALL=(ALL) ALL' >>/etc/sudoers.bk && echo '%sudo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers && useradd -m -s /bin/bash -g sudo sysop && DONE || exit 1
+	echo -e "\n>>Creando grupo sudo\c"
+	groupadd -g 513 sudo && cp /etc/sudoers /etc/sudoers.bk && echo "%sudo ALL=(ALL) ALL" >>/etc/sudoers.bk && echo "%sudo ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers && useradd -m -s /bin/bash -g sudo sysop && DONE || exit 1
 	
-	echo -e '\n>>Instalando trizen\c'
-	echo -e 'cd /tmp && git clone https://aur.archlinux.org/trizen.git >>$SALIDA 2>&1 && cd trizen && makepkg -si >>$SALIDA 2>&1 && exit || exit 1' | su - sysop && DONE || ERROR
+	echo -e "\n>>Instalando trizen\c"
+	echo -e "cd /tmp && git clone https://aur.archlinux.org/trizen.git >>$SALIDA 2>&1 && cd trizen && makepkg -si >>$SALIDA 2>&1 && exit || exit 1" | su - sysop && DONE || ERROR
 	
 	usedel -r sysop >>$SALIDA 2>&1
 	mv /etc/sudoers.bk /etc/sudoers
 	
-	echo -e '\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c'
-	echo -e 'rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git >>$SALIDA 2>&1 && bash Scripts/cmd.sh && echo OK || echo FAIL' > /usr/bin/actualizar-cmd
+	echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c"
+	echo -e "rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git >>$SALIDA 2>&1 && bash Scripts/cmd.sh && echo OK || echo FAIL" > /usr/bin/actualizar-cmd
 	chmod 755 /usr/bin/actualizar-cmd
 	actualizar-cmd
 	
 	exit
-" > /mnt/usr/bin/seguir
-
-chmod 777 /mnt/usr/bin/seguir
-arch-chroot /mnt seguir || STOP
-rm -f /mnt/usr/bin/seguir
+') | arch-chroot /mnt || STOP
 
 echo -e "\n***************************************************************************************************"
 echo "************************************** INSTALLED **************************************************"
