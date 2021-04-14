@@ -149,6 +149,9 @@ esac
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
+#Preparando Salida
+mount / /mnt/mnt >>$SALIDA 2<&1
+
 (echo -e "NOCOLOR='\033[0m'\nRED='\033[1;31m'\nGREEN='\033[1;32m'\nSALIDA=/mnt$SALIDA\nDOMINIO=$DOMINIO\nNOMBRE=$NOMBRE\nGRUB=$GRUB\nDISCO=$DISCO\nGDM=$GDM\nPASS=$PASS" && echo '
 	
 	DONE () {
@@ -165,7 +168,7 @@ genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 	ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc && DONE || ERROR
 	
 	echo -e "\n>>Cambiando idioma del sistema\c"
-	echo "es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen >$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/etc/vconsole.conf && DONE || ERROR
+	echo "es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/etc/vconsole.conf && DONE || ERROR
 	
 	echo -e "\n>>Creando archivos host\c"
 	echo -e "$NOMBRE" >/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$DOMINIO $NOMBRE" >/etc/hosts && DONE || ERROR
