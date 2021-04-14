@@ -38,7 +38,7 @@ ROOT () {
 	echo -e "\n>>Repetir contraseña: \c" && read -s PASS1
 	if [[ $PASS = $PASS1 ]]
 	then
-		;
+		sleep 1
 	else
 		ROOT
 	fi
