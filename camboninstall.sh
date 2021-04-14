@@ -59,7 +59,7 @@ echo -e "\n\n>>Dominio? \c" && read -e -i "$NOMBRE.cambon.local" DOMINIO
 echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
 echo -e "\n\n>>Graficos?(nvidia/amd/vmware) \c" && read GPU
 echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
-echo -e "\n>>Escribe los programas adicionales: \c" && read -e -i "virtualbox virtualbox-ext-oracle steam wine-staging" DISCO
+echo -e "\n>>Escribe los programas adicionales: \c" && read -e -i "virtualbox virtualbox-ext-oracle steam wine-staging" ADD
 ROOT
 
 BOOT="$DISCO$(echo 1)"
