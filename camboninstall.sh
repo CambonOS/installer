@@ -185,7 +185,7 @@ genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 	ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc && DONE || ERROR
 	
 	echo -e "\n>>Cambiando idioma del sistema\c"
-	echo "es_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/etc/vconsole.conf && DONE || ERROR
+	echo -e "\nes_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/etc/vconsole.conf && DONE || ERROR
 	
 	echo -e "\n>>Creando archivos host\c"
 	echo -e "$NOMBRE" >/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$DOMINIO $NOMBRE" >/etc/hosts && DONE || ERROR
