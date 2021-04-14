@@ -212,6 +212,7 @@ genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 		;;
 		gnome)
 			systemctl enable gdm.service >>$SALIDA 2>&1 && DONE || ERROR
+			localectl set-x11-keymap es
 		;;
 	esac
 	
