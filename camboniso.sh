@@ -10,13 +10,13 @@ RED='\033[1;31m'
 GREEN='\033[1;32m'
 
 ERROR () {
-  echo -e "${RED} ERROR ${NOCOLOR}"
+  echo -e "${RED} [ERROR] ${NOCOLOR}"
   rm -rf /ISO
   exit
 }
 
 DONE () {
-  echo -e "${GREEN} DONE ${NOCOLOR}"
+  echo -e "${GREEN} [DONE] ${NOCOLOR}"
   sleep 1
 }
 
