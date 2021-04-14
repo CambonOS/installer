@@ -59,6 +59,7 @@ echo -e "\n\n>>Dominio? \c" && read -e -i "$NOMBRE.cambon.local" DOMINIO
 echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
 echo -e "\n\n>>Graficos?(nvidia/amd/vmware) \c" && read GPU
 echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
+echo -e "\n>>Escribe los programas adicionales: \c" && read -e -i "virtualbox virtualbox-ext-oracle steam wine-staging" DISCO
 ROOT
 
 BOOT="$DISCO$(echo 1)"
@@ -153,7 +154,7 @@ case $GDM in
 		DONE
 	;;
 	gnome)
-		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweak-tool >>$SALIDA 2>&1 && DONE || ERROR
+		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweaks menulibre >>$SALIDA 2>&1 && DONE || ERROR
 	;;
 esac
 
@@ -167,6 +168,7 @@ genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 	SALIDA='/salida'
 	DOMINIO='$DOMINIO'
 	NOMBRE='$NOMBRE'
+	ADD='$ADD'
 	GRUB='$GRUB'
 	DISCO='$DISCO'
 	GDM='$GDM'
@@ -223,9 +225,12 @@ genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 	groupadd -g 513 sudo && cp /etc/sudoers /etc/sudoers.bk && echo "%sudo ALL=(ALL) ALL" >>/etc/sudoers.bk && echo "%sudo ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers && useradd -m -s /bin/bash -g sudo sysop && DONE || exit 1
 	
 	echo -e "\n>>Instalando trizen\c"
-	echo -e "cd /tmp && git clone https://aur.archlinux.org/trizen.git >/dev/null 2>&1 && cd trizen && makepkg -si >/dev/null 2>&1 && exit || exit 1" | su - sysop && DONE || ERROR
+	echo -e "cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg -si && exit || exit 1" | su sysop >>$SALIDA 2>&1 && DONE || ERROR
 	
-	usedel -r sysop >>$SALIDA 2>&1
+	echo -e "\n>>Instalando programas adicionales\c"
+	echo -e "trizen --noconfirm -S brave-bin $ADD && exit || exit 1" | su sysop >>$SALIDA 2>&1 && DONE || ERROR
+	
+	userdel -r sysop >>$SALIDA 2>&1
 	mv /etc/sudoers.bk /etc/sudoers
 	
 	echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh"
