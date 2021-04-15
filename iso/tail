@@ -6,7 +6,7 @@ TEXT HELP
 Reboot computer.
 The computer's firmware must support APM.
 ENDTEXT
-MENU LABEL Reiniciar
+MENU LABEL Reboot
 COM32 reboot.c32
 
 LABEL poweroff
@@ -14,5 +14,5 @@ TEXT HELP
 Power off computer.
 The computer's firmware must support APM.
 ENDTEXT
-MENU LABEL Apagar
+MENU LABEL Poweroff
 COM32 poweroff.c32
