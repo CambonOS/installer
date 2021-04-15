@@ -2,9 +2,9 @@
 # shellcheck disable=SC2034
 
 iso_name="cambonos"
-iso_label="CAMBON_$(date +%Y%m)"
+iso_label="CAMBON_$(date +%y.%m)"
 iso_publisher="CambonOS <https://github/CambonOS/Scripts.git>"
-iso_application="Arch Linux Installer"
+iso_application="CambonOS Installer"
 iso_version="$(date +%y.%m)"
 install_dir="arch"
 bootmodes=('bios.syslinux.mbr' 'bios.syslinux.eltorito' 'uefi-x64.systemd-boot.esp' 'uefi-x64.systemd-boot.eltorito')
