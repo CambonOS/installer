@@ -1,14 +1,9 @@
 #!/bin/bash
-if [[ $EUID -ne 0 ]]
-then
-	echo -e "\nEJECUTAR CON PRIVILEGIOS\n"
-	exit
-fi
-
+#
 NOCOLOR='\033[0m'
 RED='\033[1;31m'
 GREEN='\033[1;32m'
-SALIDA="/tmp/salida"
+SALIDA='/tmp/salida'
 
 HEAD () {
 	clear
@@ -17,15 +12,9 @@ HEAD () {
 	echo "***************************************************************************************************"
 }
 
-DONE () {
-	echo -e "${GREEN} [DONE] ${NOCOLOR}"
-	sleep 1
-}
+DONE () {echo -e "${GREEN} [DONE] ${NOCOLOR}" && sleep 1}
 
-ERROR () {
-	echo -e "${RED} [ERROR] ${NOCOLOR}"
-	sleep 3
-}
+ERROR () {echo -e "${RED} [ERROR] ${NOCOLOR}" && sleep 3}
 
 STOP () {
 	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
@@ -33,43 +22,62 @@ STOP () {
 	exit
 }
 
-ROOT () {
-	echo -e "\n\n>>Contraseña del root: \c" && read -s PASS
+CHROOT () {arch-chroot /mnt >>$SALIDA 2>&1 && DONE || ERROR}
+
+SUDO () {
+	echo -e "\n\n>>Contraseña del usuario: \c" && read -s PASS
 	echo -e "\n\n\n>>Repetir contraseña: \c" && read -s PASS1
 	if [[ $PASS = $PASS1 ]]
 	then
 		sleep 1
 	else
-		ROOT
+		SUDO
 	fi
+}
+
+OPTIONS () {
+	echo -e "\n>>Tipo de arranque?(uefi/bios) \c" && read GRUB
+	echo -e "\n\n>>Formato del disco?(mbr/gpt) \c" && read TDISCO
+	echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
+	echo -e "\n\n>>Graficos?(nvidia/amd/vmware/all) \c" && read GPU
+	echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
+	echo -e "\n\n>>Escribe los programas adicionales: \c" && read -e -i "brave-bin menulibre wine-staging" ADD
+	BOOT="$DISCO$(echo 1)"
+	SWAP="$DISCO$(echo 2)"
+	RAIZ="$DISCO$(echo 3)"
+	HOME="$DISCO$(echo 4)"
+	OUEFI="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\nEF\nt\n2\n82\nt\n3\n83\nt\n4\n83\nw\n"
+	OBIOS="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\n83\nt\n2\n82\nt\n3\n83\nt\n4\n83\nw\n"
+	GUEFI="g\nn\n1\n\n+512M\nn\n2\n\n+4G\nn\n3\n\n+40G\nn\n4\n\n\nt\n1\n1\nt\n2\n19\nt\n3\n23\nt\n4\n28\nw\n"
+	GBIOS="g\nn\n1\n\n+512M\nn\n2\n\n+4G\nn\n3\n\n+40G\nn\n4\n\n\nt\n1\n4\nt\n2\n19\nt\n3\n23\nt\n4\n28\nw\n"
 }
 
 HEAD
 
-echo -e "\n>>Iniciando instalacion\c"
-reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >$SALIDA 2>&1 || STOP
-DONE
+if [[ $EUID -ne 0 ]]
+then
+	echo -e "\nEJECUTAR CON PRIVILEGIOS\n"
+	exit
+fi
 
-echo -e "\n>>Tipo de arranque?(uefi/bios) \c" && read GRUB
+echo -e "\n>>Iniciando instalacion\c"
+reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >$SALIDA 2>&1 && DONE || STOP
+
 echo -e "\n\n>>Listando discos\n" && lsblk
 echo -e "\n>>En que disco quieres instalar el sistema? \c" && read -e -i "/dev/sd" DISCO
-echo -e "\n\n>>Formato del disco?(mbr/gpt) \c" && read TDISCO
-echo -e "\n\n>>Nombre del equipo? \c" && read NOMBRE
-echo -e "\n\n>>Dominio? \c" && read -e -i "$NOMBRE.cambon.local" DOMINIO
-echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
-echo -e "\n\n>>Graficos?(nvidia/amd/vmware) \c" && read GPU
-echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
-echo -e "\n\n>>Escribe los programas adicionales: \c" && read -e -i "brave-bin menulibre steam wine-staging virtualbox virtualbox-ext-oracle" ADD
-ROOT
 
-BOOT="$DISCO$(echo 1)"
-SWAP="$DISCO$(echo 2)"
-RAIZ="$DISCO$(echo 3)"
-HOME="$DISCO$(echo 4)"
-OUEFI="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\nEF\nt\n2\n82\nt\n3\n83\nt\n4\n83\nw\n"
-OBIOS="o\nn\np\n1\n\n+512M\nn\np\n2\n\n+4G\nn\np\n3\n\n+40G\nn\np\n4\n\n\nt\n1\n83\nt\n2\n82\nt\n3\n83\nt\n4\n83\nw\n"
-GUEFI="g\nn\n1\n\n+512M\nn\n2\n\n+4G\nn\n3\n\n+40G\nn\n4\n\n\nt\n1\n1\nt\n2\n19\nt\n3\n23\nt\n4\n28\nw\n"
-GBIOS="g\nn\n1\n\n+512M\nn\n2\n\n+4G\nn\n3\n\n+40G\nn\n4\n\n\nt\n1\n4\nt\n2\n19\nt\n3\n23\nt\n4\n28\nw\n"
+echo -e "\n>>Escoger tipo de instalacion: (default/custom) \c" && read -e -i "default" TYPE
+case $TYPE in
+	custom)
+		OPTIONS
+	;;
+	default)
+		echo -e "bios\nmbr\nintel-ucode amd\nall\ngnome\nbrave-bin menulibre\n" | OPTIONS >>$SALIDA 2>&1
+	;;
+esac
+echo -e "\n\n>>Nombre del equipo? \c" && read NOMBRE
+echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
+SUDO
 
 HEAD
 
@@ -104,15 +112,15 @@ DONE
 echo -e "\n>>Formateando y montando sistemas de archivos\c"
 case $GRUB in
 	bios)
-		echo -e "y\n" | mkfs.ext4 $BOOT >>$SALIDA 2>&1 || STOP
+		yes | mkfs.ext4 $BOOT >>$SALIDA 2>&1 || STOP
 	;;
 	uefi)
-		echo -e "y\n" | mkfs.fat -F32 $BOOT >>$SALIDA 2>&1 || STOP
+		yes | mkfs.fat -F32 $BOOT >>$SALIDA 2>&1 || STOP
 	;;
 esac
 mkswap $SWAP >>$SALIDA 2>&1 || STOP
-echo -e "y\n" | mkfs.ext4 $RAIZ >>$SALIDA 2>&1 || STOP
-echo -e "y\n" | mkfs.ext4 $HOME >>$SALIDA 2>&1 || STOP
+yes | mkfs.ext4 $RAIZ >>$SALIDA 2>&1 || STOP
+yes | mkfs.ext4 $HOME >>$SALIDA 2>&1 || STOP
 swapon $SWAP >>$SALIDA 2>&1 || STOP
 mount $RAIZ /mnt >>$SALIDA 2>&1 || STOP
 mkdir /mnt/home >>$SALIDA 2>&1 || STOP
@@ -122,29 +130,37 @@ mount $BOOT /mnt/boot >>$SALIDA 2>&1 || STOP
 DONE
 
 echo -e "\n>>Instalando base del sistema\c"
-pacstrap /mnt linux-zen linux-zen-headers linux-firmware base nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo >>$SALIDA 2>&1 || STOP
+pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 || STOP
+DONE
+
+echo -e "\n>>Instalando utilidades basicas\c"
+echo "yes | pacman -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1 && DONE || STOP
+
 case $GRUB in
 	uefi)
-		pacstrap /mnt efibootmgr >>$SALIDA 2>&1 || STOP
+		echo "yes | pacman -S efibootmgr || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1 && DONE || STOP
 	;;
 	bios)
+		DONE
 	;;
 esac
-DONE
 
 echo -e "\n>>Instalando drivers graficos\c"
 case $GPU in
 	amd)
-		pacstrap /mnt xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
+		echo "yes | pacman -S xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT
 	;;
 	nvidia)
-		pacstrap /mnt xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
+		echo "yes | pacman -S xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT
 	;;
 	intel)
-		pacstrap /mnt xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader >>$SALIDA 2>&1 && DONE || ERROR
+		echo "yes | pacman -S xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT
 	;;
 	vmware)
-		pacstrap /mnt xf86-video-vesa xf86-video-vmware lib32-mesa mesa >>$SALIDA 2>&1 && DONE || ERROR
+		echo "yes | pacman -S xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT
+	;;
+	all)
+		echo "yes | pacman -S xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidialib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | CHROOT
 	;;
 esac
 
@@ -154,46 +170,24 @@ case $GDM in
 		DONE
 	;;
 	gnome)
-		pacstrap /mnt gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweaks >>$SALIDA 2>&1 && DONE || ERROR
+		echo "yes | pacman -S gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweaks || exit 1" | CHROOT
 	;;
 esac
 
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
-(echo -e "
-	NOCOLOR='$NOCOLOR'
-	RED='$RED'
-	GREEN='$GREEN'
-	SALIDA='/salida'
-	DOMINIO='$DOMINIO'
-	NOMBRE='$NOMBRE'
-	ADD='$ADD'
-	GRUB='$GRUB'
-	DISCO='$DISCO'
-	GDM='$GDM'
-	PASS='$PASS'" && echo '	
-	DONE () {
-		echo -e "${GREEN} [DONE] ${NOCOLOR}"
-		sleep 1
-	}
+echo -e "\n>>Estableciendo zona horaria\c"
+echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 	
-	ERROR () {
-		echo -e "${RED} [ERROR] ${NOCOLOR}"
-		sleep 3
-	}
-
-	echo -e "\n>>Estableciendo zona horaria\c"
-	ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc && DONE || ERROR
+echo -e "\n>>Cambiando idioma del sistema\c"
+echo -e "\nes_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/mnt/etc/vconsole.conf && DONE || ERROR
 	
-	echo -e "\n>>Cambiando idioma del sistema\c"
-	echo -e "\nes_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/etc/vconsole.conf && DONE || ERROR
+echo -e "\n>>Creando archivos host\c"
+echo -e "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && DONE || ERROR
 	
-	echo -e "\n>>Creando archivos host\c"
-	echo -e "$NOMBRE" >/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$DOMINIO $NOMBRE" >/etc/hosts && DONE || ERROR
-	
-	echo -e "\n>>Configurando red\c"
-	systemctl enable NetworkManager.service >>$SALIDA 2>&1 && DONE || ERROR
+echo -e "\n>>Configurando red\c"
+echo "systemctl enable NetworkManager.service || exit 1" | CHROOT
 	
 	echo -e "\n>>Configurando grub\c"
 	case $GRUB in
