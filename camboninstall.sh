@@ -23,6 +23,7 @@ STOP () {
 }
 
 CHROOT () {arch-chroot /mnt >>$SALIDA 2>&1 && DONE || ERROR}
+CHROOTF () {arch-chroot /mnt >>$SALIDA 2>&1 && DONE || STOP}
 
 SUDO () {
 	echo -e "\n\n>>Contraseña del usuario: \c" && read -s PASS
@@ -134,11 +135,11 @@ pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 || 
 DONE
 
 echo -e "\n>>Instalando utilidades basicas\c"
-echo "yes | pacman -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1 && DONE || STOP
+echo "yes | pacman -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo || exit 1" | CHROOTF
 
 case $GRUB in
 	uefi)
-		echo "yes | pacman -S efibootmgr || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1 && DONE || STOP
+		echo "yes | pacman -S efibootmgr || exit 1" | CHROOTF
 	;;
 	bios)
 		DONE
@@ -189,15 +190,15 @@ echo -e "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		local
 echo -e "\n>>Configurando red\c"
 echo "systemctl enable NetworkManager.service || exit 1" | CHROOT
 	
-	echo -e "\n>>Configurando grub\c"
-	case $GRUB in
-		bios)
-			grub-install --target=i386-pc $DISCO >>$SALIDA 2>&1 || exit 1
-		;;
-		uefi)
-			grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB >>$SALIDA 2>&1 || exit 1
-		;;
-	esac && grub-mkconfig -o /boot/grub/grub.cfg >>$SALIDA 2>&1 && DONE || exit 1
+echo -e "\n>>Configurando grub\c"
+case $GRUB in
+	bios)
+		echo "grub-install --target=i386-pc $DISCO || exit 1" | CHROOTF
+	;;
+	uefi)
+		echo "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | CHROOTF
+	;;
+esac && echo "grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
 	
 	echo -e "\n>>Activando entorno grafico\c"
 	case $GDM in
