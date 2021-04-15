@@ -12,9 +12,13 @@ HEAD () {
 	echo "***************************************************************************************************"
 }
 
-DONE () {echo -e "${GREEN} [DONE] ${NOCOLOR}" && sleep 1}
+DONE () {
+	echo -e "${GREEN} [DONE] ${NOCOLOR}" && sleep 1
+}
 
-ERROR () {echo -e "${RED} [ERROR] ${NOCOLOR}" && sleep 3}
+ERROR () {
+	echo -e "${RED} [ERROR] ${NOCOLOR}" && sleep 3
+}
 
 STOP () {
 	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
@@ -22,8 +26,12 @@ STOP () {
 	exit
 }
 
-CHROOT () {arch-chroot /mnt >>$SALIDA 2>&1 && DONE || ERROR}
-CHROOTF () {arch-chroot /mnt >>$SALIDA 2>&1 && DONE || STOP}
+CHROOT () {
+	arch-chroot /mnt >>$SALIDA 2>&1 && DONE || ERROR
+}
+CHROOTF () {
+	arch-chroot /mnt >>$SALIDA 2>&1 && DONE || STOP
+}
 
 SUDO () {
 	echo -e "\n\n>>Contraseña del usuario: \c" && read -s PASS
