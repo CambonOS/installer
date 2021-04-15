@@ -213,24 +213,21 @@ esac
 echo -e "\n>>Configurando usuario\c"
 echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | CHROOT
 	
-	echo -e "\n>>Editando skel\c"
-	echo -e "\nneofetch" >/etc/skel/.bashrc && DONE || ERROR
+echo -e "\n>>Editando skel\c"
+echo -e "\n\nneofetch" >/mnt/etc/skel/.bashrc && DONE || ERROR
 
-	echo -e "\n>>Creando grupo sudo\c"
-	groupadd -g 513 sudo && cp /etc/sudoers /etc/sudoers.bk && echo "%sudo ALL=(ALL) ALL" >>/etc/sudoers.bk && echo "%sudo ALL=(ALL) NOPASSWD: ALL" >>/etc/sudoers && useradd -m -s /bin/bash -g sudo sysop && DONE || exit 1
+echo -e "\n>>Configurando sudo\c"
+cp /mnt/etc/sudoers /mnt/etc/sudoers.bk && echo "%sudo ALL=(ALL) ALL" >>/mnt/etc/sudoers.bk && echo "%sudo ALL=(ALL) NOPASSWD: ALL" >>/mnt/etc/sudoers && DONE || ERROR
+
+echo -e "\n>>Instalando trizen\c"
+echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
+
+echo -e "\n>>Instalando programas adicionales\c"
+echo "echo 'trizen --noconfirm -S $ADD || exit 1' | su $USER || exit 1" | CHROOT
+mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
 	
-	echo -e "\n>>Instalando trizen\c"
-	echo -e "cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si && exit || exit 1" | su sysop >>$SALIDA 2>&1 && DONE || ERROR
-	
-	echo -e "\n>>Instalando programas adicionales\c"
-	echo -e "trizen --noconfirm -S $ADD && exit || exit 1" | su sysop >>$SALIDA 2>&1 && DONE || ERROR
-	
-	userdel -r sysop >>$SALIDA 2>&1
-	mv /etc/sudoers.bk /etc/sudoers
-	
-echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh"
-echo "rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git && bash Scripts/cmd.sh && echo OK || echo FAIL" > /mnt/usr/bin/actualizar-cmd && chmod 755 /mnt/usr/bin/actualizar-cmd
-echo "actualizar-cmd || exit 1" | CHROOT
+echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c"
+echo "rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git && bash Scripts/cmd.sh && echo OK || echo FAIL" > /mnt/usr/bin/actualizar-cmd && chmod 755 /mnt/usr/bin/actualizar-cmd && (echo "actualizar-cmd || exit 1" | CHROOT) || ERROR
 
 swapoff $SWAP
 
