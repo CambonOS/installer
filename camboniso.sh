@@ -34,11 +34,14 @@ echo -e "\n>>Creando ficheros de configuracion de la ISO\c"
 mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
 rm /ISO/porfile/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
 mv /tmp/Scripts/camboninstall.sh /ISO/porfile/airootfs/usr/local/bin/camboninstall || ERROR
-echo -e "bash /usr/local/bin/camboninstall" >>/ISO/porfile/airootfs/root/.zshrc
+echo -e "chmod 777 /usr/local/bin/camboninstall" >>/ISO/porfile/airootfs/root/.zshrc
 mv /tmp/Scripts/iso/paquetes /ISO/porfile/packages.x86_64 || ERROR
 echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 echo -e "KEYMAP=es" >/ISO/porfile/airootfs/etc/vconsole.conf
 mv /tmp/Scripts/iso/porfile /ISO/porfile/profiledef.sh
+mv /tmp/Scripts/iso/tail /ISO/porfile/syslinux/archiso_tail.cfg
+mv /tmp/Scripts/iso/sys-linux /ISO/porfile/syslinux/archiso_sys-linux.cfg
+mv /tmp/Scripts/iso/motd /ISO/porfile/airootfs/etc/motd
 mv /tmp/Scripts/iso/confpacman /ISO/porfile/airootfs/etc/pacman.conf
 DONE
 
