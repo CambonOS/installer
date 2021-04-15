@@ -193,26 +193,25 @@ echo "systemctl enable NetworkManager.service || exit 1" | CHROOT
 echo -e "\n>>Configurando grub\c"
 case $GRUB in
 	bios)
-		echo "grub-install --target=i386-pc $DISCO || exit 1" | CHROOTF
+		echo "grub-install --target=i386-pc $DISCO && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
 	;;
 	uefi)
-		echo "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | CHROOTF
+		echo "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
 	;;
-esac && echo "grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
+esac
 	
-	echo -e "\n>>Activando entorno grafico\c"
-	case $GDM in
-		terminal)
-			DONE
-		;;
-		gnome)
-			systemctl enable gdm.service >>$SALIDA 2>&1 && DONE || ERROR
-			localectl set-x11-keymap es
-		;;
-	esac
+echo -e "\n>>Activando entorno grafico\c"
+case $GDM in
+	terminal)
+		DONE
+	;;
+	gnome)
+		echo "systemctl enable gdm.service || exit 1" | CHROOT
+	;;
+esac
 	
-	echo -e "\n>>Configurando root\c"
-	(echo -e "$PASS\n$PASS" | passwd >>$SALIDA 2>&1) && DONE || exit 1
+echo -e "\n>>Configurando usuario\c"
+echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | CHROOT
 	
 	echo -e "\n>>Editando skel\c"
 	echo -e "\nneofetch" >/etc/skel/.bashrc && DONE || ERROR
@@ -229,13 +228,9 @@ esac && echo "grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
 	userdel -r sysop >>$SALIDA 2>&1
 	mv /etc/sudoers.bk /etc/sudoers
 	
-	echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh"
-	echo -e "rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git && bash Scripts/cmd.sh && echo OK || echo FAIL" > /usr/bin/actualizar-cmd
-	chmod 755 /usr/bin/actualizar-cmd
-	actualizar-cmd
-	
-	exit
-') > /mnt/usr/bin/seguir && chmod 777 /mnt/usr/bin/seguir && arch-chroot /mnt seguir && rm -f /mnt/usr/bin/seguir && DONE || STOP
+echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh"
+echo "rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git && bash Scripts/cmd.sh && echo OK || echo FAIL" > /mnt/usr/bin/actualizar-cmd && chmod 755 /mnt/usr/bin/actualizar-cmd
+echo "actualizar-cmd || exit 1" | CHROOT
 
 swapoff $SWAP
 
