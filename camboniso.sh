@@ -32,6 +32,7 @@ cd /tmp && git clone https://github.com/CambonOS/Scripts.git && DONE || ERROR
 
 echo -e "\n>>Creando ficheros de configuracion de la ISO\c"
 mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
+rm /ISO/porfile/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
 mv /tmp/Scripts/camboninstall.sh /ISO/porfile/airootfs/usr/local/bin/camboninstall || ERROR
 echo -e "bash /usr/local/bin/camboninstall" >>/ISO/porfile/airootfs/root/.zshrc
 mv /tmp/Scripts/iso/paquetes /ISO/porfile/packages.x86_64 || ERROR
