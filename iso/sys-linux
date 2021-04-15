@@ -6,7 +6,7 @@ TEXT HELP
 Boot the Arch Linux install medium on BIOS.
 It allows you to install Arch Linux or perform system maintenance.
 ENDTEXT
-MENU LABEL Instalar CambonOS
+MENU LABEL Install CambonOS
 LINUX /%INSTALL_DIR%/boot/x86_64/vmlinuz-linux
 INITRD /%INSTALL_DIR%/boot/intel-ucode.img,/%INSTALL_DIR%/boot/amd-ucode.img,/%INSTALL_DIR%/boot/x86_64/initramfs-linux.img
 APPEND archisobasedir=%INSTALL_DIR% archisolabel=%ARCHISO_LABEL%
