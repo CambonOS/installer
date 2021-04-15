@@ -41,8 +41,11 @@ echo -e "KEYMAP=es" >/ISO/porfile/airootfs/etc/vconsole.conf
 mv /tmp/Scripts/iso/porfile /ISO/porfile/profiledef.sh
 mv /tmp/Scripts/iso/tail /ISO/porfile/syslinux/archiso_tail.cfg
 mv /tmp/Scripts/iso/sys-linux /ISO/porfile/syslinux/archiso_sys-linux.cfg
+mv /tmp/Scripts/iso/head /ISO/porfile/syslinux/archiso_head.cfg
+mv /tmp/Scripts/iso/uefi /ISO/porfile/efiboot/loader/entries/archiso-x86_64-linux.conf
 mv /tmp/Scripts/iso/motd /ISO/porfile/airootfs/etc/motd
 mv /tmp/Scripts/iso/confpacman /ISO/porfile/airootfs/etc/pacman.conf
+mv /tmp/Scripts/image/8ItevIK1iZMeCvOEdUSyOHIVW4UouWlkk1p7GeDjFY0.png /ISO/porfile/syslinux/splash.png
 DONE
 
 echo -e "\n>>Creando la ISO\n"
