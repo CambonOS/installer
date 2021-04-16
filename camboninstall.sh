@@ -31,7 +31,7 @@ CHROOTF () {
 }
 
 SUDO () {
-	echo -e "\n>>Contraseña del usuario: " && read -s PASS
+	echo -e "\n>>Contraseña del usuario: \c" && read -s PASS
 	echo -e "\n>>Repetir contraseña: \c" && read -s PASS1
 	if [[ $PASS = $PASS1 ]]
 	then
@@ -72,7 +72,7 @@ fi
 echo -e "\n>>Iniciando instalacion\c"
 reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >$SALIDA 2>&1 && DONE || STOP
 
-echo -e "\n\n>>Listando discos\n" && lsblk
+echo -e "\n>>Listando discos\n" && lsblk
 echo -e "\n>>En que disco quieres instalar el sistema? \c" && read -e -i "/dev/sd" DISCO
 
 echo -e "\n>>Escoger tipo de instalacion: (default/custom) \c" && read -e -i "default" TYPE
