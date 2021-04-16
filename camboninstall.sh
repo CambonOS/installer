@@ -190,7 +190,7 @@ echo -e "\n>>Estableciendo zona horaria\c"
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 	
 echo -e "\n>>Cambiando idioma del sistema\c"
-echo -e "\nes_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/mnt/etc/vconsole.conf && DONE || ERROR
+echo -e "\nes_ES.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" >> /mnt/etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/mnt/etc/vconsole.conf && DONE || ERROR
 	
 echo -e "\n>>Creando archivos host\c"
 echo -e "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && DONE || ERROR
@@ -235,9 +235,12 @@ echo "echo 'trizen --noconfirm -S $ADD || exit 1' | su $USER || exit 1" | CHROOT
 mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
 	
 echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c"
-echo "rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git && bash Scripts/cmd.sh && echo OK || echo FAIL" > /mnt/usr/bin/actualizar-cmd && chmod 755 /mnt/usr/bin/actualizar-cmd && (echo "actualizar-cmd || exit 1" | CHROOT) || ERROR
+echo "rm -rf /tmp/Scripts; cd /tmp && (echo -e 'jabalinomillo\nC100cpb.Ar,af.Arp' | git clone https://github.com/CambonOS/Scripts.git) && bash Scripts/cmd.sh && echo OK || echo FAIL" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd || exit 1" | CHROOT) || ERROR
 
+echo -e "\n>>Terminando instalación\c"
+echo "@reboot root localectl set-x11-keymap es && echo '@reboot root cambonos-cmd' > /etc/cron.d/cambonos-cmd" > /mnt/etc/cron.d/cambonos-cmd
 swapoff $SWAP
+DONE
 
 echo -e "\n***************************************************************************************************"
 echo "************************************** INSTALLED **************************************************"
