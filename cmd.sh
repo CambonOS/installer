@@ -8,5 +8,7 @@ fi
 cd /tmp/Scripts
 
 cp ./camboniso.sh /usr/bin/cambonos-iso
+chmod 755 /usr/bin/cambonos-iso
 
-cp ./actualizar.sh /usr/bin/cambonos-update
+cp ./actualizar.sh /usr/bin/cambonos-upgrade
+chmod 755 /usr/bin/cambonos-upgrade
