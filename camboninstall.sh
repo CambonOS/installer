@@ -6,10 +6,7 @@ GREEN='\033[1;32m'
 SALIDA='/tmp/salida'
 
 HEAD () {
-	clear
-	echo "***************************************************************************************************"
-	echo "******************************* CAMBON OS INSTALLER ***********************************************"
-	echo "***************************************************************************************************"
+	clear && cat /etc/motd
 }
 
 DONE () {
@@ -44,13 +41,16 @@ SUDO () {
 	fi
 }
 
-OPTIONS () {
+PREGUNTAS () {
 	echo -e "\n>>Tipo de arranque?(uefi/bios) \c" && read GRUB
 	echo -e "\n\n>>Formato del disco?(mbr/gpt) \c" && read TDISCO
 	echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
 	echo -e "\n\n>>Graficos?(nvidia/amd/vmware/all) \c" && read GPU
 	echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
 	echo -e "\n\n>>Escribe los programas adicionales: \c" && read -e -i "brave-bin menulibre wine-staging" ADD
+}
+
+VARIABLES () {	
 	BOOT="$DISCO$(echo 1)"
 	SWAP="$DISCO$(echo 2)"
 	RAIZ="$DISCO$(echo 3)"
@@ -78,12 +78,20 @@ echo -e "\n>>En que disco quieres instalar el sistema? \c" && read -e -i "/dev/s
 echo -e "\n>>Escoger tipo de instalacion: (default/custom) \c" && read -e -i "default" TYPE
 case $TYPE in
 	custom)
-		OPTIONS
+		PREGUTAS
+		VARIABLES
 	;;
 	default)
-		echo -e "bios\nmbr\nintel-ucode amd\nall\ngnome\nbrave-bin menulibre\n" | OPTIONS >>$SALIDA 2>&1
+		GRUB='bios'
+		TDISCO='mbr'
+		CPU='intel-ucode amd'
+		GPU='all'
+		GDM='gnome'
+		ADD='brave-bin menulibre'
+		VARIABLES
 	;;
 esac
+
 echo -e "\n\n>>Nombre del equipo? \c" && read NOMBRE
 echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
 SUDO
@@ -143,11 +151,11 @@ pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 || 
 DONE
 
 echo -e "\n>>Instalando utilidades basicas\c"
-echo "yes | pacman -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo || exit 1" | CHROOTF
+echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo || exit 1" | CHROOTF
 
 case $GRUB in
 	uefi)
-		echo "yes | pacman -S efibootmgr || exit 1" | CHROOTF
+		echo "pacman --noconfirm -S efibootmgr || exit 1" | CHROOTF
 	;;
 	bios)
 		DONE
@@ -157,19 +165,19 @@ esac
 echo -e "\n>>Instalando drivers graficos\c"
 case $GPU in
 	amd)
-		echo "yes | pacman -S xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT
+		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT
 	;;
 	nvidia)
-		echo "yes | pacman -S xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT
+		echo "pacman --noconfirm -S xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT
 	;;
 	intel)
-		echo "yes | pacman -S xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT
+		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT
 	;;
 	vmware)
-		echo "yes | pacman -S xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT
+		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT
 	;;
 	all)
-		echo "yes | pacman -S xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidialib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | CHROOT
+		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidialib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | CHROOT
 	;;
 esac
 
@@ -179,7 +187,7 @@ case $GDM in
 		DONE
 	;;
 	gnome)
-		echo "yes | pacman -S gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweaks || exit 1" | CHROOT
+		echo "pacman --noconfirm -S gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweaks || exit 1" | CHROOT
 	;;
 esac
 
@@ -190,7 +198,7 @@ echo -e "\n>>Estableciendo zona horaria\c"
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 	
 echo -e "\n>>Cambiando idioma del sistema\c"
-echo -e "\nes_ES.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" >> /mnt/etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=en_US.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/mnt/etc/vconsole.conf && DONE || ERROR
+echo -e "\nes_ES.UTF-8 UTF-8\nes_ES.UTF-8 UTF-8" >> /mnt/etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=es_ES.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/mnt/etc/vconsole.conf && DONE || ERROR
 	
 echo -e "\n>>Creando archivos host\c"
 echo -e "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && DONE || ERROR
