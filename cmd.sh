@@ -5,9 +5,10 @@ GREEN='\033[1;32m'
 
 ERROR () {
 	echo -e "${RED} [ERROR] ${NOCOLOR}"
+	exit
 }
 
-cd /tmp/Scripts || ERROR && echo 'El repositorio debe estar clonado en /tmp' && exit
+cd /tmp/Scripts || ERROR
 
 sudo cp ./camboniso.sh /usr/bin/cambonos-iso || ERROR
 sudo chmod 755 /usr/bin/cambonos-iso || ERROR
