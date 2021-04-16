@@ -7,7 +7,7 @@ ERROR () {
 	echo -e "${RED} [ERROR] ${NOCOLOR}"
 }
 
-sudo cd /tmp/Scripts || (ERROR ; echo 'El repositorio debe estar clonado en /tmp' ; exit)
+sudo cd /tmp/Scripts || ERROR && echo 'El repositorio debe estar clonado en /tmp' && exit
 
 sudo cp ./camboniso.sh /usr/bin/cambonos-iso || ERROR
 sudo chmod 755 /usr/bin/cambonos-iso || ERROR
