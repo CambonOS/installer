@@ -47,7 +47,7 @@ PREGUNTAS () {
 	echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
 	echo -e "\n\n>>Graficos?(nvidia/amd/vmware/all) \c" && read GPU
 	echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
-	echo -e "\n\n>>Escribe los programas adicionales: \c" && read -e -i "brave-bin menulibre wine-staging" ADD
+	echo -e "\n\n>>Escribe los programas adicionales: \c" && read -e -i "menulibre" ADD
 }
 
 VARIABLES () {	
@@ -87,7 +87,7 @@ case $TYPE in
 		CPU='intel-ucode amd'
 		GPU='all'
 		GDM='gnome'
-		ADD='brave-bin menulibre'
+		ADD='menulibre'
 		VARIABLES
 	;;
 esac
@@ -151,16 +151,7 @@ pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 || 
 DONE
 
 echo -e "\n>>Instalando utilidades basicas\c"
-echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager grub $CPU-ucode git base-devel sudo || exit 1" | CHROOTF
-
-case $GRUB in
-	uefi)
-		echo "pacman --noconfirm -S efibootmgr || exit 1" | CHROOTF
-	;;
-	bios)
-		DONE
-	;;
-esac
+echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU-ucode git base-devel sudo cronie ntfs-3g || exit 1" | CHROOTF
 
 echo -e "\n>>Instalando drivers graficos\c"
 case $GPU in
@@ -176,8 +167,8 @@ case $GPU in
 	vmware)
 		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT
 	;;
-	all)
-		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidialib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | CHROOT
+	*)
+		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | CHROOT
 	;;
 esac
 
@@ -209,10 +200,10 @@ echo "systemctl enable NetworkManager.service || exit 1" | CHROOT
 echo -e "\n>>Configurando grub\c"
 case $GRUB in
 	bios)
-		echo "grub-install --target=i386-pc $DISCO && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
+		echo "pacman --noconfirm -S grub && grub-install --target=i386-pc $DISCO && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
 	;;
 	uefi)
-		echo "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
+		echo "pacman --noconfirm -S grub efibootmgr && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
 	;;
 esac
 	
@@ -239,7 +230,7 @@ echo -e "\n>>Instalando trizen\c"
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Instalando programas adicionales\c"
-echo "echo 'trizen --noconfirm -S $ADD || exit 1' | su $USER || exit 1" | CHROOT
+echo "echo 'trizen --noconfirm -S brave-bin wine-staging $ADD || exit 1' | su $USER || exit 1" | CHROOT
 mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
 	
 echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c"
