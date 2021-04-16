@@ -31,8 +31,8 @@ CHROOTF () {
 }
 
 SUDO () {
-	echo -e "\n\n>>Contraseña del usuario: \c" && read -s PASS
-	echo -e "\n\n\n>>Repetir contraseña: \c" && read -s PASS1
+	echo -e "\n>>Contraseña del usuario: " && read -s PASS
+	echo -e "\n>>Repetir contraseña: \c" && read -s PASS1
 	if [[ $PASS = $PASS1 ]]
 	then
 		sleep 1
@@ -43,11 +43,11 @@ SUDO () {
 
 PREGUNTAS () {
 	echo -e "\n>>Tipo de arranque?(uefi/bios) \c" && read GRUB
-	echo -e "\n\n>>Formato del disco?(mbr/gpt) \c" && read TDISCO
-	echo -e "\n\n>>Procesador?(intel/amd) \c" && read CPU
-	echo -e "\n\n>>Graficos?(nvidia/amd/vmware/all) \c" && read GPU
-	echo -e "\n\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
-	echo -e "\n\n>>Escribe los programas adicionales: \c" && read -e -i "menulibre" ADD
+	echo -e "\n>>Formato del disco?(mbr/gpt) \c" && read TDISCO
+	echo -e "\n>>Procesador?(intel/amd) \c" && read CPU
+	echo -e "\n>>Graficos?(nvidia/amd/vmware/all) \c" && read GPU
+	echo -e "\n>>Entorno grafico?(terminal/gnome) \c" && read GDM
+	echo -e "\n>>Escribe los programas adicionales: \c" && read -e -i "menulibre" ADD
 }
 
 VARIABLES () {	
@@ -92,8 +92,8 @@ case $TYPE in
 	;;
 esac
 
-echo -e "\n\n>>Nombre del equipo? \c" && read NOMBRE
-echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
+echo -e "\n>>Nombre del equipo? \c" && read NOMBRE
+echo -e "\n>>Nombre para el nuevo usuario: \c" && read USER
 SUDO
 
 HEAD
@@ -149,6 +149,9 @@ DONE
 echo -e "\n>>Instalando base del sistema\c"
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 || STOP
 DONE
+
+echo -e "\n>>Configurando pacman\c"
+cp /etc/pacman.conf /mnt/etc/pacman.conf
 
 echo -e "\n>>Instalando utilidades basicas\c"
 echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU-ucode git base-devel sudo cronie ntfs-3g || exit 1" | CHROOTF
@@ -234,7 +237,7 @@ echo "echo 'trizen --noconfirm -S brave-bin wine-staging $ADD || exit 1' | su $U
 mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
 	
 echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c"
-echo "rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git && bash Scripts/cmd.sh && echo OK || echo FAIL" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd || exit 1" | CHROOT) || ERROR
+echo "sudo rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git && sudo bash Scripts/cmd.sh && echo OK || echo FAIL" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd || exit 1" | CHROOT) || ERROR
 
 echo -e "\n>>Terminando instalación\c"
 echo "@reboot root localectl set-x11-keymap es && echo '#@reboot root cambonos-cmd' > /etc/cron.d/cambonos-cmd" > /mnt/etc/cron.d/cambonos-cmd
