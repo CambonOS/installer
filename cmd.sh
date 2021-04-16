@@ -1,14 +1,21 @@
 #!/bin/bash
-if [[ $EUID -ne 0 ]]
-then 
-	echo -e "Debese ejecutar como usuario con privilejios"
-	exit 1
-fi
+NOCOLOR='\033[0m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
 
-cd /tmp/Scripts
+DONE () {
+	echo -e "${GREEN} [DONE] ${NOCOLOR}" && sleep 1
+}
 
-cp ./camboniso.sh /usr/bin/cambonos-iso
-chmod 755 /usr/bin/cambonos-iso
+ERROR () {
+	echo -e "${RED} [ERROR] ${NOCOLOR}" && sleep 3
+}
 
-cp ./actualizar.sh /usr/bin/cambonos-upgrade
-chmod 755 /usr/bin/cambonos-upgrade
+sudo cd /tmp/Scripts || ERROR
+
+sudo cp ./camboniso.sh /usr/bin/cambonos-iso || ERROR
+sudo chmod 755 /usr/bin/cambonos-iso || ERROR
+
+sudo cp ./actualizar.sh /usr/bin/cambonos-upgrade || ERROR
+sudo chmod 755 /usr/bin/cambonos-upgrade || ERROR
+DONE
