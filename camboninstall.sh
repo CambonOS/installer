@@ -235,10 +235,10 @@ echo "echo 'trizen --noconfirm -S $ADD || exit 1' | su $USER || exit 1" | CHROOT
 mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
 	
 echo -e "\n>>Ejecutando el script cmd de https://github.com/cambonos/cmd.sh\c"
-echo "rm -rf /tmp/Scripts; cd /tmp && (echo -e 'jabalinomillo\nC100cpb.Ar,af.Arp' | git clone https://github.com/CambonOS/Scripts.git) && bash Scripts/cmd.sh && echo OK || echo FAIL" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd || exit 1" | CHROOT) || ERROR
+echo "rm -rf /tmp/Scripts; cd /tmp && git clone https://github.com/CambonOS/Scripts.git && bash Scripts/cmd.sh && echo OK || echo FAIL" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd || exit 1" | CHROOT) || ERROR
 
 echo -e "\n>>Terminando instalación\c"
-echo "@reboot root localectl set-x11-keymap es && echo '@reboot root cambonos-cmd' > /etc/cron.d/cambonos-cmd" > /mnt/etc/cron.d/cambonos-cmd
+echo "@reboot root localectl set-x11-keymap es && echo '#@reboot root cambonos-cmd' > /etc/cron.d/cambonos-cmd" > /mnt/etc/cron.d/cambonos-cmd
 swapoff $SWAP
 DONE
 
