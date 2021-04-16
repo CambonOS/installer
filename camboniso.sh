@@ -37,6 +37,7 @@ echo 'chmod 777 /usr/local/bin/camboninstall;GREEN="\033[1;32m";NOCOLOR="\033[0m
 echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 echo -e "KEYMAP=es" >/ISO/porfile/airootfs/etc/vconsole.conf
 cp -r /tmp/Scripts/iso/* /ISO/porfile/ || ERROR
+rm /ISO/porfile/syslinux/splash.png
 DONE
 
 echo -e "\n>>Creando la ISO\n"
