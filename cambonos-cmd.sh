@@ -8,12 +8,12 @@ ERROR () {
 	exit
 }
 
-cd /tmp/Scripts || ERROR
+cd /tmp/arch-distro || ERROR
 
-sudo cp ./camboniso.sh /usr/bin/cambonos-iso || ERROR
+sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
 sudo chmod 755 /usr/bin/cambonos-iso || ERROR
 
-sudo cp ./actualizar.sh /usr/bin/cambonos-upgrade || ERROR
+sudo cp ./cambonos-upgrade.sh /usr/bin/cambonos-upgrade || ERROR
 sudo chmod 755 /usr/bin/cambonos-upgrade || ERROR
 
 echo -e "${GREEN}[DONE]${NOCOLOR}"
