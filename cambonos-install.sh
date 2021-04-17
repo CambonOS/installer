@@ -147,14 +147,34 @@ mount $BOOT /mnt/boot >>$SALIDA 2>&1 || STOP
 DONE
 
 echo -e "\n>>Instalando base del sistema\c"
-pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 || STOP
-DONE
+pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && DONE || STOP
+
+echo -e "\n>>Cambiando idioma del sistema\c"
+echo -e "\nes_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=es_ES.UTF-8" >/mnt/etc/locale.conf && echo -e "KEYMAP=es" >/mnt/etc/vconsole.conf && DONE || ERROR
+
+echo -e "\n>>Estableciendo zona horaria\c"
+echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
+
+echo -e "\n>>Editando skel\c"
+echo -e "\n\nneofetch" >/mnt/etc/skel/.bashrc && DONE || ERROR
+
+echo -e "\n>>Generando archivo fstab\c"
+genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
 echo -e "\n>>Configurando pacman\c"
-cp /etc/pacman.conf /mnt/etc/pacman.conf
+cp /etc/pacman.conf /mnt/etc/pacman.conf && DONE || ERROR
 
 echo -e "\n>>Instalando utilidades basicas\c"
 echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU-ucode git base-devel sudo cronie ntfs-3g || exit 1" | CHROOTF
+
+echo -e "\n>>Configurando red\c"
+echo "echo -e "$NOMBRE" >/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/etc/hosts && systemctl enable NetworkManager.service || exit 1" | CHROOT
+
+echo -e "\n>>Configurando usuario\c"
+echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | CHROOT
+
+echo -e "\n>>Configurando sudo\c"
+cp /mnt/etc/sudoers /mnt/etc/sudoers.bk && echo -e "\n%sudo ALL=(ALL) ALL" >>/mnt/etc/sudoers.bk && echo "%sudo ALL=(ALL) NOPASSWD: ALL" >>/mnt/etc/sudoers && DONE || ERROR
 
 echo -e "\n>>Instalando drivers graficos\c"
 case $GPU in
@@ -175,32 +195,17 @@ case $GPU in
 	;;
 esac
 
-echo -e "\n>>Instalando entorno grafico seleccionado\c"
+echo -e "\n>>Instalando entorno grafico\c"
 case $GDM in
 	terminal)
 		DONE
 	;;
 	gnome)
-		echo "pacman --noconfirm -S gdm nautilus alacritty gedit gnome-calculator gnome-control-center gnome-tweaks || exit 1" | CHROOT
+		echo "pacman --noconfirm -S gdm nautilus gnome-control-center gnome-tweaks && systemctl enable gdm.service || exit 1" | CHROOT
 	;;
 esac
 
-echo -e "\n>>Generando archivo fstab\c"
-genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
-
-echo -e "\n>>Estableciendo zona horaria\c"
-echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
-	
-echo -e "\n>>Cambiando idioma del sistema\c"
-echo -e "\nes_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=es_ES.UTF-8" >/etc/locale.conf && echo -e "KEYMAP=es" >/mnt/etc/vconsole.conf && DONE || ERROR
-	
-echo -e "\n>>Creando archivos host\c"
-echo -e "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && DONE || ERROR
-	
-echo -e "\n>>Configurando red\c"
-echo "systemctl enable NetworkManager.service || exit 1" | CHROOT
-	
-echo -e "\n>>Configurando grub\c"
+echo -e "\n>>Instalando grub\c"
 case $GRUB in
 	bios)
 		echo "pacman --noconfirm -S grub && grub-install --target=i386-pc $DISCO && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
@@ -209,25 +214,6 @@ case $GRUB in
 		echo "pacman --noconfirm -S grub efibootmgr && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF
 	;;
 esac
-	
-echo -e "\n>>Activando entorno grafico\c"
-case $GDM in
-	terminal)
-		DONE
-	;;
-	gnome)
-		echo "systemctl enable gdm.service || exit 1" | CHROOT
-	;;
-esac
-	
-echo -e "\n>>Configurando usuario\c"
-echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | CHROOT
-	
-echo -e "\n>>Editando skel\c"
-echo -e "\n\nneofetch" >/mnt/etc/skel/.bashrc && DONE || ERROR
-
-echo -e "\n>>Configurando sudo\c"
-cp /mnt/etc/sudoers /mnt/etc/sudoers.bk && echo "%sudo ALL=(ALL) ALL" >>/mnt/etc/sudoers.bk && echo "%sudo ALL=(ALL) NOPASSWD: ALL" >>/mnt/etc/sudoers && DONE || ERROR
 
 echo -e "\n>>Instalando trizen\c"
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
