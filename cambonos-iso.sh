@@ -27,16 +27,16 @@ echo -e "\n>>Instalando paquetes necesarios\c"
 pacman --noconfirm -Sy archiso >/tmp/Salida.txt 2>&1 && DONE || ERROR
 
 echo -e "\n>>Descargando el script de instalacion"
-rm -rf /tmp/Scripts >>/tmp/Salida.txt 2>&1
-cd /tmp && git clone https://github.com/CambonOS/Scripts.git && DONE || ERROR
+rm -rf /tmp/arch-distro >>/tmp/Salida.txt 2>&1
+cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && DONE || ERROR
 
 echo -e "\n>>Creando ficheros de configuracion de la ISO\c"
 mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
-mv /tmp/Scripts/camboninstall.sh /ISO/porfile/airootfs/usr/local/bin/camboninstall || ERROR
-echo 'chmod 777 /usr/local/bin/camboninstall;VERDE="\033[1;32m";NOCOLOR="\033[0m";AZUL="\033[1;34m";echo -e "\n  Para instalar ${AZUL}CambonOS${NOCOLOR} ejecute el comando ${VERDE}camboninstall${NOCOLOR}\n"' >>/ISO/porfile/airootfs/root/.zshrc
+mv /tmp/arch-distro/cambonos-install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install || ERROR
+echo 'chmod 777 /usr/local/bin/cambonos-install;VERDE="\033[1;32m";NOCOLOR="\033[0m";AZUL="\033[1;34m";echo -e "\n  Para instalar ${AZUL}CambonOS${NOCOLOR} ejecute el comando ${VERDE}cambonos-install${NOCOLOR}\n"' >>/ISO/porfile/airootfs/root/.zshrc
 echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 echo -e "KEYMAP=es" >/ISO/porfile/airootfs/etc/vconsole.conf
-cp -r /tmp/Scripts/iso/* /ISO/porfile/ || ERROR
+cp -r /tmp/arch-distro/iso/* /ISO/porfile/ || ERROR
 rm /ISO/porfile/syslinux/splash.png
 DONE
 
