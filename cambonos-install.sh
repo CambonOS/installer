@@ -20,7 +20,7 @@ ERROR () {
 STOP () {
 	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
 	umount /mnt/boot >>$SALIDA 2>&1; umount /mnt/home >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; swapoff $SWAP >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt
-	exit
+	exit 1
 }
 
 CHROOT () {
@@ -149,32 +149,20 @@ DONE
 echo -e "\n>>Instalando base del sistema\c"
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && DONE || STOP
 
-echo -e "\n>>Cambiando idioma del sistema\c"
-echo -e "\nes_ES.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen && locale-gen >>$SALIDA 2>&1 && echo -e "LANG=es_ES.UTF-8\nLANGUAGE=es_ES.UTF-8\nLC_ALL=es_ES.UTF-8" >/mnt/etc/locale.conf && echo -e "KEYMAP=es" >/mnt/etc/vconsole.conf && DONE || ERROR
-
-echo -e "\n>>Estableciendo zona horaria\c"
-echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
-
-echo -e "\n>>Editando skel\c"
-echo -e "\n\nneofetch" >/mnt/etc/skel/.bashrc && DONE || ERROR
-
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
-echo -e "\n>>Configurando pacman\c"
-cp /etc/pacman.conf /mnt/etc/pacman.conf && DONE || ERROR
+echo -e "\n>>Configurando sistema\c"
+echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd || exit 1" | CHROOTF >$SALIDA 2>&1) && cp /mnt/tmp/arch-distro/etc/* /mnt/etc && (echo "hwclock --systohc || exit 1" | CHROOTF >$SALIDA 2>&1) && DONE || STOP
 
 echo -e "\n>>Instalando utilidades basicas\c"
 echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU-ucode git base-devel sudo cronie ntfs-3g || exit 1" | CHROOTF
 
 echo -e "\n>>Configurando red\c"
-echo "echo -e "$NOMBRE" >/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/etc/hosts && systemctl enable NetworkManager.service || exit 1" | CHROOT
+echo "echo '$NOMBRE' >/etc/hostname && echo -e '127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE' >/etc/hosts && systemctl enable NetworkManager.service || exit 1" | CHROOT
 
-echo -e "\n>>Configurando usuario\c"
+echo -e "\n>>Creando usuario\c"
 echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | CHROOT
-
-echo -e "\n>>Configurando sudo\c"
-cp /mnt/etc/sudoers /mnt/etc/sudoers.bk && echo -e "\n%sudo ALL=(ALL) ALL" >>/mnt/etc/sudoers.bk && echo "%sudo ALL=(ALL) NOPASSWD: ALL" >>/mnt/etc/sudoers && DONE || ERROR
 
 echo -e "\n>>Instalando drivers graficos\c"
 case $GPU in
@@ -219,16 +207,12 @@ echo -e "\n>>Instalando trizen\c"
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Instalando programas adicionales\c"
+mv /mnt/etc/sudoers /mnt/etc/sudoers.bk
+echo "%sudo ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers
 echo "echo 'trizen --noconfirm -S brave-bin wine-staging $ADD || exit 1' | su $USER || exit 1" | CHROOT
 mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
-	
-echo -e "\n>>Instalado los comandos cambonos\c"
-echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd || exit 1" | CHROOT) || ERROR
 
-echo -e "\n>>Terminando instalación\c"
-echo "@reboot root localectl set-x11-keymap es && echo '#@reboot root cambonos-cmd' > /etc/crontab" > /mnt/etc/crontab
 swapoff $SWAP
-DONE
 
 echo -e "\n***************************************************************************************************"
 echo "************************************** INSTALLED **************************************************"
