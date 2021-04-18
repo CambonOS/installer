@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Examinador de servidores VNC de Avahi
+NoDisplay=true
+Comment=Examinar servidores VNC con zeroconf activado
+Icon=network-wired
+Exec=/usr/bin/bvnc
+Actions=
+Categories=GNOME;Network;
+OnlyShowIn=Old;

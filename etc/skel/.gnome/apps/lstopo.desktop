@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Hardware Locality lstopo
+NoDisplay=true
+Comment=Show hardware topology
+Icon=applications-other
+Exec=lstopo
+Actions=
+Categories=System;System-Tools;
+Keywords=System;Utility;
+OnlyShowIn=Old;

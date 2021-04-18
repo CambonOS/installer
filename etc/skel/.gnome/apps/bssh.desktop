@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Examinador de servidores SSH de Avahi
+NoDisplay=true
+Comment=Examinar servidores SSH con zeroconf activado
+Icon=network-wired
+Exec=/usr/bin/bssh
+Actions=
+Categories=GNOME;Network;
+OnlyShowIn=Old;

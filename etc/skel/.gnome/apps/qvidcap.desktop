@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Qt V4L2 video capture utility
+NoDisplay=true
+Comment=Viewer for video capture
+Icon=qvidcap
+Exec=qvidcap
+Actions=
+Categories=AudioVideo;
+Keywords=video;grabber;V4L;
+OnlyShowIn=Old;

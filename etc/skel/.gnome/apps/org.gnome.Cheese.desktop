@@ -1,0 +1,15 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Cheese
+GenericName=Fotomatón de cámara web
+NoDisplay=true
+Comment=Tome fotografías y vídeos con su cámara web, con divertidos efectos gráficos
+Icon=org.gnome.Cheese
+DBusActivatable=true
+Exec=cheese
+Actions=
+Categories=AudioVideo;GNOME;Recorder;Video;
+Keywords=foto;vídeo;cámara web;cámara;selfie;
+StartupNotify=true
+OnlyShowIn=Old;
