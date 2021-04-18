@@ -153,10 +153,10 @@ echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
 echo -e "\n>>Configurando sistema\c"
-echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd || exit 1" | CHROOTF >$SALIDA 2>&1) && cp /mnt/tmp/arch-distro/etc/* /mnt/etc && (echo "ln -sf /usr/share/zoneinfo/Región/Ciudad /etc/localtime && hwclock --systohc || exit 1" | CHROOTF >$SALIDA 2>&1) && DONE || STOP
+echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd || exit 1" | CHROOTF >$SALIDA 2>&1) && cp -r /mnt/tmp/arch-distro/etc/* /mnt/etc && (echo "ln -sf /usr/share/zoneinfo/Región/Ciudad /etc/localtime && hwclock --systohc || exit 1" | CHROOTF >$SALIDA 2>&1) && DONE || STOP
 
 echo -e "\n>>Instalando utilidades basicas\c"
-echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU-ucode git base-devel sudo cronie ntfs-3g || exit 1" | CHROOTF
+echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU-ucode git base-devel sudo ntfs-3g || exit 1" | CHROOTF
 
 echo -e "\n>>Configurando red\c"
 echo "echo '$NOMBRE' >/etc/hostname && echo -e '127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE' >/etc/hosts && systemctl enable NetworkManager.service || exit 1" | CHROOT
