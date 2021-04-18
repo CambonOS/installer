@@ -78,7 +78,7 @@ echo -e "\n>>En que disco quieres instalar el sistema? \c" && read -e -i "/dev/s
 echo -e "\n>>Escoger tipo de instalacion: (default/custom) \c" && read -e -i "default" TYPE
 case $TYPE in
 	custom)
-		PREGUTAS
+		PREGUNTAS
 		VARIABLES
 	;;
 	default)
