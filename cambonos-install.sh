@@ -212,6 +212,7 @@ echo "%sudo ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers
 echo "echo 'trizen --noconfirm -S brave-bin wine-staging $ADD || exit 1' | su $USER || exit 1" | CHROOT
 mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
 
+echo "locale-gen" | CHROOT
 swapoff $SWAP
 
 echo -e "\n***************************************************************************************************"
