@@ -154,11 +154,8 @@ echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completi
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
-echo -e "\n>>Configurando sistema\c"
-echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd && cp -r /tmp/arch-distro/etc/* /etc || exit 1" | arch-chroot /mnt) && (echo "ln -sf /usr/share/zoneinfo/Región/Ciudad /etc/localtime && hwclock --systohc || exit 1" | CHROOT) || STOP
-
 echo -e "\n>>Configurando red\c"
-echo "echo '$NOMBRE' >/etc/hostname && echo -e '127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE' >/etc/hosts && systemctl enable NetworkManager.service || exit 1" | CHROOT
+echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service || exit 1' | CHROOT
 
 echo -e "\n>>Creando usuario\c"
 echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | CHROOT
@@ -203,15 +200,16 @@ case $GRUB in
 esac
 
 echo -e "\n>>Instalando trizen\c"
+echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Instalando programas adicionales\c"
-mv /mnt/etc/sudoers /mnt/etc/sudoers.bk
-echo "%sudo ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers
-echo "echo 'trizen --noconfirm -S brave-bin wine-staging $ADD || exit 1' | su $USER || exit 1" | CHROOT
-mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
+echo "echo 'trizen --noconfirm -S $ADD || exit 1' | su $USER || exit 1" | CHROOT
 
-echo "locale-gen" | CHROOT
+echo -e "\n>>Configurando sistema\c"
+echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd && cp -r /tmp/arch-distro/etc/* /etc || exit 1" | arch-chroot /mnt) && (echo "ln -sf /usr/share/zoneinfo/Región/Ciudad /etc/localtime && hwclock --systohc || exit 1" | CHROOT) || STOP
+
+echo 'locale-gen' | CHROOT
 swapoff $SWAP
 
 echo -e "\n***************************************************************************************************"
