@@ -152,8 +152,8 @@ echo -e "\n>>Instalando utilidades basicas\c"
 echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU-ucode git base-devel sudo ntfs-3g || exit 1" | CHROOTF
 
 echo -e "\n>>Configurando sistema\c"
-echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && echo "cambonos-cmd" | arch-chroot /mnt
-echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc' | arch-chroot /mnt
+echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && echo "cambonos-cmd" | arch-chroot /mnt >$SALIDA 2>&1
+echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc' | arch-chroot /mnt >$SALIDA 2>&1
 echo "ln -sf /usr/share/zoneinfo/Región/Ciudad /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 
 echo -e "\n>>Generando archivo fstab\c"
@@ -205,12 +205,13 @@ case $GRUB in
 esac
 
 echo -e "\n>>Instalando trizen\c"
+cp /mnt/etc/sudoers /mnt/etc/sudoers.bk
 echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Instalando programas adicionales\c"
 echo "echo 'trizen --noconfirm -S $ADD || exit 1' | su $USER || exit 1" | CHROOT
-cp arch-distro/etc/sudoers /mnt/etc/sudoers
+mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
 
 echo 'locale-gen' | CHROOT
 swapoff $SWAP
