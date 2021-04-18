@@ -29,7 +29,7 @@ pacman --noconfirm -Sy archiso >/tmp/Salida.txt 2>&1 && DONE || ERROR
 
 echo -e "\n>>Descargando el script de instalacion"
 rm -rf /tmp/arch-distro >>/tmp/Salida.txt 2>&1
-cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && DONE || ERROR
+cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
 
 echo -e "\n>>Creando ficheros de configuracion de la ISO\c"
 mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
