@@ -151,6 +151,9 @@ pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && 
 echo -e "\n>>Instalando utilidades basicas\c"
 echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU-ucode git base-devel sudo ntfs-3g || exit 1" | CHROOTF
 
+echo -e "\n>>Configurando sistema\c"
+echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && echo "cambonos-cmd" | arch-chroot /mnt && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /mnt/etc && (echo "ln -sf /usr/share/zoneinfo/Región/Ciudad /etc/localtime && hwclock --systohc || exit 1" | CHROOT) || STOP
+
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
@@ -205,9 +208,7 @@ echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd triz
 
 echo -e "\n>>Instalando programas adicionales\c"
 echo "echo 'trizen --noconfirm -S $ADD || exit 1' | su $USER || exit 1" | CHROOT
-
-echo -e "\n>>Configurando sistema\c"
-echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && (echo "cambonos-cmd && cp -r /tmp/arch-distro/etc/* /etc || exit 1" | arch-chroot /mnt) && (echo "ln -sf /usr/share/zoneinfo/Región/Ciudad /etc/localtime && hwclock --systohc || exit 1" | CHROOT) || STOP
+cp arch-distro/etc/sudoers /mnt/etc/sudoers
 
 echo 'locale-gen' | CHROOT
 swapoff $SWAP
