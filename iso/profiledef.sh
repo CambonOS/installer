@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
 
-iso_name="cambonos"
+iso_name="CambonOS-InstallCD"
 iso_label="CAMBON_$(date +%y.%m)"
 iso_publisher="CambonOS <https://github/CambonOS/Scripts.git>"
 iso_application="CambonOS Installer"
