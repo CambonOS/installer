@@ -19,8 +19,7 @@ ERROR () {
 
 STOP () {
 	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
-	umount /mnt/boot >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt
-	exit 1
+  umount /mnt/boot >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt
 }
 
 CHROOT () {
@@ -46,7 +45,7 @@ ROOT () {
 	echo -e "\n>>Contraseña del usuario administrador (root): \c" && read -s SECRET
 	echo -e "\n\n>>Repetir contraseña: \c" && read -s SECRET1
 	if [[ $SECRET = $SECRET1 ]]
-	then
+  then
 		sleep 1
 	else
 		ROOT
@@ -70,6 +69,7 @@ echo -e "\n>>Escoger tipo de instalacion: (cambonos/cambonos-lite/cambonos-serve
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 ROOT
 echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
+
 SUDO
 HEAD
 
@@ -94,6 +94,7 @@ case $GRUB in
 		DONE ;;
 esac
 
+
 echo -e "\n>>Instalando base del sistema\c"
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && DONE || STOP
 
@@ -105,6 +106,7 @@ echo -e "\n>>Configurando sistema\c"
 echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && echo "cambonos-cmd" | arch-chroot /mnt >$SALIDA 2>&1
 echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc' | arch-chroot /mnt >$SALIDA 2>&1
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
+
 
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
