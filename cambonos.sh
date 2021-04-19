@@ -16,7 +16,7 @@ DONE () {
 }
 case $1 in
 	upgrade)
-		if [ $2 = -b ]
+		if [ $2 = '-b' ]
 		then
 			echo -e "${BLUE}\n>>Actualizando comandos de CambonOS${NOCOLOR}"
 			cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
