@@ -16,12 +16,34 @@ DONE () {
 }
 case $1 in
 	upgrade)
-		echo -e "\n>>Actualizando paquetes\c"
-		trizen -Syyu --noconfirm >/tmp/Salida.txt 2>&1 || ERROR
-		DONE
-		echo -e ">>Actualizando GRUB\c"
-		sudo grub-mkconfig -o /boot/grub/grub.cfg >>/tmp/Salida.txt 2>&1 || ERROR
-		DONE
+		if [ $2 = -b ]
+		then
+			echo -e "\n>>Actualizando comandos de CambonOS\c"
+			cd /tmp; sudo rm -rf Arch-Distro
+			git clone -b $3 https://github.com/CambonOS/Arch-Distro
+			cd Arch-Distro
+			sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
+			sudo chmod 755 /usr/bin/cambonos-iso || ERROR
+			sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
+			sudo chmod 755 /usr/bin/cambonos || ERROR
+			DONE
+		else
+			echo -e "\n>>Actualizando comandos de CambonOS\c"
+			cd /tmp; sudo rm -rf Arch-Distro
+			git clone https://github.com/CambonOS/Arch-Distro
+			cd Arch-Distro
+			sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
+			sudo chmod 755 /usr/bin/cambonos-iso || ERROR
+			sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
+			sudo chmod 755 /usr/bin/cambonos || ERROR
+			DONE
+			echo -e "\n>>Actualizando paquetes\c"
+			trizen -Syyu --noconfirm >/tmp/Salida.txt 2>&1 || ERROR
+			DONE
+			echo -e ">>Actualizando GRUB\c"
+			sudo grub-mkconfig -o /boot/grub/grub.cfg >>/tmp/Salida.txt 2>&1 || ERROR
+			DONE
+		fi
 		;;
 	install)
 		shift
