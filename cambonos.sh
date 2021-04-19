@@ -29,9 +29,11 @@ case $1 in
 		DONE
 		;;
 	list)
+		shift
 		trizen -Q $*
 		;;
 	search)
+		shift
 		trizen -Ss $*
 		;;
 	remove)
