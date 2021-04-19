@@ -103,8 +103,8 @@ echo -e "\n>>Instalando utilidades basicas\c"
 echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | CHROOTF
 
 echo -e "\n>>Configurando sistema\c"
-echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && echo "cambonos-cmd" | arch-chroot /mnt >$SALIDA 2>&1
 echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc' | arch-chroot /mnt >$SALIDA 2>&1
+echo "gsettings set org.gnome.desktop.background picture-uri file:///etc/skel/.local/share/backgrounds/anime-girl-archlinux.png" | arch-chroot /mnt >$SALIDA 2>&1
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 
 
