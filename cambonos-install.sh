@@ -104,7 +104,7 @@ echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completi
 echo -e "\n>>Configurando sistema\c"
 echo "sudo rm -rf /tmp/arch-distro; cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && sudo bash arch-distro/cambonos-cmd.sh" > /mnt/usr/bin/cambonos-cmd && chmod 755 /mnt/usr/bin/cambonos-cmd && echo "cambonos-cmd" | arch-chroot /mnt >$SALIDA 2>&1
 echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc' | arch-chroot /mnt >$SALIDA 2>&1
-echo "ln -sf /usr/share/zoneinfo/Región/Ciudad /etc/localtime && hwclock --localtime || exit 1" | CHROOT
+echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
