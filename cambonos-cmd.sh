@@ -13,7 +13,7 @@ cd /tmp/arch-distro || ERROR
 sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
 sudo chmod 755 /usr/bin/cambonos-iso || ERROR
 
-sudo cp ./cambonos-upgrade.sh /usr/bin/cambonos-upgrade || ERROR
-sudo chmod 755 /usr/bin/cambonos-upgrade || ERROR
+sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
+sudo chmod 755 /usr/bin/cambonos || ERROR
 
 echo -e "${GREEN}[DONE]${NOCOLOR}"
