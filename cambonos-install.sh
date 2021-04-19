@@ -80,16 +80,18 @@ echo -e "\n>>Particionando disco\c"
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 case $GRUB in
 	uefi) 
-		(echo -e "g\nn\n1\n\n+512M\nn\n2\n\n\nt\n1\n1\nt\n2\n23\nw\n" | fdisk -w always $DISCO >>$SALIDA 2>&1) && DONE || STOP 
+		(echo -e "g\nn\n1\n\n+512M\nn\n2\n\n\nt\n1\n1\nt\n2\n23\nw\n" | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP 
 		yes | mkfs.fat -F32 $DISCO$(echo 1) >>$SALIDA 2>&1 || STOP
 		yes | mkfs.ext4 $DISCO$(echo 2) >>$SALIDA 2>&1 || STOP
 		mount $DISCO$(echo 2) /mnt >>$SALIDA 2>&1 || STOP 
 		mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
-		mount $DISCO$(echo 1) /mnt/boot >>$SALIDA 2>&1 || STOP ;;
+		mount $DISCO$(echo 1) /mnt/boot >>$SALIDA 2>&1 || STOP 
+		DONE ;;
 	bios) 
-		(echo -e "o\nn\np\n1\n\n\nt\n3\n83\nw\n" | fdisk -w always $DISCO >>$SALIDA 2>&1) && DONE || STOP
+		(echo -e "o\nn\np\n1\n\n\nt\n3\n83\nw\n" | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP
 		yes | mkfs.ext4 $DISCO$(echo 1) >>$SALIDA 2>&1 || STOP
-		mount $DISCO$(echo 1) /mnt >>$SALIDA 2>&1 || STOP ;;
+		mount $DISCO$(echo 1) /mnt >>$SALIDA 2>&1 || STOP 
+		DONE ;;
 esac
 
 echo -e "\n>>Instalando base del sistema\c"
@@ -115,7 +117,7 @@ echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e 
 
 echo -e "\n>>Instalando drivers graficos\c"
 (lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia'
-(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd'
+(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd'cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
 (lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel'
 (lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware'
 case $GPU in
