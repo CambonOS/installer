@@ -19,7 +19,7 @@ ERROR () {
 
 STOP () {
 	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
-	umount /mnt/boot >>$SALIDA 2>&1; umount /mnt/home >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; swapoff $SWAP >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt
+	umount /mnt/boot >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt
 	exit 1
 }
 
@@ -164,5 +164,4 @@ echo -e "\n>>Activando zswap \c"
 systemctl enable zramd.service | CHROOT
 
 echo -e "\n>>Terminando instalacion"
-swapoff $SWAP
 echo 'locale-gen' | CHROOT
