@@ -18,7 +18,7 @@ case $1 in
 	upgrade)
 		if [ $2 = -b ]
 		then
-			echo -e "\n>>Actualizando comandos de CambonOS\c"
+			echo -e "${BLUE}\n>>Actualizando comandos de CambonOS\c${NOCOLOR}"
 			cd /tmp; sudo rm -rf Arch-Distro
 			git clone -b $3 https://github.com/CambonOS/Arch-Distro
 			cd Arch-Distro
@@ -28,7 +28,7 @@ case $1 in
 			sudo chmod 755 /usr/bin/cambonos || ERROR
 			DONE
 		else
-			echo -e "\n>>Actualizando comandos de CambonOS\c"
+			echo -e "${BLUE}\n>>Actualizando comandos de CambonOS\c${NOCOLOR}"
 			cd /tmp; sudo rm -rf Arch-Distro
 			git clone https://github.com/CambonOS/Arch-Distro
 			cd Arch-Distro
@@ -37,10 +37,10 @@ case $1 in
 			sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 			sudo chmod 755 /usr/bin/cambonos || ERROR
 			DONE
-			echo -e "\n>>Actualizando paquetes\c"
+			echo -e "${BLUE}\n>>Actualizando paquetes\c${NOCOLOR}"
 			trizen -Syyu --noconfirm >/tmp/Salida.txt 2>&1 || ERROR
 			DONE
-			echo -e ">>Actualizando GRUB\c"
+			echo -e "${BLUE}>>Actualizando GRUB\c${NOCOLOR}"
 			sudo grub-mkconfig -o /boot/grub/grub.cfg >>/tmp/Salida.txt 2>&1 || ERROR
 			DONE
 		fi
@@ -71,14 +71,17 @@ case $1 in
 		shift
 		case $1 in
 			-b)
+				echo -e "${BLUE}\n>>Clonando repositorio CambonOS/Arch-Distro\c${NOCOLOR}"
 				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
 				git clone -b $2 https://github.com/CambonOS/Arch-Distro.git || ERROR
 				;;
 			--branch)
+				echo -e "${BLUE}\n>>Clonando repositorio CambonOS/Arch-Distro\c${NOCOLOR}"
 				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
 				git clone -b $2 https://github.com/CambonOS/Arch-Distro.git || ERROR
 				;;
 			*)
+				echo -e "${BLUE}\n>>Clonando repositorio CambonOS/Arch-Distro\c${NOCOLOR}"
 				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
 				git clone https://github.com/CambonOS/Arch-Distro.git || ERROR
 				;;
