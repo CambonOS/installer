@@ -26,7 +26,8 @@ case $1 in
 				sudo chmod 755 /usr/bin/cambonos-iso || ERROR
 				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 				sudo chmod 755 /usr/bin/cambonos || ERROR
-				DONE ;;
+				DONE
+				;;
 			--branch)
 				echo -e "${BLUE}\n>>Actualizando comandos de CambonOS${NOCOLOR}"
 				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
@@ -36,7 +37,8 @@ case $1 in
 				sudo chmod 755 /usr/bin/cambonos-iso || ERROR
 				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 				sudo chmod 755 /usr/bin/cambonos || ERROR
-				DONE ;;
+				DONE
+				;;
 			*)
 				echo -e "${BLUE}\n>>Actualizando comandos de CambonOS${NOCOLOR}"
 				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
@@ -53,7 +55,8 @@ case $1 in
 				DONE
 				echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 				sudo grub-mkconfig -o /boot/grub/grub.cfg >>/tmp/Salida.txt 2>&1 || ERROR
-				DONE ;;
+				DONE
+				;;
 		esac
 		;;
 	install)
