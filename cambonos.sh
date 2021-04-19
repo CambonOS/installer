@@ -3,6 +3,7 @@
 NOCOLOR='\033[0m'
 RED='\033[1;31m'
 GREEN='\033[1;32m'
+BLUE='\033[1;34m'
 
 ERROR () {
   echo -e "${RED} ERROR \n${NOCOLOR}"
@@ -54,6 +55,6 @@ case $1 in
 		DONE
 		;;
 	*)
-		echo "${RED}Opción ${BLUE}$1${RED} no reconocida.${NOCOLOR}"
+		echo -e "${RED}Opción ${BLUE}$1${RED} no reconocida.${NOCOLOR}"
 		;;
 esac
