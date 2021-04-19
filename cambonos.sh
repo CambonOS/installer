@@ -46,14 +46,21 @@ case $1 in
 		DONE
 		;;
 	clone)
-		if [ $2 = -b ] or [ $2 = --branch ]
-		then
-			rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-			git clone -b '$3' https://github.com/CambonOS/Arch-Distro.git || ERROR
-		else
-			rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-			git clone https://github.com/CambonOS/Arch-Distro.git || ERROR
-		fi
+		shift
+		case $1 in
+			-b)
+				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
+				git clone -b '$2' https://github.com/CambonOS/Arch-Distro.git || ERROR
+				;;
+			--branch)
+				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
+				git clone -b '$2' https://github.com/CambonOS/Arch-Distro.git || ERROR
+				;;
+			*)
+				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
+				git clone https://github.com/CambonOS/Arch-Distro.git || ERROR
+				;;
+		esac
 		DONE
 		;;
 	*)
