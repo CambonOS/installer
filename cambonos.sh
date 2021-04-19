@@ -18,11 +18,6 @@ case $1 in
 		echo -e "\n>>Actualizando paquetes\c"
 		trizen -Syyu --noconfirm >/tmp/Salida.txt 2>&1 || ERROR
 		DONE
-
-		echo -e ">>Desistalando paquetes guerfanos\c"
-		trizen -Rns $(trizen -Qqdt) --noconfirm >>/tmp/Salida.txt 2>&1
-		DONE
-
 		echo -e ">>Actualizando GRUB\c"
 		sudo grub-mkconfig -o /boot/grub/grub.cfg >>/tmp/Salida.txt 2>&1 || ERROR
 		DONE
@@ -32,16 +27,28 @@ case $1 in
 		trizen -Sy $* || ERROR
 		DONE
 		;;
+	list)
+		trizen -Q $*
+		;;
+	search)
+		trizen -Ss $*
+		;;
 	remove)
 		shift
 		trizen -Rns $* || ERROR
 		DONE
 		;;
+	autoremove)
+		trizen -Rns $(trizen -Qqdt)
+		DONE
+		;;
 	clone)
 		if [ $2 = -b ] or [ $2 = --branch]
 		then
+			rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
 			git clone -b $3 https://github.com/CambonOS/Arch-Distro.git || ERROR
 		else
+			rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
 			git clone https://github.com/CambonOS/Arch-Distro.git || ERROR
 		fi
 		DONE
