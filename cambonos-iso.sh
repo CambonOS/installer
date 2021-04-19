@@ -39,6 +39,7 @@ echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 echo -e "KEYMAP=es" >/ISO/porfile/airootfs/etc/vconsole.conf
 cp -r /tmp/arch-distro/iso/* /ISO/porfile/ || ERROR
 rm /ISO/porfile/syslinux/splash.png
+rm /ISO/porfile/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
 DONE
 
 echo -e "\n>>Creando la ISO\n"
