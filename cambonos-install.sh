@@ -43,7 +43,7 @@ SUDO () {
 }
 
 ROOT () {
-	echo -e "\n>>Contraseña del usuarioadministrador (root): \c" && read -s SECRET
+	echo -e "\n>>Contraseña del usuario administrador (root): \c" && read -s SECRET
 	echo -e "\n\n>>Repetir contraseña: \c" && read -s SECRET1
 	if [[ $SECRET = $SECRET1 ]]
 	then
@@ -69,7 +69,7 @@ echo -e "\n>>En que disco quieres instalar el sistema: \c" && read -e -i "/dev/s
 echo -e "\n>>Escoger tipo de instalacion: (cambonos/cambonos-lite/cambonos-server) \c" && read -e -i "cambonos" TYPE
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 ROOT
-echo -e "\n>>Nombre para el nuevo usuario: \c" && read USER
+echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
 SUDO
 HEAD
 
@@ -77,7 +77,7 @@ echo -e "\n>>Actualizando reloj\c"
 timedatectl set-ntp true >>$SALIDA 2>&1 && DONE || ERROR
 
 echo -e "\n>>Particionando disco\c"
-ls /sys/firmware/efi/efivars >/dev/null && GRUB='uefi' || GRUB='bios'
+ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 case $GRUB in
 	uefi) 
 		(echo -e "g\nn\n1\n\n+512M\nn\n2\n\n\nt\n1\n1\nt\n2\n23\nw\n" | fdisk -w always $DISCO >>$SALIDA 2>&1) && DONE || STOP 
@@ -87,7 +87,7 @@ case $GRUB in
 		mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
 		mount $DISCO$(echo 1) /mnt/boot >>$SALIDA 2>&1 || STOP ;;
 	bios) 
-		(echo -e "o\nn\np\n1\n\nt\n3\n83\nw\n" | fdisk -w always $DISCO >>$SALIDA 2>&1) && DONE || STOP
+		(echo -e "o\nn\np\n1\n\n\nt\n3\n83\nw\n" | fdisk -w always $DISCO >>$SALIDA 2>&1) && DONE || STOP
 		yes | mkfs.ext4 $DISCO$(echo 1) >>$SALIDA 2>&1 || STOP
 		mount $DISCO$(echo 1) /mnt >>$SALIDA 2>&1 || STOP ;;
 esac
