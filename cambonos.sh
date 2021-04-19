@@ -16,35 +16,45 @@ DONE () {
 }
 case $1 in
 	upgrade)
-		if [ $2 = '-b' ]
-		then
-			echo -e "${BLUE}\n>>Actualizando comandos de CambonOS${NOCOLOR}"
-			cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-			git clone -b $3 https://github.com/CambonOS/Arch-Distro >>/tmp/Salida.txt 2>&1
-			cd Arch-Distro
-			sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
-			sudo chmod 755 /usr/bin/cambonos-iso || ERROR
-			sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
-			sudo chmod 755 /usr/bin/cambonos || ERROR
-			DONE
-		else
-			echo -e "${BLUE}\n>>Actualizando comandos de CambonOS${NOCOLOR}"
-			cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-			git clone https://github.com/CambonOS/Arch-Distro >>/tmp/Salida.txt 2>&1
-			cd Arch-Distro
-			sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
-			sudo chmod 755 /usr/bin/cambonos-iso || ERROR
-			sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
-			sudo chmod 755 /usr/bin/cambonos || ERROR
-			DONE
-			echo -e "${BLUE}\n>>Actualizando paquetes${NOCOLOR}"
-			sleep 3
-			trizen -Syyu || ERROR
-			DONE
-			echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
-			sudo grub-mkconfig -o /boot/grub/grub.cfg >>/tmp/Salida.txt 2>&1 || ERROR
-			DONE
-		fi
+		case $2 in
+			-b)
+				echo -e "${BLUE}\n>>Actualizando comandos de CambonOS${NOCOLOR}"
+				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
+				git clone -b $3 https://github.com/CambonOS/Arch-Distro >>/tmp/Salida.txt 2>&1
+				cd Arch-Distro
+				sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
+				sudo chmod 755 /usr/bin/cambonos-iso || ERROR
+				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
+				sudo chmod 755 /usr/bin/cambonos || ERROR
+				DONE ;;
+			--branch)
+				echo -e "${BLUE}\n>>Actualizando comandos de CambonOS${NOCOLOR}"
+				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
+				git clone -b $3 https://github.com/CambonOS/Arch-Distro >>/tmp/Salida.txt 2>&1
+				cd Arch-Distro
+				sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
+				sudo chmod 755 /usr/bin/cambonos-iso || ERROR
+				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
+				sudo chmod 755 /usr/bin/cambonos || ERROR
+				DONE ;;
+			*)
+				echo -e "${BLUE}\n>>Actualizando comandos de CambonOS${NOCOLOR}"
+				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
+				git clone https://github.com/CambonOS/Arch-Distro >>/tmp/Salida.txt 2>&1
+				cd Arch-Distro
+				sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
+				sudo chmod 755 /usr/bin/cambonos-iso || ERROR
+				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
+				sudo chmod 755 /usr/bin/cambonos || ERROR
+				DONE
+				echo -e "${BLUE}\n>>Actualizando paquetes${NOCOLOR}"
+				sleep 3
+				trizen -Syyu || ERROR
+				DONE
+				echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
+				sudo grub-mkconfig -o /boot/grub/grub.cfg >>/tmp/Salida.txt 2>&1 || ERROR
+				DONE ;;
+		esac
 		;;
 	install)
 		shift
