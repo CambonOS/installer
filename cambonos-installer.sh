@@ -41,6 +41,17 @@ SUDO () {
 	fi
 }
 
+ROOT () {
+	echo -e "\n>>Contraseña del usuarioadministrador (root): \c" && read -s SECRET
+	echo -e "\n\n>>Repetir contraseña: \c" && read -s SECRET1
+	if [[ $PASS = $PASS1 ]]
+	then
+		sleep 1
+	else
+		ROOT
+	fi
+}
+
 PREGUNTAS () {
 	echo -e "\n>>Tipo de arranque?(uefi/bios) \c" && read GRUB
 	echo -e "\n>>Formato del disco?(mbr/gpt) \c" && read TDISCO
@@ -94,6 +105,7 @@ esac
 
 echo -e "\n>>Nombre del equipo? \c" && read NOMBRE
 echo -e "\n>>Nombre para el nuevo usuario: \c" && read USER
+ROOT
 SUDO
 HEAD
 
