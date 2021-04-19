@@ -6,12 +6,12 @@ GREEN='\033[1;32m'
 BLUE='\033[1;34m'
 
 ERROR () {
-  echo -e "${RED} ERROR \n${NOCOLOR}"
+  echo -e "${RED}ERROR${NOCOLOR}"
   exit
 }
 
 DONE () {
-  echo -e "${GREEN} DONE \n${NOCOLOR}"
+  echo -e "${GREEN}DONE${NOCOLOR}"
   sleep 1
 }
 case $1 in
@@ -41,7 +41,7 @@ case $1 in
 			sleep 3
 			trizen -Syyu || ERROR
 			DONE
-			echo -e "${BLUE}>>Actualizando GRUB${NOCOLOR}"
+			echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 			sudo grub-mkconfig -o /boot/grub/grub.cfg >>/tmp/Salida.txt 2>&1 || ERROR
 			DONE
 		fi
