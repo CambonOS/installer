@@ -29,9 +29,9 @@ pacman --noconfirm -Sy archiso >/tmp/Salida.txt 2>&1 && DONE || ERROR
 
 echo -e "\n>>Descargando el script de instalacion"
 rm -rf /tmp/arch-distro >>/tmp/Salida.txt 2>&1
-if [ $1 = -b ] or [ $1 = --branch ]
+if [ $1 = '-b' ] or [ $1 = '--branch' ]
 then
-	cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
+	cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE |${NOCOLOR}| ERROR
 else
 	cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
 fi
