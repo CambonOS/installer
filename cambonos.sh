@@ -50,11 +50,11 @@ case $1 in
 		case $1 in
 			-b)
 				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone -b '$2' https://github.com/CambonOS/Arch-Distro.git || ERROR
+				git clone -b $2 https://github.com/CambonOS/Arch-Distro.git || ERROR
 				;;
 			--branch)
 				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone -b '$2' https://github.com/CambonOS/Arch-Distro.git || ERROR
+				git clone -b $2 https://github.com/CambonOS/Arch-Distro.git || ERROR
 				;;
 			*)
 				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
