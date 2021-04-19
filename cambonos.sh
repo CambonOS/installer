@@ -19,8 +19,8 @@ case $1 in
 		if [ $2 = -b ]
 		then
 			echo -e "${BLUE}\n>>Actualizando comandos de CambonOS${NOCOLOR}"
-			cd /tmp; sudo rm -rf Arch-Distro
-			git clone -b $3 https://github.com/CambonOS/Arch-Distro
+			cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
+			git clone -b $3 https://github.com/CambonOS/Arch-Distro >>/tmp/Salida.txt 2>&1
 			cd Arch-Distro
 			sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
 			sudo chmod 755 /usr/bin/cambonos-iso || ERROR
@@ -29,8 +29,8 @@ case $1 in
 			DONE
 		else
 			echo -e "${BLUE}\n>>Actualizando comandos de CambonOS${NOCOLOR}"
-			cd /tmp; sudo rm -rf Arch-Distro
-			git clone https://github.com/CambonOS/Arch-Distro
+			cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
+			git clone https://github.com/CambonOS/Arch-Distro >>/tmp/Salida.txt 2>&1
 			cd Arch-Distro
 			sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
 			sudo chmod 755 /usr/bin/cambonos-iso || ERROR
@@ -38,7 +38,8 @@ case $1 in
 			sudo chmod 755 /usr/bin/cambonos || ERROR
 			DONE
 			echo -e "${BLUE}\n>>Actualizando paquetes${NOCOLOR}"
-			trizen -Syyu --noconfirm >/tmp/Salida.txt 2>&1 || ERROR
+			sleep 3
+			trizen -Syyu || ERROR
 			DONE
 			echo -e "${BLUE}>>Actualizando GRUB${NOCOLOR}"
 			sudo grub-mkconfig -o /boot/grub/grub.cfg >>/tmp/Salida.txt 2>&1 || ERROR
@@ -73,17 +74,17 @@ case $1 in
 			-b)
 				echo -e "${BLUE}\n>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
 				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone -b $2 https://github.com/CambonOS/Arch-Distro.git || ERROR
+				git clone -b $2 https://github.com/CambonOS/Arch-Distro.git >>/tmp/Salida.txt 2>&1 || ERROR
 				;;
 			--branch)
 				echo -e "${BLUE}\n>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
 				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone -b $2 https://github.com/CambonOS/Arch-Distro.git || ERROR
+				git clone -b $2 https://github.com/CambonOS/Arch-Distro.git >>/tmp/Salida.txt 2>&1 || ERROR
 				;;
 			*)
 				echo -e "${BLUE}\n>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
 				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone https://github.com/CambonOS/Arch-Distro.git || ERROR
+				git clone https://github.com/CambonOS/Arch-Distro.git >>/tmp/Salida.txt 2>&1 || ERROR
 				;;
 		esac
 		DONE
