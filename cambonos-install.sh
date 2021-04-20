@@ -102,9 +102,8 @@ echo -e "\n>>Instalando utilidades basicas\c"
 echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | CHROOTF
 
 echo -e "\n>>Configurando sistema\c"
-echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc && cp -r arch-distro/usr/* /usr' | arch-chroot /mnt >$SALIDA 2>&1
-echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade -b main' | arch-chroot /mnt >$SALIDA 2>&1
-echo "echo 'gsettings set org.gnome.desktop.background picture-uri file:///etc/skel/.local/share/backgrounds/anime-girl-archlinux.png' | su $USER" | arch-chroot /mnt >$SALIDA 2>&1
+echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc && cp -r arch-distro/usr/* /usr' | arch-chroot /mnt >>$SALIDA 2>&1
+echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade -b main' | arch-chroot /mnt >>$SALIDA 2>&1
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 
 
@@ -115,8 +114,7 @@ echo -e "\n>>Configurando red\c"
 echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service || exit 1' | CHROOT
 
 echo -e "\n>>Creando usuario\c"
-echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | CHROOT
-echo -e "(echo -e '$SECRET\n$SECRET' | passwd root) || exit 1" | CHROOT
+(echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1) && echo -e "(echo -e '$SECRET\n$SECRET' | passwd root) || exit 1" | CHROOT
 
 echo -e "\n>>Instalando drivers graficos\c"
 (lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia'
