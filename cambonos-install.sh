@@ -69,7 +69,6 @@ echo -e "\n>>Escoger tipo de instalacion: (cambonos/cambonos-lite/cambonos-serve
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 ROOT
 echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
-
 SUDO
 HEAD
 
@@ -117,7 +116,7 @@ echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhos
 
 echo -e "\n>>Creando usuario\c"
 echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | CHROOT
-echo -e "echo -e '$SECRET\n$SECRET' | passwd root) || exit 1" | CHROOT
+echo -e "(echo -e '$SECRET\n$SECRET' | passwd root) || exit 1" | CHROOT
 
 echo -e "\n>>Instalando drivers graficos\c"
 (lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia'
