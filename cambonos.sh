@@ -16,26 +16,28 @@ DONE () {
 }
 case $1 in
 	-h)
-		echo -e "\ncambonos	[OPTION]
-		\n		-h			Muestra esta ayuda
-		\n		upgrade			Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
-		\n		install			Instala paquetes tanto de pacman como de AUR
-		\n		list			Lista los paquetes instalados incluyendo paquetes de AUR
-		\n		search			Busca un paquete en los repositorios oficiales y en AUR
-		\n		remove			Elimina paquetes instalados
-		\n		autoremove		Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
-		\n		clone			Clona el repositorio de CambonOS"
+		echo -e "\nComando: cambonos ${BLUE}[OPTION]${NOCOLOR}
+		\n\n		[OPTIONS]
+		\n		${BLUE}-h${NOCOLOR}			Muestra esta ayuda
+		\n		${BLUE}upgrade${NOCOLOR}			Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
+		\n		${BLUE}install${NOCOLOR}			Instala paquetes tanto de pacman como de AUR
+		\n		${BLUE}list${NOCOLOR}			Lista los paquetes instalados incluyendo paquetes de AUR
+		\n		${BLUE}search${NOCOLOR}			Busca un paquete en los repositorios oficiales y en AUR
+		\n		${BLUE}remove${NOCOLOR}			Elimina paquetes instalados
+		\n		${BLUE}autoremove${NOCOLOR}			Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
+		\n		${BLUE}clone${NOCOLOR}			Clona el repositorio de CambonOS"
 		;;
 	--help)
-		echo -e "\ncambonos	[OPTION]
-		\n		-h			Muestra esta ayuda
-		\n		upgrade			Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
-		\n		install			Instala paquetes tanto de pacman como de AUR
-		\n		list			Lista los paquetes instalados incluyendo paquetes de AUR
-		\n		search			Busca un paquete en los repositorios oficiales y en AUR
-		\n		remove			Elimina paquetes instalados
-		\n		autoremove		Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
-		\n		clone			Clona el repositorio de CambonOS"
+		echo -e "\n\nComando: cambonos ${BLUE}[OPTION]${NOCOLOR}
+		\n\n		[OPTIONS]
+		\n		${BLUE}-h${NOCOLOR}			Muestra esta ayuda
+		\n		${BLUE}upgrade${NOCOLOR}			Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
+		\n		${BLUE}install${NOCOLOR}			Instala paquetes tanto de pacman como de AUR
+		\n		${BLUE}list${NOCOLOR}			Lista los paquetes instalados incluyendo paquetes de AUR
+		\n		${BLUE}search${NOCOLOR}			Busca un paquete en los repositorios oficiales y en AUR
+		\n		${BLUE}remove${NOCOLOR}			Elimina paquetes instalados
+		\n		${BLUE}autoremove${NOCOLOR}			Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
+		\n		${BLUE}clone${NOCOLOR}			Clona el repositorio de CambonOS"
 		;;
 	upgrade)
 		case $2 in
