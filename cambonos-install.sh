@@ -164,7 +164,7 @@ echo "echo 'trizen --noconfirm -S zramd brave-bin menulibre gedit gnome-calculat
 mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
 
 echo -e "\n>>Activando zswap \c"
-systemctl enable zramd.service | CHROOT
+echo "systemctl enable zramd.service" | CHROOT
 
 echo -e "\n>>Terminando instalacion"
 echo 'locale-gen' | CHROOT
