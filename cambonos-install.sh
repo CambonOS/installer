@@ -163,8 +163,8 @@ echo -e "\n>>Instalando programas adicionales\c"
 echo "echo 'trizen --noconfirm -S zramd brave-bin menulibre gedit gnome-calculator alacritty steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle || exit 1' | su $USER || exit 1" | CHROOT
 mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
 
-echo -e "\n>>Activando zswap \c"
+echo -e "\n>>Activando zswap\c"
 echo "systemctl enable zramd.service" | CHROOT
 
-echo -e "\n>>Terminando instalacion"
+echo -e "\n>>Terminando instalacion\c"
 echo 'locale-gen' | CHROOT
