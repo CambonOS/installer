@@ -16,7 +16,7 @@ DONE () {
 }
 case $1 in
 	-h)
-		echo -e "\nComando: cambonos ${BLUE}[OPTION]${NOCOLOR}
+		echo -e "\n${BLUE}>>Comando: cambonos [OPTION]${NOCOLOR}
 		\n\n		[OPTIONS]
 		\n		${BLUE}-h${NOCOLOR}			Muestra esta ayuda
 		\n		${BLUE}upgrade${NOCOLOR}			Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
@@ -28,7 +28,7 @@ case $1 in
 		\n		${BLUE}clone${NOCOLOR}			Clona el repositorio de CambonOS"
 		;;
 	--help)
-		echo -e "\n\nComando: cambonos ${BLUE}[OPTION]${NOCOLOR}
+		echo -e "\n${BLUE}>>Comando: cambonos [OPTION]${NOCOLOR}
 		\n\n		[OPTIONS]
 		\n		${BLUE}-h${NOCOLOR}			Muestra esta ayuda
 		\n		${BLUE}upgrade${NOCOLOR}			Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
