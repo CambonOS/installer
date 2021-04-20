@@ -105,7 +105,7 @@ echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completi
 echo -e "\n>>Configurando sistema\c"
 echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc' | arch-chroot /mnt >$SALIDA 2>&1
 echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade -b main' | arch-chroot /mnt >$SALIDA 2>&1
-echo "gsettings set org.gnome.desktop.background picture-uri file:///etc/skel/.local/share/backgrounds/anime-girl-archlinux.png" | arch-chroot /mnt >$SALIDA 2>&1
+echo "echo 'gsettings set org.gnome.desktop.background picture-uri file:///etc/skel/.local/share/backgrounds/anime-girl-archlinux.png' | su $USER" | arch-chroot /mnt >$SALIDA 2>&1
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 
 
