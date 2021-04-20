@@ -26,6 +26,17 @@ case $1 in
 		\n		autoremove		Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
 		\n		clone			Clona el repositorio de CambonOS"
 		;;
+	--help)
+		echo -e "\ncambonos	[OPTION]
+		\n		-h				Muestra esta ayuda
+		\n		upgrade			Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
+		\n		install			Instala paquetes tanto de pacman como de AUR
+		\n		list			Lista los paquetes instalados incluyendo paquetes de AUR
+		\n		search			Busca un paquete en los repositorios oficiales y en AUR
+		\n		remove			Elimina paquetes instalados
+		\n		autoremove		Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
+		\n		clone			Clona el repositorio de CambonOS"
+		;;
 	upgrade)
 		case $2 in
 			-b)
