@@ -19,7 +19,7 @@ ERROR () {
 
 STOP () {
 	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
-  umount /mnt/boot >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt
+  umount /mnt/boot >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt ; exit 1
 }
 
 CHROOT () {
@@ -99,13 +99,7 @@ pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && 
 
 echo -e "\n>>Instalando utilidades basicas\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') && (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-echo "pacman --noconfirm -S nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | CHROOTF
-
-echo -e "\n>>Configurando sistema\c"
-echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc && cp -r arch-distro/usr/* /usr' | arch-chroot /mnt >>$SALIDA 2>&1
-echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade -b main' | arch-chroot /mnt >>$SALIDA 2>&1
-echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
-
+echo "pacman --noconfirm -Sy nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | CHROOTF
 
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
@@ -117,21 +111,22 @@ echo -e "\n>>Creando usuario\c"
 (echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1) && echo -e "(echo -e '$SECRET\n$SECRET' | passwd root) || exit 1" | CHROOT
 
 echo -e "\n>>Instalando drivers graficos\c"
+echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf
 (lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia'
 (lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd'
 (lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel'
 (lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware'
 case $GPU in
 	amd)
-		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
 	nvidia)
-		echo "pacman --noconfirm -S xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
 	intel)
-		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
 	vmware)
-		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT ;;
 	*)
-		echo "pacman --noconfirm -S xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | CHROOT ;;
 esac
 
 echo -e "\n>>Instalando entorno grafico\c"
@@ -139,30 +134,33 @@ case $TYPE in
 	cambonos-server)
 		DONE ;;
 	cambonos)
-		echo "pacman --noconfirm -S gdm nautilus gnome-control-center gnome-tweaks && systemctl enable gdm.service || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy gdm nautilus gnome-control-center gnome-tweaks && systemctl enable gdm.service || exit 1" | CHROOT ;;
 	cambonos-lite)
-		echo "pacman --noconfirm -S xfce4 lightdm && systemctl enable lightdm.service || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy xfce4 lightdm && systemctl enable lightdm.service || exit 1" | CHROOT ;;
 esac
 
 echo -e "\n>>Instalando grub\c"
 case $GRUB in
 	bios)
-		echo "pacman --noconfirm -S grub && grub-install --target=i386-pc $DISCO && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF ;;
+		echo "pacman --noconfirm -Sy grub && grub-install --target=i386-pc $DISCO && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF ;;
 	uefi)
-		echo "pacman --noconfirm -S grub efibootmgr && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF ;;
+		echo "pacman --noconfirm -Sy grub efibootmgr && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF ;;
 esac
 
 echo -e "\n>>Instalando trizen\c"
-cp /mnt/etc/sudoers /mnt/etc/sudoers.bk
 echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Instalando programas adicionales\c"
-echo "echo 'trizen --noconfirm -S zramd brave-bin menulibre gedit gnome-calculator alacritty steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle || exit 1' | su $USER || exit 1" | CHROOT
-mv /mnt/etc/sudoers.bk /mnt/etc/sudoers
+echo "echo 'trizen --noconfirm -Sy zramd brave-bin menulibre gedit gnome-calculator alacritty steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Activando zswap\c"
 echo "systemctl enable zramd.service" | CHROOT
+
+echo -e "\n>>Configurando sistema\c"
+echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc && cp -r arch-distro/usr/* /usr' | arch-chroot /mnt >>$SALIDA 2>&1
+echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade -b main' | arch-chroot /mnt >>$SALIDA 2>&1
+echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 
 echo -e "\n>>Terminando instalacion\c"
 echo 'locale-gen' | CHROOT
