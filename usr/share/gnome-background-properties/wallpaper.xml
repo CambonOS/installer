@@ -3,7 +3,7 @@
 <wallpapers>
   <wallpaper deleted="false">
     <name>CambonOS</name>
-    <filename>/usr/local/share/backgrounds/cambonos.jpg</filename>
+    <filename>/etc/skel/.local/share/backgrounds/cambonos.jpg</filename>
     <options>zoom</options>
   </wallpaper>
 </wallpapers>
