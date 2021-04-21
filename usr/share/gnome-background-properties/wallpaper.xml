@@ -3,7 +3,38 @@
 <wallpapers>
   <wallpaper deleted="false">
     <name>CambonOS</name>
-    <filename>/etc/skel/.local/share/backgrounds/cambonos.jpg</filename>
+    <filename>/usr/share/backgrounds/cambonos.jpg</filename>
+    <options>zoom</options>
+    <shade_type>solid</shade_type>
+  </wallpaper>
+  <wallpaper deleted="false">
+    <name>CambonOS</name>
+    <filename>/usr/share/backgrounds/pacman.jpg</filename>
+    <options>zoom</options>
+  </wallpaper>
+  <wallpaper deleted="false">
+    <name>CambonOS</name>
+    <filename>/usr/share/backgrounds/lago.jpg</filename>
+    <options>zoom</options>
+  </wallpaper>
+  <wallpaper deleted="false">
+    <name>CambonOS</name>
+    <filename>/usr/share/backgrounds/2021-04-18-23-02-34-arch-basic.jpg</filename>
+    <options>zoom</options>
+  </wallpaper>
+  <wallpaper deleted="false">
+    <name>CambonOS</name>
+    <filename>/usr/share/backgrounds/2021-04-18-23-02-34-tux.jpg</filename>
+    <options>zoom</options>
+  </wallpaper>
+  <wallpaper deleted="false">
+    <name>CambonOS</name>
+    <filename>/usr/share/backgrounds/ciudad.jpeg</filename>
+    <options>zoom</options>
+  </wallpaper>
+  <wallpaper deleted="false">
+    <name>CambonOS</name>
+    <filename>/usr/share/backgrounds/anime-girl-archlinux.png</filename>
     <options>zoom</options>
   </wallpaper>
 </wallpapers>
