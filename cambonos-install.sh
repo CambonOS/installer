@@ -160,7 +160,7 @@ echo "systemctl enable zramd.service" | CHROOT
 echo -e "\n>>Configurando sistema\c"
 echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc && cp -r arch-distro/usr/* /usr' | arch-chroot /mnt >>$SALIDA 2>&1
 echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade' | arch-chroot /mnt >>$SALIDA 2>&1
-echo "echo 'gsettings set org.gnome.desktop.background picture-uri "file:///usr/share/backgrounds/cambonos.jpg' | su $USER" | arch-chroot /mnt >>$SALIDA 2>&1
+echo "echo 'gsettings set org.gnome.desktop.background picture-uri "file:///usr/share/backgrounds/cambonos.jpg"' | su $USER" | arch-chroot /mnt >>$SALIDA 2>&1
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 
 echo -e "\n>>Terminando instalacion\c"
