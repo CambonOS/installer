@@ -15,13 +15,14 @@ DONE () {
   echo -e "${GREEN}DONE${NOCOLOR}"
   sleep 1
 }
+sudo rm -f /tmp/Salida.txt
 case $1 in
 	-h)
 		echo -e "\n${BLUE}>>Comando: cambonos [OPTION]${NOCOLOR}
 	[OPTIONS]
 	${BLUE}-h${NOCOLOR}		Muestra esta ayuda
 	${BLUE}upgrade${NOCOLOR}		Actualiza tanto los paquetes de pacman como de AUR
-				ademas de actualizar el script cambonos
+			ademas de actualizar el script cambonos
 	${BLUE}install${NOCOLOR}		Instala paquetes tanto de pacman como de AUR
 	${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
 	${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
@@ -36,7 +37,7 @@ case $1 in
 	[OPTIONS]
 	${BLUE}-h${NOCOLOR}		Muestra esta ayuda
 	${BLUE}upgrade${NOCOLOR}		Actualiza tanto los paquetes de pacman como de AUR
-				ademas de actualizar el script cambonos
+			ademas de actualizar el script cambonos
 	${BLUE}install${NOCOLOR}		Instala paquetes tanto de pacman como de AUR
 	${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
 	${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
@@ -47,13 +48,14 @@ case $1 in
 	${BLUE}mkiso${NOCOLOR}		Crea una ISO de instalacion de CambonOS"
 		;;
 	upgrade)
+		sudo rm -rf /tmp/arch-distro
 		case $2 in
 			-b)
 				echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 				sleep 2
-				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone -b $3 https://github.com/CambonOS/Arch-Distro
-				cd Arch-Distro
+				cd /tmp
+				git clone -b $3 https://github.com/CambonOS/arch-distro
+				cd arch-distro
 				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 				sudo chmod 755 /usr/bin/cambonos || ERROR
 				DONE
@@ -61,9 +63,9 @@ case $1 in
 			--branch)
 				echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 				sleep 2
-				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone -b $3 https://github.com/CambonOS/Arch-Distro
-				cd Arch-Distro
+				cd /tmp
+				git clone -b $3 https://github.com/CambonOS/arch-distro
+				cd arch-distro
 				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 				sudo chmod 755 /usr/bin/cambonos || ERROR
 				DONE
@@ -71,9 +73,9 @@ case $1 in
 			*)
 				echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 				sleep 2
-				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone https://github.com/CambonOS/Arch-Distro
-				cd Arch-Distro
+				cd /tmp
+				git clone https://github.com/CambonOS/arch-distro
+				cd arch-distro
 				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 				sudo chmod 755 /usr/bin/cambonos || ERROR
 				DONE
