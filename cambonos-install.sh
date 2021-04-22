@@ -142,9 +142,9 @@ esac
 echo -e "\n>>Instalando grub\c"
 case $GRUB in
 	bios)
-		echo "pacman --noconfirm -Sy grub && grub-install --target=i386-pc $DISCO && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF ;;
+		echo "pacman --noconfirm -Sy grub && grub-install --target=i386-pc $DISCO || exit 1" | CHROOTF ;;
 	uefi)
-		echo "pacman --noconfirm -Sy grub efibootmgr && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS && grub-mkconfig -o /boot/grub/grub.cfg || exit 1" | CHROOTF ;;
+		echo "pacman --noconfirm -Sy grub efibootmgr && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | CHROOTF ;;
 esac
 
 echo -e "\n>>Instalando trizen\c"
@@ -159,8 +159,7 @@ echo "systemctl enable zramd.service" | CHROOT
 
 echo -e "\n>>Configurando sistema\c"
 echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc && cp -r arch-distro/usr/* /usr' | arch-chroot /mnt >>$SALIDA 2>&1
-echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade' | arch-chroot /mnt >>$SALIDA 2>&1
-echo "echo 'gsettings set org.gnome.desktop.background picture-uri "file:///usr/share/backgrounds/cambonos.jpg"' | su $USER" | arch-chroot /mnt >>$SALIDA 2>&1
+echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade -b main && grub-mkconfig -o /boot/grub/grub.cfg' | arch-chroot /mnt >>$SALIDA 2>&1
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
 
 echo -e "\n>>Terminando instalacion\c"
