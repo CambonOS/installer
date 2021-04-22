@@ -124,24 +124,22 @@ case $1 in
 		;;
 	clone)
 		shift
+		rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
 		case $1 in
 			-b)
 				echo -e "${BLUE}>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
 				sleep 2
-				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone -b $2 https://github.com/CambonOS/Arch-Distro.git || ERROR
+				git clone -b $2 https://github.com/CambonOS/arch-distro.git || ERROR
 				;;
 			--branch)
 				echo -e "${BLUE}>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
 				sleep 2
-				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone -b $2 https://github.com/CambonOS/Arch-Distro.git || ERROR
+				git clone -b $2 https://github.com/CambonOS/arch-distro.git || ERROR
 				;;
 			*)
 				echo -e "${BLUE}>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
 				sleep 2
-				rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
-				git clone https://github.com/CambonOS/Arch-Distro.git || ERROR
+				git clone https://github.com/CambonOS/arch-distro.git || ERROR
 				;;
 		esac
 		DONE
