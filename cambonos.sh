@@ -7,6 +7,7 @@ BLUE='\033[1;34m'
 
 ERROR () {
   echo -e "${RED}ERROR${NOCOLOR}"
+  rm -rf /ISO >>/tmp/Salida.txt 2>&1
   exit
 }
 
@@ -17,27 +18,29 @@ DONE () {
 case $1 in
 	-h)
 		echo -e "\n${BLUE}>>Comando: cambonos [OPTION]${NOCOLOR}
-		\n\n	[OPTIONS]
-		\n	${BLUE}-h${NOCOLOR}		Muestra esta ayuda
-		\n	${BLUE}upgrade${NOCOLOR}	Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
-		\n	${BLUE}install${NOCOLOR}	Instala paquetes tanto de pacman como de AUR
-		\n	${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
-		\n	${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
-		\n	${BLUE}remove${NOCOLOR}		Elimina paquetes instalados
-		\n	${BLUE}autoremove${NOCOLOR}	Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
-		\n	${BLUE}clone${NOCOLOR}		Clona el repositorio de CambonOS"
+		[OPTIONS]
+		${BLUE}-h${NOCOLOR}		Muestra esta ayuda
+		${BLUE}upgrade${NOCOLOR}	Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
+		${BLUE}install${NOCOLOR}	Instala paquetes tanto de pacman como de AUR
+		${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
+		${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
+		${BLUE}remove${NOCOLOR}		Elimina paquetes instalados
+		${BLUE}autoremove${NOCOLOR}	Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
+		${BLUE}clone${NOCOLOR}		Clona el repositorio de CambonOS
+		${BLUE}mkiso${NOCOLOR}		Crea una ISO de instalacion de CambonOS"
 		;;
 	--help)
 		echo -e "\n${BLUE}>>Comando: cambonos [OPTION]${NOCOLOR}
-		\n\n	[OPTIONS]
-		\n	${BLUE}-h${NOCOLOR}		Muestra esta ayuda
-		\n	${BLUE}upgrade${NOCOLOR}	Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
-		\n	${BLUE}install${NOCOLOR}	Instala paquetes tanto de pacman como de AUR
-		\n	${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
-		\n	${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
-		\n	${BLUE}remove${NOCOLOR}		Elimina paquetes instalados
-		\n	${BLUE}autoremove${NOCOLOR}	Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
-		\n	${BLUE}clone${NOCOLOR}		Clona el repositorio de CambonOS"
+		[OPTIONS]
+		${BLUE}-h${NOCOLOR}		Muestra esta ayuda
+		${BLUE}upgrade${NOCOLOR}	Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
+		${BLUE}install${NOCOLOR}	Instala paquetes tanto de pacman como de AUR
+		${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
+		${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
+		${BLUE}remove${NOCOLOR}		Elimina paquetes instalados
+		${BLUE}autoremove${NOCOLOR}	Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
+		${BLUE}clone${NOCOLOR}		Clona el repositorio de CambonOS
+		${BLUE}mkiso${NOCOLOR}		Crea una ISO de instalacion de CambonOS"
 		;;
 	upgrade)
 		case $2 in
@@ -142,6 +145,53 @@ case $1 in
 				;;
 		esac
 		DONE
+		;;
+	mkiso)
+		if [[ $EUID -ne 0 ]]
+		then
+			echo -e "Debese ejecutar como usuario con privilejios"
+			exit
+		fi
+		echo -e "\n>>Carpeta destino ISO:\c"
+		read -e -i $(pwd) RUTAD
+
+		echo -e "\n>>Instalando paquetes necesarios\c"
+		pacman --noconfirm -Sy archiso >/tmp/Salida.txt 2>&1 && DONE || ERROR
+
+		echo -e "\n>>Descargando el script de instalacion"
+		rm -rf /tmp/arch-distro >>/tmp/Salida.txt 2>&1
+		case $1 in
+			-b)
+				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE |${NOCOLOR}| ERROR
+				;;
+			--branch)
+				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE |${NOCOLOR}| ERROR
+				;;
+			*)
+				cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
+				;;
+		esac
+		DONE
+
+		echo -e "\n>>Creando ficheros de configuracion de la ISO\c"
+		mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
+		mv /tmp/arch-distro/cambonos-install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install || ERROR
+		echo 'chmod 777 /usr/local/bin/cambonos-install;VERDE="\033[1;32m";NOCOLOR="\033[0m";AZUL="\033[1;34m";echo -e "\n  Para instalar ${AZUL}CambonOS${NOCOLOR} ejecute el comando ${VERDE}cambonos-install${NOCOLOR}\n"' >>/ISO/porfile/airootfs/root/.zshrc
+		echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
+		echo -e "KEYMAP=es" >/ISO/porfile/airootfs/etc/vconsole.conf
+		cp -r /tmp/arch-distro/iso/* /ISO/porfile/ || ERROR
+		rm /ISO/porfile/syslinux/splash.png
+		rm /ISO/porfile/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
+		DONE
+
+		echo -e "\n>>Creando la ISO\n"
+		mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile && DONE || ERROR
+
+		echo -e "\n>>Eliminado ficheros/paquetes innecesarios\c"
+		rm -rf /ISO
+		pacman --noconfirm -Rns archiso >>/tmp/Salida.txt 2>&1
+
+		echo -e "\n\n${GREEN}***********DONE***********\n\n${NOCOLOR}"
 		;;
 	*)
 		echo -e "${RED}Opción ${BLUE}$1${RED} no reconocida. Para obtener ayuda ${BLUE}cambonos -h${NOCOLOR}"
