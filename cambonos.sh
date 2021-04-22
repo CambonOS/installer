@@ -50,8 +50,6 @@ case $1 in
 				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
 				git clone -b $3 https://github.com/CambonOS/Arch-Distro
 				cd Arch-Distro
-				sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
-				sudo chmod 755 /usr/bin/cambonos-iso || ERROR
 				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 				sudo chmod 755 /usr/bin/cambonos || ERROR
 				DONE
@@ -62,8 +60,6 @@ case $1 in
 				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
 				git clone -b $3 https://github.com/CambonOS/Arch-Distro
 				cd Arch-Distro
-				sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
-				sudo chmod 755 /usr/bin/cambonos-iso || ERROR
 				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 				sudo chmod 755 /usr/bin/cambonos || ERROR
 				DONE
@@ -74,8 +70,6 @@ case $1 in
 				cd /tmp; sudo rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
 				git clone https://github.com/CambonOS/Arch-Distro
 				cd Arch-Distro
-				sudo cp ./cambonos-iso.sh /usr/bin/cambonos-iso || ERROR
-				sudo chmod 755 /usr/bin/cambonos-iso || ERROR
 				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 				sudo chmod 755 /usr/bin/cambonos || ERROR
 				DONE
