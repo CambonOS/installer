@@ -143,16 +143,19 @@ case $1 in
 	mkiso)
 		if [[ $EUID -ne 0 ]]
 		then
-			echo -e "Debese ejecutar como usuario con privilejios"
+			echo -e "${RED}Debese ejecutar como usuario con privilejios${NOCOLOR}"
 			exit
 		fi
 		echo -e "\n>>Carpeta destino ISO:\c"
+		sleep 2
 		read -e -i $(pwd) RUTAD
 
-		echo -e "\n>>Instalando paquetes necesarios\c"
+		echo -e "\n>>Instalando paquetes necesarios"
+		sleep 2
 		pacman --noconfirm -Sy archiso >/tmp/Salida.txt 2>&1 && DONE || ERROR
 
 		echo -e "\n>>Descargando el script de instalacion"
+		sleep 2
 		rm -rf /tmp/arch-distro >>/tmp/Salida.txt 2>&1
 		case $1 in
 			-b)
@@ -165,9 +168,9 @@ case $1 in
 				cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
 				;;
 		esac
-		DONE
 
-		echo -e "\n>>Creando ficheros de configuracion de la ISO\c"
+		echo -e "\n>>Creando ficheros de configuracion de la ISO"
+		sleep 2
 		mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
 		mv /tmp/arch-distro/cambonos-install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install || ERROR
 		echo 'chmod 777 /usr/local/bin/cambonos-install;VERDE="\033[1;32m";NOCOLOR="\033[0m";AZUL="\033[1;34m";echo -e "\n  Para instalar ${AZUL}CambonOS${NOCOLOR} ejecute el comando ${VERDE}cambonos-install${NOCOLOR}\n"' >>/ISO/porfile/airootfs/root/.zshrc
@@ -178,14 +181,15 @@ case $1 in
 		rm /ISO/porfile/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
 		DONE
 
-		echo -e "\n>>Creando la ISO\n"
+		echo -e "\n>>Creando la ISO"
+		sleep 2
 		mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile && DONE || ERROR
 
-		echo -e "\n>>Eliminado ficheros/paquetes innecesarios\c"
+		echo -e "\n>>Eliminado ficheros/paquetes innecesarios"
+		sleep 2
 		rm -rf /ISO
 		pacman --noconfirm -Rns archiso >>/tmp/Salida.txt 2>&1
-
-		echo -e "\n\n${GREEN}***********DONE***********\n\n${NOCOLOR}"
+		DONE
 		;;
 	*)
 		echo -e "${RED}Opción ${BLUE}$1${RED} no reconocida. Para obtener ayuda ${BLUE}cambonos -h${NOCOLOR}"
