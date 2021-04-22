@@ -18,29 +18,33 @@ DONE () {
 case $1 in
 	-h)
 		echo -e "\n${BLUE}>>Comando: cambonos [OPTION]${NOCOLOR}
-		[OPTIONS]
-		${BLUE}-h${NOCOLOR}		Muestra esta ayuda
-		${BLUE}upgrade${NOCOLOR}	Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
-		${BLUE}install${NOCOLOR}	Instala paquetes tanto de pacman como de AUR
-		${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
-		${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
-		${BLUE}remove${NOCOLOR}		Elimina paquetes instalados
-		${BLUE}autoremove${NOCOLOR}	Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
-		${BLUE}clone${NOCOLOR}		Clona el repositorio de CambonOS
-		${BLUE}mkiso${NOCOLOR}		Crea una ISO de instalacion de CambonOS"
+	[OPTIONS]
+	${BLUE}-h${NOCOLOR}		Muestra esta ayuda
+	${BLUE}upgrade${NOCOLOR}		Actualiza tanto los paquetes de pacman como de AUR
+						ademas de actualizar el script cambonos
+	${BLUE}install${NOCOLOR}	Instala paquetes tanto de pacman como de AUR
+	${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
+	${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
+	${BLUE}remove${NOCOLOR}		Elimina paquetes instalados
+	${BLUE}autoremove${NOCOLOR}	Elimina los paquetes que han sido instalados automaticamento
+					como dependencias y no son necesarios
+	${BLUE}clone${NOCOLOR}		Clona el repositorio de CambonOS
+	${BLUE}mkiso${NOCOLOR}		Crea una ISO de instalacion de CambonOS"
 		;;
 	--help)
 		echo -e "\n${BLUE}>>Comando: cambonos [OPTION]${NOCOLOR}
-		[OPTIONS]
-		${BLUE}-h${NOCOLOR}		Muestra esta ayuda
-		${BLUE}upgrade${NOCOLOR}	Actualiza tanto los paquetes de pacman como de AUR ademas de actualizar el script cambonos
-		${BLUE}install${NOCOLOR}	Instala paquetes tanto de pacman como de AUR
-		${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
-		${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
-		${BLUE}remove${NOCOLOR}		Elimina paquetes instalados
-		${BLUE}autoremove${NOCOLOR}	Elimina los paquetes que han sido instalados automaticamento como dependencias y no son necesarios
-		${BLUE}clone${NOCOLOR}		Clona el repositorio de CambonOS
-		${BLUE}mkiso${NOCOLOR}		Crea una ISO de instalacion de CambonOS"
+	[OPTIONS]
+	${BLUE}-h${NOCOLOR}		Muestra esta ayuda
+	${BLUE}upgrade${NOCOLOR}		Actualiza tanto los paquetes de pacman como de AUR
+						ademas de actualizar el script cambonos
+	${BLUE}install${NOCOLOR}	Instala paquetes tanto de pacman como de AUR
+	${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
+	${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
+	${BLUE}remove${NOCOLOR}		Elimina paquetes instalados
+	${BLUE}autoremove${NOCOLOR}	Elimina los paquetes que han sido instalados automaticamento
+					como dependencias y no son necesarios
+	${BLUE}clone${NOCOLOR}		Clona el repositorio de CambonOS
+	${BLUE}mkiso${NOCOLOR}		Crea una ISO de instalacion de CambonOS"
 		;;
 	upgrade)
 		case $2 in
