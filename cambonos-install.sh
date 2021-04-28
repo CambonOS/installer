@@ -30,6 +30,30 @@ CHROOTF () {
 	arch-chroot /mnt >>$SALIDA 2>&1 && DONE || STOP
 }
 
+SOFTWARE () {
+	HEAD
+	echo -e "
+***** Software a instalar *****
+Emulador de terminal:
+1-Alacritty		2-Gnome Terminal	3-Konsole
+4-Terminator		5-Xterm
+
+Suite ofimatica:
+7-LibreOffice
+
+Gaming:
+13-GameHub		14-Steam		15-Ckiaki
+16-Lutris
+
+Virtualizacion:
+19-VirtualBox		20-Gnome-Box
+
+Navegadores:
+25-Firefox		26-Brave		27-Chrome
+28-Opera		29-Chromiun"
+	echo -e "\nEscribir numeros separados por comas: \c" && read NUMBER
+}
+
 SUDO () {
 	echo -e "\n>>Contraseña del usuario: \c" && read -s PASS
 	echo -e "\n\n>>Repetir contraseña: \c" && read -s PASS1
@@ -65,7 +89,6 @@ reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >$SALIDA 2
 
 echo -e "\n>>Listando discos\n" && lsblk
 echo -e "\n>>En que disco quieres instalar el sistema: \c" && read -e -i "/dev/sd" DISCO
-echo -e "\n>>Escoger tipo de instalacion: (cambonos/cambonos-lite/cambonos-server) \c" && read -e -i "cambonos" TYPE
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 ROOT
 echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
@@ -130,14 +153,7 @@ case $GPU in
 esac
 
 echo -e "\n>>Instalando entorno grafico\c"
-case $TYPE in
-	cambonos-server)
-		DONE ;;
-	cambonos)
-		echo "pacman --noconfirm -Sy gdm nautilus gnome-control-center gnome-tweaks && systemctl enable gdm.service || exit 1" | CHROOT ;;
-	cambonos-lite)
-		echo "pacman --noconfirm -Sy xfce4 lightdm && systemctl enable lightdm.service || exit 1" | CHROOT ;;
-esac
+echo "pacman --noconfirm -Sy gdm nautilus gnome-control-center gnome-tweaks && systemctl enable gdm.service || exit 1" | CHROOT
 
 echo -e "\n>>Instalando grub\c"
 case $GRUB in
@@ -152,7 +168,25 @@ echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Instalando programas adicionales\c"
-echo "echo 'trizen --noconfirm -Sy zramd brave-bin menulibre gedit gnome-calculator alacritty steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle || exit 1' | su $USER || exit 1" | CHROOT
+echo $NUMBER | grep 1[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy alacritty || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 2[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy gnome-terminal || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 3[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy konsole || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 4[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy terminator || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 5[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy xterm || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 7[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy libreoffice-fresh libreoffice-fresh-es || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 13[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy gamehub || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 14[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy steam || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 15[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy chiaki || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 16[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy lutris || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 19[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy virtualbox virtualbox-guest-iso virtualbox-ext-oracle || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 20[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy gnome-boxes || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 25[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy firefox-i18n-es-es || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 26[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy brave-bin || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 27[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy google-chrome || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 28[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy opera || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 29[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy chromium || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo "echo 'trizen --noconfirm -Sy zramd gedit gnome-calculator || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+
 
 echo -e "\n>>Activando zswap\c"
 echo "systemctl enable zramd.service" | CHROOT
