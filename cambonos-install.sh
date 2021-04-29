@@ -34,6 +34,7 @@ SOFTWARE () {
 	HEAD
 	echo -e "
 ***** Software a instalar *****
+
 Emulador de terminal:
 1-Alacritty		2-Gnome Terminal	3-Konsole
 4-Terminator		5-Xterm
@@ -50,8 +51,9 @@ Virtualizacion:
 
 Navegadores:
 25-Firefox		26-Brave		27-Chrome
-28-Opera		29-Chromiun"
-	echo -e "\nEscribir numeros separados por comas: \c" && read NUMBER
+28-Opera		29-Chromiun
+
+Escribir numeros separados por comas: \c" && read NUMBER
 }
 
 SUDO () {
@@ -93,6 +95,7 @@ echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 ROOT
 echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
 SUDO
+SOFTWARE
 HEAD
 
 echo -e "\n>>Actualizando reloj\c"
