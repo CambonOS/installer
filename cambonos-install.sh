@@ -171,23 +171,23 @@ echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Instalando programas adicionales\c"
-echo $NUMBER | grep 1[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy alacritty || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 2[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy gnome-terminal || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 3[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy konsole || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 4[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy terminator || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 5[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy xterm || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 7[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy libreoffice-fresh libreoffice-fresh-es || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 13[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy gamehub || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 14[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy steam || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 15[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy chiaki || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 16[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy lutris || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 19[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy virtualbox virtualbox-guest-iso virtualbox-ext-oracle || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 20[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy gnome-boxes || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 25[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy firefox-i18n-es-es || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 26[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy brave-bin || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 27[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy google-chrome || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 28[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy opera || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo $NUMBER | grep 29[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy chromium || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+echo $NUMBER | grep 1[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy alacritty || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 2[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy gnome-terminal || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 3[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy konsole || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 4[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy terminator || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 5[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy xterm || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 7[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy libreoffice-fresh libreoffice-fresh-es || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 13[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy gamehub || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 14[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy alacritty || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 15[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy chiaki || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 16[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy lutris || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 19[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy virtualbox virtualbox-guest-iso virtualbox-ext-oracle || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 20[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy gnome-boxes || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 25[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy firefox-i18n-es-es || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 26[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy brave-bin || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 27[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy google-chrome || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 28[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy opera || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
+echo $NUMBER | grep 29[^0-9] >/dev/null && (echo "echo 'trizen --noconfirm -Sy chromium || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1)
 echo "echo 'trizen --noconfirm -Sy zramd gedit gnome-calculator || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Activando zswap\c"
