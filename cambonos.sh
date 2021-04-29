@@ -17,36 +17,6 @@ DONE () {
 }
 sudo rm -f /tmp/Salida.txt
 case $1 in
-	-h)
-		echo -e "\n${BLUE}>>Comando: cambonos [OPTION]${NOCOLOR}
-	[OPTIONS]
-	${BLUE}-h${NOCOLOR}		Muestra esta ayuda
-	${BLUE}upgrade${NOCOLOR}		Actualiza tanto los paquetes de pacman como de AUR
-			ademas de actualizar el script cambonos
-	${BLUE}install${NOCOLOR}		Instala paquetes tanto de pacman como de AUR
-	${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
-	${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
-	${BLUE}remove${NOCOLOR}		Elimina paquetes instalados
-	${BLUE}autoremove${NOCOLOR}	Elimina los paquetes que han sido instalados automaticamento
-			como dependencias y no son necesarios
-	${BLUE}clone${NOCOLOR}		Clona el repositorio de CambonOS
-	${BLUE}mkiso${NOCOLOR}		Crea una ISO de instalacion de CambonOS"
-		;;
-	--help)
-		echo -e "\n${BLUE}>>Comando: cambonos [OPTION]${NOCOLOR}
-	[OPTIONS]
-	${BLUE}-h${NOCOLOR}		Muestra esta ayuda
-	${BLUE}upgrade${NOCOLOR}		Actualiza tanto los paquetes de pacman como de AUR
-			ademas de actualizar el script cambonos
-	${BLUE}install${NOCOLOR}		Instala paquetes tanto de pacman como de AUR
-	${BLUE}list${NOCOLOR}		Lista los paquetes instalados incluyendo paquetes de AUR
-	${BLUE}search${NOCOLOR}		Busca un paquete en los repositorios oficiales y en AUR
-	${BLUE}remove${NOCOLOR}		Elimina paquetes instalados
-	${BLUE}autoremove${NOCOLOR}	Elimina los paquetes que han sido instalados automaticamento
-			como dependencias y no son necesarios
-	${BLUE}clone${NOCOLOR}		Clona el repositorio de CambonOS
-	${BLUE}mkiso${NOCOLOR}		Crea una ISO de instalacion de CambonOS"
-		;;
 	upgrade)
 		sudo rm -rf /tmp/arch-distro
 		case $2 in
@@ -89,38 +59,6 @@ case $1 in
 				DONE
 				;;
 		esac
-		;;
-	install)
-		echo -e "${BLUE}>>Instalando paquetes${NOCOLOR}"
-		sleep 2
-		shift
-		trizen -Sy $* || ERROR
-		DONE
-		;;
-	list)
-		echo -e "${BLUE}>>Listando paquetes instalados${NOCOLOR}"
-		sleep 2
-		shift
-		trizen -Q $*
-		;;
-	search)
-		echo -e "${BLUE}>>Buscando paquetes${NOCOLOR}"
-		sleep 2
-		shift
-		trizen -Ss $*
-		;;
-	remove)
-		echo -e "${BLUE}>>Eliminando paquetes${NOCOLOR}"
-		sleep 2
-		shift
-		trizen -Rns $* || ERROR
-		DONE
-		;;
-	autoremove)
-		echo -e "${BLUE}>>Eliminando paquetes guerfanos${NOCOLOR}"
-		sleep 2
-		trizen -Rns $(trizen -Qqdt)
-		DONE
 		;;
 	clone)
 		shift
