@@ -188,8 +188,7 @@ echo $NUMBER | grep 26[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy br
 echo $NUMBER | grep 27[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy google-chrome || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
 echo $NUMBER | grep 28[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy opera || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
 echo $NUMBER | grep 29[^0-9] >/dev/null && echo "echo 'trizen --noconfirm -Sy chromium || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-echo "echo 'trizen --noconfirm -Sy zramd gedit gnome-calculator || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
-
+echo "echo 'trizen --noconfirm -Sy zramd gedit gnome-calculator || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Activando zswap\c"
 echo "systemctl enable zramd.service" | CHROOT
