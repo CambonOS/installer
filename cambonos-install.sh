@@ -193,7 +193,7 @@ case $GPU in
 esac
 
 echo -e "\n>>Instalando entorno grafico\c"
-echo "pacman --noconfirm -Sy gdm nautilus gnome-control-center gnome-tweaks && systemctl enable gdm.service || exit 1" | CHROOT
+echo "pacman --noconfirm -Sy chrome-gnome-shell gdm nautilus gnome-control-center gnome-tweaks && systemctl enable gdm.service || exit 1" | CHROOT
 
 echo -e "\n>>Instalando grub\c"
 case $GRUB in
