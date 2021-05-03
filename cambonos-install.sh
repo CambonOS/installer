@@ -53,7 +53,7 @@ Navegadores:
 25-Firefox		26-Brave		27-Chrome
 28-Opera		29-Chromiun
 
-Escribir numeros separados por comas: \c" && read NUMBER
+Escribir los numeros separados: \c" && read NUMBER
 }
 
 INSTALL () {
