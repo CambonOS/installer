@@ -75,7 +75,7 @@ ROOT () {
 	echo -e "\n>>Contraseña del usuario administrador (root): \c" && read -s SECRET
 	echo -e "\n\n>>Repetir contraseña: \c" && read -s SECRET1
 	if [[ $SECRET = $SECRET1 ]]
-  then
+	then
 		sleep 1
 	else
 		ROOT
@@ -137,7 +137,7 @@ echo -e "\n>>Configurando red\c"
 echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service || exit 1' | CHROOT
 
 echo -e "\n>>Creando usuario\c"
-(echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS' | passwd $USER) || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1) && echo -e "(echo -e '$SECRET\n$SECRET' | passwd root) || exit 1" | CHROOT
+(echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1) && echo -e "(echo -e '$SECRET\n$SECRET1' | passwd root) || exit 1" | CHROOT
 
 echo -e "\n>>Instalando drivers graficos\c"
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf
@@ -153,7 +153,7 @@ case $GPU in
 	intel)
 		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
 	vmware)
-		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy virtualbox-guest-utils virtualbox-guest-utils-nox xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT ;;
 	*)
 		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | CHROOT ;;
 esac
@@ -170,7 +170,7 @@ case $GRUB in
 esac
 
 echo -e "\n>>Instalando trizen\c"
-echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers
+echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Instalando programas adicionales\c"
