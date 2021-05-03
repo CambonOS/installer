@@ -174,23 +174,23 @@ echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" > /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Instalando programas adicionales\c"
-echo $NUMBER | grep 1[^0-9] >/dev/null && APP='alacritty' && INSTALL
-echo $NUMBER | grep 2[^0-9] >/dev/null && APP='gnome-terminal' && INSTALL
-echo $NUMBER | grep 3[^0-9] >/dev/null && APP='konsole' && INSTALL
-echo $NUMBER | grep 4[^0-9] >/dev/null && APP='terminator' && INSTALL
-echo $NUMBER | grep 5[^0-9] >/dev/null && APP='xterm' && INSTALL
-echo $NUMBER | grep 7[^0-9] >/dev/null && APP='libreoffice-fresh libreoffice-fresh-es' && INSTALL
-echo $NUMBER | grep 13[^0-9] >/dev/null && APP='gamehub' && INSTALL
-echo $NUMBER | grep 14[^0-9] >/dev/null && APP='steam' && INSTALL
-echo $NUMBER | grep 15[^0-9] >/dev/null && APP='chiaki' && INSTALL
-echo $NUMBER | grep 16[^0-9] >/dev/null && APP='lutris' && INSTALL
-echo $NUMBER | grep 19[^0-9] >/dev/null && APP='virtualbox virtualbox-guest-iso virtualbox-ext-oracle' && INSTALL
-echo $NUMBER | grep 20[^0-9] >/dev/null && APP='gnome-boxes' && INSTALL
-echo $NUMBER | grep 25[^0-9] >/dev/null && APP='firefox-i18n-es-es' && INSTALL
-echo $NUMBER | grep 26[^0-9] >/dev/null && APP='brave-bin' && INSTALL
-echo $NUMBER | grep 27[^0-9] >/dev/null && APP='google-chrome' && INSTALL
-echo $NUMBER | grep 28[^0-9] >/dev/null && APP='opera' && INSTALL
-echo $NUMBER | grep 29[^0-9] >/dev/null && APP='chromium' && INSTALL
+echo $NUMBER | grep 1[[:blank:][:punct:]] >/dev/null && APP='alacritty' && INSTALL
+echo $NUMBER | grep 2[[:blank:][:punct:]] >/dev/null && APP='gnome-terminal' && INSTALL
+echo $NUMBER | grep 3[[:blank:][:punct:]] >/dev/null && APP='konsole' && INSTALL
+echo $NUMBER | grep 4[[:blank:][:punct:]] >/dev/null && APP='terminator' && INSTALL
+echo $NUMBER | grep 5[[:blank:][:punct:]] >/dev/null && APP='xterm' && INSTALL
+echo $NUMBER | grep 7[[:blank:][:punct:]] >/dev/null && APP='libreoffice-fresh libreoffice-fresh-es' && INSTALL
+echo $NUMBER | grep 13[[:blank:][:punct:]] >/dev/null && APP='gamehub' && INSTALL
+echo $NUMBER | grep 14[[:blank:][:punct:]] >/dev/null && APP='steam' && INSTALL
+echo $NUMBER | grep 15[[:blank:][:punct:]] >/dev/null && APP='chiaki' && INSTALL
+echo $NUMBER | grep 16[[:blank:][:punct:]] >/dev/null && APP='lutris' && INSTALL
+echo $NUMBER | grep 19[[:blank:][:punct:]] >/dev/null && APP='virtualbox virtualbox-guest-iso virtualbox-ext-oracle' && INSTALL
+echo $NUMBER | grep 20[[:blank:][:punct:]] >/dev/null && APP='gnome-boxes' && INSTALL
+echo $NUMBER | grep 25[[:blank:][:punct:]] >/dev/null && APP='firefox-i18n-es-es' && INSTALL
+echo $NUMBER | grep 26[[:blank:][:punct:]] >/dev/null && APP='brave-bin' && INSTALL
+echo $NUMBER | grep 27[[:blank:][:punct:]] >/dev/null && APP='google-chrome' && INSTALL
+echo $NUMBER | grep 28[[:blank:][:punct:]] >/dev/null && APP='opera' && INSTALL
+echo $NUMBER | grep 29[[:blank:][:punct:]] >/dev/null && APP='chromium' && INSTALL
 APP='zramd gedit gnome-calculator' && INSTALL
 DONE
 
