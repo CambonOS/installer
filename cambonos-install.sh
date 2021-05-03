@@ -40,14 +40,20 @@ Emulador de terminal:
 4-Terminator		5-Xterm
 
 Suite ofimatica:
-7-LibreOffice
+7-LibreOffice		8-OpenOffice		9-Calligra
+
+Programas basicos:
+10-Wine			11-Editor de textos	12-Calculadora
 
 Gaming:
-13-GameHub		14-Steam		15-Ckiaki
+13-GameHub		14-Steam		15-Chiaki
 16-Lutris
 
 Virtualizacion:
-19-VirtualBox		20-Gnome-Box
+19-VirtualBox		20-Gnome Boxes
+
+Multimedia:
+22-Video (VLC)		23-Fotos (EOG)		24-Musica (Rhythmbox)
 
 Navegadores:
 25-Firefox		26-Brave		27-Chrome
@@ -57,6 +63,34 @@ Escribir los numeros separados: \c" && read NUMBER
 }
 
 INSTALL () {
+	case $CONT in
+		0) APP='zramd' ;;
+		1) APP='alacritty' ;;
+		2) APP='gnome-terminal' ;;
+		3) APP='konsole' ;;
+		4) APP='terminator' ;;
+		5) APP='xterm' ;;
+		7) APP='libreoffice-fresh libreoffice-fresh-es' ;;
+		8) APP='openoffice-bin' ;;
+		9) APP='calligra' ;;
+		10) APP='wine-staging' ;;
+		11) APP='gedit' ;;
+		12) APP='gnome-calculator' ;;
+		13) APP='gamehub' ;;
+		14) APP='steam' ;;
+		15) APP='chiaki' ;;
+		16) APP='lutris' ;;
+		19) APP='virtualbox virtualbox-guest-iso virtualbox-ext-oracle' ;;
+		20) APP='gnome-boxes' ;;
+		22) APP='vlc' ;;
+		23) APP='eog' ;;
+		24) APP='rhythmbox' ;;
+		25) APP='firefox-i18n-es-es' ;;
+		26) APP='brave-bin' ;;
+		27) APP='google-chrome' ;;
+		28) APP='opera' ;;
+		29) APP='chromium' ;;
+	esac
 	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1
 }
 
@@ -174,24 +208,12 @@ echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
 
 echo -e "\n>>Instalando programas adicionales\c"
-echo $NUMBER. | grep 1[[:blank:][:punct:]] >/dev/null && APP='alacritty' && INSTALL
-echo $NUMBER. | grep 2[[:blank:][:punct:]] >/dev/null && APP='gnome-terminal' && INSTALL
-echo $NUMBER. | grep 3[[:blank:][:punct:]] >/dev/null && APP='konsole' && INSTALL
-echo $NUMBER. | grep 4[[:blank:][:punct:]] >/dev/null && APP='terminator' && INSTALL
-echo $NUMBER. | grep 5[[:blank:][:punct:]] >/dev/null && APP='xterm' && INSTALL
-echo $NUMBER. | grep 7[[:blank:][:punct:]] >/dev/null && APP='libreoffice-fresh libreoffice-fresh-es' && INSTALL
-echo $NUMBER. | grep 13[[:blank:][:punct:]] >/dev/null && APP='gamehub' && INSTALL
-echo $NUMBER. | grep 14[[:blank:][:punct:]] >/dev/null && APP='steam' && INSTALL
-echo $NUMBER. | grep 15[[:blank:][:punct:]] >/dev/null && APP='chiaki' && INSTALL
-echo $NUMBER. | grep 16[[:blank:][:punct:]] >/dev/null && APP='lutris' && INSTALL
-echo $NUMBER. | grep 19[[:blank:][:punct:]] >/dev/null && APP='virtualbox virtualbox-guest-iso virtualbox-ext-oracle' && INSTALL
-echo $NUMBER. | grep 20[[:blank:][:punct:]] >/dev/null && APP='gnome-boxes' && INSTALL
-echo $NUMBER. | grep 25[[:blank:][:punct:]] >/dev/null && APP='firefox-i18n-es-es' && INSTALL
-echo $NUMBER. | grep 26[[:blank:][:punct:]] >/dev/null && APP='brave-bin' && INSTALL
-echo $NUMBER. | grep 27[[:blank:][:punct:]] >/dev/null && APP='google-chrome' && INSTALL
-echo $NUMBER. | grep 28[[:blank:][:punct:]] >/dev/null && APP='opera' && INSTALL
-echo $NUMBER. | grep 29[[:blank:][:punct:]] >/dev/null && APP='chromium' && INSTALL
-APP='zramd gedit gnome-calculator' && INSTALL
+CONT='0'
+while [$CONT < 35]
+do
+	echo $NUMBER,0. | grep $CONT[[:blank:][:punct:]] >/dev/null && INSTALL
+	((CONT++))
+done
 DONE
 
 echo -e "\n>>Activando zswap\c"
