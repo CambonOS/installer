@@ -57,7 +57,7 @@ Escribir numeros separados por comas: \c" && read NUMBER
 }
 
 INSTALL () {
-	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | arch-chroot >>$SALIDA 2>&1
+	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1
 }
 
 SUDO () {
@@ -192,6 +192,7 @@ echo $NUMBER | grep 27[^0-9] >/dev/null && APP='google-chrome' && INSTALL
 echo $NUMBER | grep 28[^0-9] >/dev/null && APP='opera' && INSTALL
 echo $NUMBER | grep 29[^0-9] >/dev/null && APP='chromium' && INSTALL
 APP='zramd gedit gnome-calculator' && INSTALL
+DONE
 
 echo -e "\n>>Activando zswap\c"
 echo "systemctl enable zramd.service" | CHROOT
