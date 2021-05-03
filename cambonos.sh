@@ -134,7 +134,7 @@ case $1 in
 		DONE
 		;;
 	*)
-		echo -e "${RED}Opción ${BLUE}$1${RED} no reconocida. Las opciones posibles ${BLUE}cambonos upgrade${NOCOLOR}, ${BLUE}cambonos mkiso${NOCOLOR}, ${BLUE}cambonos clone${NOCOLOR}"
+		echo -e "${RED}Opción ${BLUE}$1${RED} no reconocida.\nLas opciones posibles:\n		${BLUE}cambonos upgrade${NOCOLOR}\n		${BLUE}cambonos mkiso${NOCOLOR}\n		${BLUE}cambonos clone${NOCOLOR}"
 		sleep 2
 		;;
 esac
