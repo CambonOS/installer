@@ -117,7 +117,6 @@ ROOT () {
 }
 
 HEAD
-
 if [[ $EUID -ne 0 ]]
 then
 	echo -e "\nEJECUTAR CON PRIVILEGIOS\n"
@@ -127,7 +126,7 @@ fi
 echo -e "\n>>Iniciando instalacion\c"
 reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >$SALIDA 2>&1 && DONE || STOP
 
-echo -e "\n>>Listando discos\n" && lsblk
+echo -e "\n>>Listando discos\n" && lsblk -o NAME,VENDOR,MODEL,SIZE -d
 echo -e "\n>>En que disco quieres instalar el sistema: \c" && read -e -i "/dev/sd" DISCO
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 ROOT
