@@ -209,7 +209,7 @@ echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd triz
 
 echo -e "\n>>Instalando programas adicionales\c"
 CONT='0'
-while [$CONT < 35]
+while [ $CONT -lt 40 ]
 do
 	echo $NUMBER,0. | grep $CONT[[:blank:][:punct:]] >/dev/null && INSTALL
 	((CONT++))
