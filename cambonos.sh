@@ -15,16 +15,18 @@ DONE () {
   echo -e "${GREEN}DONE${NOCOLOR}"
   sleep 1
 }
+
 sudo rm -f /tmp/Salida.txt
 case $1 in
 	upgrade)
+		shift
 		sudo rm -rf /tmp/arch-distro
-		case $2 in
+		case $1 in
 			-b)
 				echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 				sleep 2
 				cd /tmp
-				git clone -b $3 https://github.com/CambonOS/arch-distro
+				git clone -b $2 https://github.com/CambonOS/arch-distro
 				cd arch-distro
 				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 				sudo chmod 755 /usr/bin/cambonos || ERROR
@@ -34,7 +36,7 @@ case $1 in
 				echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 				sleep 2
 				cd /tmp
-				git clone -b $3 https://github.com/CambonOS/arch-distro
+				git clone -b $2 https://github.com/CambonOS/arch-distro
 				cd arch-distro
 				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
 				sudo chmod 755 /usr/bin/cambonos || ERROR
@@ -51,7 +53,11 @@ case $1 in
 				DONE
 				echo -e "${BLUE}\n>>Actualizando paquetes${NOCOLOR}"
 				sleep 2
-				trizen -Syyu || ERROR
+				trizen --noconfirm -Syyu || ERROR
+				DONE
+				echo -e "${BLUE}\n>>Eliminando paquetes guerfanos${NOCOLOR}"
+				sleep 2
+				trizen --noconfirm -Rns $(trizen -Qqdt) || ERROR
 				DONE
 				echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 				sleep 2
@@ -83,6 +89,7 @@ case $1 in
 		DONE
 		;;
 	mkiso)
+		shift
 		if [[ $EUID -ne 0 ]]
 		then
 			echo -e "${RED}Debese ejecutar como usuario con privilejios${NOCOLOR}"
