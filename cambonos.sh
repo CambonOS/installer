@@ -95,29 +95,29 @@ case $1 in
 			echo -e "${RED}Debese ejecutar como usuario con privilejios${NOCOLOR}"
 			exit
 		fi
-		echo -e "\n>>Carpeta destino ISO:\c"
+		echo -e "\n${BLUE}>>Carpeta destino ISO:${NOCOLOR}\c"
 		read -e -i $(pwd) RUTAD
 
-		echo -e "\n>>Instalando paquetes necesarios"
+		echo -e "\n${BLUE}>>Instalando paquetes necesarios${NOCOLOR}"
 		sleep 2
 		pacman --noconfirm -Sy archiso >/tmp/Salida.txt 2>&1 && DONE || ERROR
 
-		echo -e "\n>>Descargando el script de instalacion"
+		echo -e "\n${BLUE}>>Descargando el script de instalacion${NOCOLOR}"
 		sleep 2
 		rm -rf /tmp/arch-distro >>/tmp/Salida.txt 2>&1
 		case $1 in
 			-b)
-				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE |${NOCOLOR}| ERROR
+				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
 				;;
 			--branch)
-				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE |${NOCOLOR}| ERROR
+				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
 				;;
 			*)
 				cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
 				;;
 		esac
 
-		echo -e "\n>>Creando ficheros de configuracion de la ISO"
+		echo -e "\n${BLUE}>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
 		sleep 2
 		mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
 		mv /tmp/arch-distro/cambonos-install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install || ERROR
@@ -129,11 +129,11 @@ case $1 in
 		rm /ISO/porfile/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
 		DONE
 
-		echo -e "\n>>Creando la ISO"
+		echo -e "\n${BLUE}>>Creando la ISO${NOCOLOR}"
 		sleep 2
 		mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile && DONE || ERROR
 
-		echo -e "\n>>Eliminado ficheros/paquetes innecesarios"
+		echo -e "\n${BLUE}>>Eliminado ficheros/paquetes innecesarios${NOCOLOR}"
 		sleep 2
 		rm -rf /ISO
 		pacman --noconfirm -Rns archiso >>/tmp/Salida.txt 2>&1
