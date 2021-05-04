@@ -57,7 +57,7 @@ case $1 in
 				DONE
 				echo -e "${BLUE}\n>>Eliminando paquetes guerfanos${NOCOLOR}"
 				sleep 2
-				trizen --noconfirm -Rns $(trizen -Qqdt) || ERROR
+				trizen --noconfirm -Rns $(trizen -Qqdt)
 				DONE
 				echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 				sleep 2
@@ -96,7 +96,6 @@ case $1 in
 			exit
 		fi
 		echo -e "\n>>Carpeta destino ISO:\c"
-		sleep 2
 		read -e -i $(pwd) RUTAD
 
 		echo -e "\n>>Instalando paquetes necesarios"
