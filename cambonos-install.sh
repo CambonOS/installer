@@ -187,7 +187,7 @@ case $GPU in
 	intel)
 		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
 	vmware)
-		echo "pacman --noconfirm -Sy virtualbox-guest-utils virtualbox-guest-utils-nox xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy virtualbox-guest-utils-nox xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT ;;
 	*)
 		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | CHROOT ;;
 esac
