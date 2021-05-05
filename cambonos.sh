@@ -119,12 +119,12 @@ case $1 in
 
 		echo -e "\n${BLUE}>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
 		sleep 2
-		mkdir /ISO && cp -r /usr/share/archiso/configs/releng /ISO/porfile || ERROR
+		mkdir /ISO && cp -r /usr/share/archiso/configs/releng/* /ISO/porfile || ERROR
 		cp /tmp/arch-distro/cambonos-install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install || ERROR
 		echo 'VERDE="\033[1;32m";NOCOLOR="\033[0m";AZUL="\033[1;34m";echo -e "\n  Para instalar ${AZUL}CambonOS${NOCOLOR} ejecute el comando ${VERDE}cambonos-install${NOCOLOR}\n"' >>/ISO/porfile/airootfs/root/.zshrc
 		echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
 		echo -e "KEYMAP=es" >/ISO/porfile/airootfs/etc/vconsole.conf
-		cp -r /tmp/arch-distro/iso /ISO/porfile || ERROR
+		cp -r /tmp/arch-distro/iso/* /ISO/porfile || ERROR
 		rm /ISO/porfile/syslinux/splash.png
 		rm /ISO/porfile/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
 		DONE
