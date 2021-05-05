@@ -93,7 +93,7 @@ case $1 in
 		mkdir /iso
 		mkdir /iso/perfil
 		cp -r /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
-		echo 'cambonos-install"' >>/iso/perfil/airootfs/root/.zshrc
+		echo "cambonos-install" >>/iso/perfil/airootfs/root/.zshrc
 		echo -e "camboniso" >/iso/perfil/airootfs/etc/hostname
 		echo -e "KEYMAP=es" >/iso/perfil/airootfs/etc/vconsole.conf
 		rm /iso/perfil/syslinux/splash.png
