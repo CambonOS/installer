@@ -94,10 +94,10 @@ case $1 in
 		mkdir /iso/perfil 
 		case $1 in
 			-b)
-				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
+				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 || ERROR
 				;;
 			*)
-				cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
+				cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && || ERROR
 				;;
 		esac
 		cp -r /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
