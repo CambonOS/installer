@@ -115,6 +115,7 @@ case $1 in
 
 		echo -e "\n${BLUE}>>Eliminado ficheros/paquetes innecesarios${NOCOLOR}"
 		sleep 2
+		rm -rf /iso
 		pacman --noconfirm -Rns archiso >>/tmp/Salida.txt 2>&1
 		DONE
 		;;
