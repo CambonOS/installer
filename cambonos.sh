@@ -101,8 +101,7 @@ case $1 in
 		case $1 in
 			-b)
 				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 || ERROR
-				echo -e "cd /tmp && rm -rf arch-distro; git clone -b $2 https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos-install.sh" >/iso/perfil/airootfs/usr/local/bin/cambonos-install 
-				
+				echo -e "cd /tmp && rm -rf arch-distro; git clone -b $2 https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos-install.sh" >/iso/perfil/airootfs/usr/local/bin/cambonos-install
 				;;
 			*)
 				cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 || ERROR
@@ -112,7 +111,7 @@ case $1 in
 		cp -r /tmp/arch-distro/iso/* /iso/perfil || ERROR
 		case $1 in
 			-b)
-				echo -e "sed 's/iso_version=\"\$(date +%y.%m)\"/iso_version=\"$2\"/' /tmp/arch-distro/iso/profiledef.sh" > /tmp/script && bash /tmp/script > /iso/porfile/profiledef.sh
+				echo -e "sed 's/iso_version=\"\$(date +%y.%m)\"/iso_version=\"$2\"/' /tmp/arch-distro/iso/profiledef.sh" > /tmp/script && bash /tmp/script > /iso/perfil/profiledef.sh
 				;;
 			*)
 				;;
