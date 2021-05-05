@@ -7,7 +7,6 @@ BLUE='\033[1;34m'
 
 ERROR () {
   echo -e "${RED}ERROR${NOCOLOR}"
-  rm -rf /ISO >>/tmp/Salida.txt 2>&1
   exit
 }
 
@@ -23,16 +22,6 @@ case $1 in
 		sudo rm -rf /tmp/arch-distro
 		case $1 in
 			-b)
-				echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
-				sleep 2
-				cd /tmp
-				git clone -b $2 https://github.com/CambonOS/arch-distro
-				cd arch-distro
-				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
-				sudo chmod 755 /usr/bin/cambonos || ERROR
-				DONE
-				;;
-			--branch)
 				echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 				sleep 2
 				cd /tmp
@@ -68,14 +57,9 @@ case $1 in
 		;;
 	clone)
 		shift
-		rm -rf Arch-Distro >/tmp/Salida.txt 2>&1
+		rm -rf arch-distro >/tmp/Salida.txt 2>&1
 		case $1 in
 			-b)
-				echo -e "${BLUE}>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
-				sleep 2
-				git clone -b $2 https://github.com/CambonOS/arch-distro.git || ERROR
-				;;
-			--branch)
 				echo -e "${BLUE}>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
 				sleep 2
 				git clone -b $2 https://github.com/CambonOS/arch-distro.git || ERROR
@@ -102,40 +86,35 @@ case $1 in
 		sleep 2
 		pacman --noconfirm -Sy archiso >/tmp/Salida.txt 2>&1 && DONE || ERROR
 
-		echo -e "\n${BLUE}>>Descargando el script de instalacion${NOCOLOR}"
+		echo -e "\n${BLUE}>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
 		sleep 2
 		rm -rf /tmp/arch-distro >>/tmp/Salida.txt 2>&1
+		rm -rf /tmp/perfil >>/tmp/Salida.txt 2>&1
+		mkdir /tmp/perfil 
 		case $1 in
 			-b)
-				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
-				;;
-			--branch)
 				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
 				;;
 			*)
 				cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
 				;;
 		esac
-
-		echo -e "\n${BLUE}>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
-		sleep 2
-		mkdir /ISO && mkdir /ISO/porfile && cp -r /usr/share/archiso/configs/releng/* /ISO/porfile || ERROR
-		cp /tmp/arch-distro/cambonos-install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install || ERROR
-		echo 'VERDE="\033[1;32m";NOCOLOR="\033[0m";AZUL="\033[1;34m";echo -e "\n  Para instalar ${AZUL}CambonOS${NOCOLOR} ejecute el comando ${VERDE}cambonos-install${NOCOLOR}\n"' >>/ISO/porfile/airootfs/root/.zshrc
-		echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
-		echo -e "KEYMAP=es" >/ISO/porfile/airootfs/etc/vconsole.conf
-		cp -r /tmp/arch-distro/iso/* /ISO/porfile || ERROR
-		rm /ISO/porfile/syslinux/splash.png
-		rm /ISO/porfile/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
+		cp -r /usr/share/archiso/configs/releng/* /tmp/perfil || ERROR
+		cp /tmp/arch-distro/cambonos-install.sh /tmp/perfil/airootfs/usr/local/bin/cambonos-install || ERROR
+		echo 'VERDE="\033[1;32m";NOCOLOR="\033[0m";AZUL="\033[1;34m";echo -e "\n  Para instalar ${AZUL}CambonOS${NOCOLOR} ejecute el comando ${VERDE}cambonos-install${NOCOLOR}\n"' >>/tmp/perfil/airootfs/root/.zshrc
+		echo -e "camboniso" >/tmp/perfil/airootfs/etc/hostname
+		echo -e "KEYMAP=es" >/tmp/perfil/airootfs/etc/vconsole.conf
+		cp -r /tmp/arch-distro/iso/* /tmp/perfil || ERROR
+		rm /tmp/perfil/syslinux/splash.png
+		rm /tmp/perfil/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
 		DONE
 
 		echo -e "\n${BLUE}>>Creando la ISO${NOCOLOR}"
 		sleep 2
-		mkarchiso -v -w /ISO/work -o $RUTAD /ISO/porfile && DONE || ERROR
+		mkarchiso -v -w /tmp/work -o $RUTAD /tmp/perfil && DONE || ERROR
 
 		echo -e "\n${BLUE}>>Eliminado ficheros/paquetes innecesarios${NOCOLOR}"
 		sleep 2
-		rm -rf /ISO
 		pacman --noconfirm -Rns archiso >>/tmp/Salida.txt 2>&1
 		DONE
 		;;
