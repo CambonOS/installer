@@ -89,7 +89,9 @@ case $1 in
 		echo -e "\n${BLUE}>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
 		sleep 2
 		rm -rf /tmp/* >>/tmp/Salida.txt 2>&1
-		mkdir /tmp/perfil 
+		rm -rf /iso >>/tmp/Salida.txt 2>&1
+		mkdir /iso
+		mkdir /iso/perfil 
 		case $1 in
 			-b)
 				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
@@ -98,19 +100,19 @@ case $1 in
 				cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 && DONE || ERROR
 				;;
 		esac
-		cp -r /usr/share/archiso/configs/releng/* /tmp/perfil || ERROR
-		cp /tmp/arch-distro/cambonos-install.sh /tmp/perfil/airootfs/usr/local/bin/cambonos-install || ERROR
-		echo 'cambonos-install"' >>/tmp/perfil/airootfs/root/.zshrc
-		echo -e "camboniso" >/tmp/perfil/airootfs/etc/hostname
-		echo -e "KEYMAP=es" >/tmp/perfil/airootfs/etc/vconsole.conf
-		cp -r /tmp/arch-distro/iso/* /tmp/perfil || ERROR
-		rm /tmp/perfil/syslinux/splash.png
-		rm /tmp/perfil/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
+		cp -r /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
+		cp /tmp/arch-distro/cambonos-install.sh /iso/perfil/airootfs/usr/local/bin/cambonos-install || ERROR
+		echo 'cambonos-install"' >>/iso/perfil/airootfs/root/.zshrc
+		echo -e "camboniso" >/iso/perfil/airootfs/etc/hostname
+		echo -e "KEYMAP=es" >/iso/perfil/airootfs/etc/vconsole.conf
+		cp -r /tmp/arch-distro/iso/* /iso/perfil || ERROR
+		rm /iso/perfil/syslinux/splash.png
+		rm /iso/perfil/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
 		DONE
 
 		echo -e "\n${BLUE}>>Creando la ISO${NOCOLOR}"
 		sleep 2
-		mkarchiso -v -w /tmp/work -o $RUTAD /tmp/perfil && DONE || ERROR
+		mkarchiso -v -w /iso/work -o $RUTAD /iso/perfil && DONE || ERROR
 
 		echo -e "\n${BLUE}>>Eliminado ficheros/paquetes innecesarios${NOCOLOR}"
 		sleep 2
