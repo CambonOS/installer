@@ -1,5 +1,6 @@
 base
 linux
+linux-firmware
 reflector
 arch-install-scripts
 zsh
@@ -9,4 +10,3 @@ memtest86+
 edk2-shell
 intel-ucode
 amd-ucode
-init
