@@ -3,7 +3,7 @@
 
 iso_name="CambonOS"
 iso_label="CAMBON_$(date +%y.%m)"
-iso_publisher="CambonOS <https://github/CambonOS/Arch-Distro>"
+iso_publisher="CambonOS <https://github.com/CambonOS/Arch-Distro>"
 iso_application="CambonOS Installer"
 iso_version="$(date +%y.%m)"
 install_dir="arch"
