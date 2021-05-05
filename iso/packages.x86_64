@@ -7,3 +7,6 @@ git
 syslinux
 memtest86+
 edk2-shell
+intel-ucode
+amd-ucode
+init
