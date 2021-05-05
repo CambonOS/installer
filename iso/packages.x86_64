@@ -1,6 +1,5 @@
 base
-linux-zen
-linux-zen-headers
+linux
 reflector
 arch-install-scripts
 zsh
