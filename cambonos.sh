@@ -91,23 +91,32 @@ case $1 in
 		rm -rf /tmp/arch-distro >>/tmp/Salida.txt 2>&1
 		rm -rf /iso >>/tmp/Salida.txt 2>&1
 		mkdir /iso
-		mkdir /iso/perfil 
-		case $1 in
-			-b)
-				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 || ERROR
-				;;
-			*)
-				cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 || ERROR
-				;;
-		esac
+		mkdir /iso/perfil
 		cp -r /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
-		cp /tmp/arch-distro/cambonos-install.sh /iso/perfil/airootfs/usr/local/bin/cambonos-install || ERROR
 		echo 'cambonos-install"' >>/iso/perfil/airootfs/root/.zshrc
 		echo -e "camboniso" >/iso/perfil/airootfs/etc/hostname
 		echo -e "KEYMAP=es" >/iso/perfil/airootfs/etc/vconsole.conf
-		cp -r /tmp/arch-distro/iso/* /iso/perfil || ERROR
 		rm /iso/perfil/syslinux/splash.png
 		rm /iso/perfil/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
+		case $1 in
+			-b)
+				cd /tmp && git clone -b $2 https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 || ERROR
+				echo -e "cd /tmp && rm -rf arch-distro; git clone -b $2 https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos-install.sh" >/iso/perfil/airootfs/usr/local/bin/cambonos-install 
+				
+				;;
+			*)
+				cd /tmp && git clone https://github.com/CambonOS/arch-distro.git >>/tmp/Salida.txt 2>&1 || ERROR
+				cp /tmp/arch-distro/cambonos-install.sh /iso/perfil/airootfs/usr/local/bin/cambonos-install || ERROR
+				;;
+		esac
+		cp -r /tmp/arch-distro/iso/* /iso/perfil || ERROR
+		case $1 in
+			-b)
+				echo -e "sed 's/iso_version=\"\$(date +%y.%m)\"/iso_version=\"$2\"/' /tmp/arch-distro/iso/profiledef.sh" > /tmp/script && bash /tmp/script > /iso/porfile/profiledef.sh
+				;;
+			*)
+				;;
+		esac
 		DONE
 
 		echo -e "\n${BLUE}>>Creando la ISO${NOCOLOR}"
