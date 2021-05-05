@@ -5,13 +5,21 @@ RED='\033[1;31m'
 GREEN='\033[1;32m'
 SALIDA='/tmp/salida'
 
-HEAD () {clear && cat /etc/motd}
+HEAD () {
+	clear && cat /etc/motd
+}
 
-DONE () {echo -e "${GREEN} [DONE] ${NOCOLOR}" && sleep 1}
+DONE () {
+	echo -e "${GREEN} [DONE] ${NOCOLOR}" && sleep 1
+}
 
-ERROR () {echo -e "${RED} [ERROR] ${NOCOLOR}" && sleep 3}
+ERROR () {
+	echo -e "${RED} [ERROR] ${NOCOLOR}" && sleep 3
+}
 
-ARCH () {arch-chroot /mnt >>$SALIDA 2>&1}
+ARCH () {
+	arch-chroot /mnt >>$SALIDA 2>&1
+}
 
 STOP () {
 	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
