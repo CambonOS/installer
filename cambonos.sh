@@ -88,8 +88,7 @@ case $1 in
 
 		echo -e "\n${BLUE}>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
 		sleep 2
-		rm -rf /tmp/arch-distro >>/tmp/Salida.txt 2>&1
-		rm -rf /tmp/perfil >>/tmp/Salida.txt 2>&1
+		rm -rf /tmp/* >>/tmp/Salida.txt 2>&1
 		mkdir /tmp/perfil 
 		case $1 in
 			-b)
@@ -101,7 +100,7 @@ case $1 in
 		esac
 		cp -r /usr/share/archiso/configs/releng/* /tmp/perfil || ERROR
 		cp /tmp/arch-distro/cambonos-install.sh /tmp/perfil/airootfs/usr/local/bin/cambonos-install || ERROR
-		echo 'VERDE="\033[1;32m";NOCOLOR="\033[0m";AZUL="\033[1;34m";echo -e "\n  Para instalar ${AZUL}CambonOS${NOCOLOR} ejecute el comando ${VERDE}cambonos-install${NOCOLOR}\n"' >>/tmp/perfil/airootfs/root/.zshrc
+		echo 'cambonos-install"' >>/tmp/perfil/airootfs/root/.zshrc
 		echo -e "camboniso" >/tmp/perfil/airootfs/etc/hostname
 		echo -e "KEYMAP=es" >/tmp/perfil/airootfs/etc/vconsole.conf
 		cp -r /tmp/arch-distro/iso/* /tmp/perfil || ERROR
