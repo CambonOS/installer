@@ -88,6 +88,7 @@ case $1 in
 
 		echo -e "\n${BLUE}>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
 		sleep 2
+		rm -rf /tmp/arch-distro >>/tmp/Salida.txt 2>&1
 		rm -rf /iso >>/tmp/Salida.txt 2>&1
 		mkdir /iso
 		mkdir /iso/perfil 
