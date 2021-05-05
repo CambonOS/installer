@@ -5,3 +5,6 @@ reflector
 arch-install-scripts
 zsh
 git
+syslinux
+memtest86+
+edk2-shell
