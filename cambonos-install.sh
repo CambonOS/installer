@@ -5,29 +5,17 @@ RED='\033[1;31m'
 GREEN='\033[1;32m'
 SALIDA='/tmp/salida'
 
-HEAD () {
-	clear && cat /etc/motd
-}
+HEAD () {clear && cat /etc/motd}
 
-DONE () {
-	echo -e "${GREEN} [DONE] ${NOCOLOR}" && sleep 1
-}
+DONE () {echo -e "${GREEN} [DONE] ${NOCOLOR}" && sleep 1}
 
-ERROR () {
-	echo -e "${RED} [ERROR] ${NOCOLOR}" && sleep 3
-}
+ERROR () {echo -e "${RED} [ERROR] ${NOCOLOR}" && sleep 3}
+
+ARCH () {arch-chroot /mnt >>$SALIDA 2>&1}
 
 STOP () {
 	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
-  umount /mnt/boot >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt ; exit 1
-}
-
-CHROOT () {
-	arch-chroot /mnt >>$SALIDA 2>&1 && DONE || ERROR
-}
-
-CHROOTF () {
-	arch-chroot /mnt >>$SALIDA 2>&1 && DONE || STOP
+	umount /mnt/boot >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt ; exit 1
 }
 
 SOFTWARE () {
@@ -91,7 +79,7 @@ INSTALL () {
 		28) APP='opera' ;;
 		29) APP='chromium' ;;
 	esac
-	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1
+	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | ARCH
 }
 
 SUDO () {
@@ -116,16 +104,11 @@ ROOT () {
 	fi
 }
 
-HEAD
-if [[ $EUID -ne 0 ]]
-then
-	echo -e "\nEJECUTAR CON PRIVILEGIOS\n"
-	exit
-fi
+################################################################################################################
 
+HEAD
 echo -e "\n>>Iniciando instalacion\c"
 reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >$SALIDA 2>&1 && DONE || STOP
-
 
 echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 echo -e "\n>>En que disco quieres instalar el sistema: \c" && read -e -i "/dev/sd" DISCO
@@ -162,16 +145,16 @@ pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && 
 
 echo -e "\n>>Instalando utilidades basicas\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') && (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-echo "pacman --noconfirm -Sy nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | CHROOTF
+echo "pacman --noconfirm -Sy nano man man-db man-pages man-pages-es bash-completion neovim neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 
 echo -e "\n>>Generando archivo fstab\c"
 genfstab -U /mnt >> /mnt/etc/fstab && DONE || STOP
 
 echo -e "\n>>Configurando red\c"
-echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service || exit 1' | CHROOT
+echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service || exit 1' | ARCH && DONE || ERROR
 
 echo -e "\n>>Creando usuario\c"
-(echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | arch-chroot /mnt >>$SALIDA 2>&1) && echo -e "(echo -e '$SECRET\n$SECRET1' | passwd root) || exit 1" | CHROOT
+(echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | ARCH) && echo -e "(echo -e '$SECRET\n$SECRET1' | passwd root) || exit 1" | ARCH && DONE || ERROR
 
 echo -e "\n>>Instalando drivers graficos\c"
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf
@@ -181,31 +164,31 @@ echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.con
 (lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware'
 case $GPU in
 	amd)
-		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
 	nvidia)
-		echo "pacman --noconfirm -Sy xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
 	intel)
-		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
 	vmware)
-		echo "pacman --noconfirm -Sy virtualbox-guest-utils xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy virtualbox-guest-utils xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | ARCH && DONE || ERROR ;;
 	*)
-		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | CHROOT ;;
+		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | ARCH && DONE || ERROR ;;
 esac
 
 echo -e "\n>>Instalando entorno grafico\c"
-echo "pacman --noconfirm -Sy chrome-gnome-shell gdm nautilus gnome-control-center gnome-tweaks && systemctl enable gdm.service || exit 1" | CHROOT
+echo "pacman --noconfirm -Sy chrome-gnome-shell gdm nautilus gnome-control-center gnome-tweaks && systemctl enable gdm.service || exit 1" | ARCH && DONE || ERROR
 
 echo -e "\n>>Instalando grub\c"
 case $GRUB in
 	bios)
-		echo "pacman --noconfirm -Sy grub && grub-install --target=i386-pc $DISCO || exit 1" | CHROOTF ;;
+		echo "pacman --noconfirm -Sy grub && grub-install --target=i386-pc $DISCO || exit 1" | ARCH && DONE || STOP ;;
 	uefi)
-		echo "pacman --noconfirm -Sy grub efibootmgr && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | CHROOTF ;;
+		echo "pacman --noconfirm -Sy grub efibootmgr && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | ARCH && DONE || STOP ;;
 esac
 
 echo -e "\n>>Instalando trizen\c"
 echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
-echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | CHROOT
+echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 echo -e "\n>>Instalando programas adicionales\c"
 CONT='0'
@@ -217,12 +200,12 @@ done
 DONE
 
 echo -e "\n>>Activando zswap\c"
-echo "systemctl enable zramd.service" | CHROOT
+echo "systemctl enable zramd.service" | ARCH && DONE || ERROR
 
 echo -e "\n>>Configurando sistema\c"
-echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc && cp -r arch-distro/usr/* /usr' | arch-chroot /mnt >>$SALIDA 2>&1
-echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade -b main && grub-mkconfig -o /boot/grub/grub.cfg' | arch-chroot /mnt >>$SALIDA 2>&1
-echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | CHROOT
+echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc && cp -r arch-distro/usr/* /usr' | ARCH
+echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade -b main && grub-mkconfig -o /boot/grub/grub.cfg' | ARCH
+echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | ARCH && DONE || ERROR
 
 echo -e "\n>>Terminando instalacion\c"
-echo 'locale-gen' | CHROOT
+echo 'locale-gen' | ARCH && DONE || ERROR
