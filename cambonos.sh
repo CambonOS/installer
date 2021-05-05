@@ -119,7 +119,7 @@ case $1 in
 
 		echo -e "\n${BLUE}>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
 		sleep 2
-		mkdir /ISO && mkdir /ISO/porfile && cp -r /usr/share/archiso/configs/releng/ /ISO/porfile/* || ERROR
+		mkdir /ISO && mkdir /ISO/porfile && cp -r /usr/share/archiso/configs/releng/* /ISO/porfile/ || ERROR
 		mv /tmp/arch-distro/cambonos-install.sh /ISO/porfile/airootfs/usr/local/bin/cambonos-install || ERROR
 		echo 'VERDE="\033[1;32m";NOCOLOR="\033[0m";AZUL="\033[1;34m";echo -e "\n  Para instalar ${AZUL}CambonOS${NOCOLOR} ejecute el comando ${VERDE}cambonos-install${NOCOLOR}\n"' >>/ISO/porfile/airootfs/root/.zshrc
 		echo -e "camboniso" >/ISO/porfile/airootfs/etc/hostname
