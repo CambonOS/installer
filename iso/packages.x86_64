@@ -10,7 +10,6 @@ bind-tools
 brltty
 broadcom-wl
 btrfs-progs
-clonezilla
 cloud-init
 crda
 darkhttpd
@@ -30,7 +29,6 @@ f2fs-tools
 fatresize
 fsarchiver
 gnu-netcat
-gpart
 gpm
 gptfdisk
 grml-zsh-config
@@ -50,8 +48,6 @@ livecd-sounds
 lsscsi
 lvm2
 lynx
-man-db
-man-pages
 mc
 mdadm
 memtest86+
@@ -64,13 +60,9 @@ nbd
 ndisc6
 nfs-utils
 nilfs-utils
-nmap
 ntfs-3g
 nvme-cli
 openconnect
-partclone
-parted
-partimage
 ppp
 pptpclient
 reflector
@@ -84,7 +76,6 @@ sl
 smartmontools
 sof-firmware
 squashfs-tools
-sudo
 syslinux
 systemd-resolvconf
 tcpdump
