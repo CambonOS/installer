@@ -26,9 +26,6 @@ case $1 in
 				sleep 2
 				cd /tmp
 				git clone -b $2 https://github.com/CambonOS/arch-distro
-				cd arch-distro
-				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
-				sudo chmod 755 /usr/bin/cambonos || ERROR
 				DONE
 				;;
 			*)
@@ -36,9 +33,6 @@ case $1 in
 				sleep 2
 				cd /tmp
 				git clone https://github.com/CambonOS/arch-distro
-				cd arch-distro
-				sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
-				sudo chmod 755 /usr/bin/cambonos || ERROR
 				DONE
 				echo -e "${BLUE}\n>>Actualizando paquetes${NOCOLOR}"
 				sleep 2
@@ -54,6 +48,9 @@ case $1 in
 				DONE
 				;;
 		esac
+		cd arch-distro
+		sudo cp ./cambonos.sh /usr/bin/cambonos || ERROR
+		sudo chmod 755 /usr/bin/cambonos || ERROR
 		;;
 	clone)
 		shift
@@ -79,6 +76,7 @@ case $1 in
 			echo -e "${RED}Debese ejecutar como usuario con privilejios${NOCOLOR}"
 			exit
 		fi
+		
 		echo -e "\n${BLUE}>>Carpeta destino ISO:${NOCOLOR}\c"
 		read -e -i $(pwd) RUTAD
 
@@ -124,7 +122,7 @@ case $1 in
 		DONE
 		;;
 	*)
-		echo -e "${RED}Opción ${BLUE}$1${RED} no reconocida.\nLas opciones posibles:\n		${BLUE}cambonos upgrade${NOCOLOR}\n		${BLUE}cambonos mkiso${NOCOLOR}\n		${BLUE}cambonos clone${NOCOLOR}"
+		echo -e "${RED}Opción ${BLUE}$1${RED} no reconocida. Las opciones posibles:\n		${BLUE}cambonos upgrade${NOCOLOR}\n		${BLUE}cambonos mkiso${NOCOLOR}\n		${BLUE}cambonos clone${NOCOLOR}"
 		sleep 2
 		;;
 esac
