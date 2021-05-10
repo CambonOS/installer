@@ -213,8 +213,6 @@ echo "systemctl enable zramd.service" | ARCH && DONE || ERROR
 echo -e "\n>>Configurando sistema\c"
 echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && cp -r arch-distro/etc/* /etc && cp -r arch-distro/usr/* /usr' | ARCH
 echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash arch-distro/cambonos.sh upgrade -b main && grub-mkconfig -o /boot/grub/grub.cfg' | ARCH
-echo "echo 'gsettings set org.gnome.desktop.wm.preferences button-layout :minimize,maximize,close' | su $USER" | ARCH
-echo "echo 'gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/cambonos.jpg' | su $USER" | ARCH
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | ARCH && DONE || ERROR
 
 echo -e "\n>>Terminando instalacion\c"
