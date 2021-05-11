@@ -217,4 +217,5 @@ echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systo
 
 echo -e "\n>>Terminando instalacion\c"
 cp /mnt/etc/skel/.bashrc /mnt/home/$USER/.bashrc
+rm -rf /mnt/home/$USER/go
 echo 'locale-gen' | ARCH && DONE || ERROR
