@@ -216,4 +216,5 @@ echo 'cd /tmp && git clone https://github.com/CambonOS/arch-distro.git && bash a
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc || exit 1" | ARCH && DONE || ERROR
 
 echo -e "\n>>Terminando instalacion\c"
+cp /mnt/etc/skel/.bashrc /mnt/home/$USER/.bashrc
 echo 'locale-gen' | ARCH && DONE || ERROR
