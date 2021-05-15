@@ -7,4 +7,4 @@ Comment=Navegar en busca de servicios Zeroconf disponibles en su red
 Icon=network-wired
 Exec=/usr/bin/avahi-discover
 Actions=
-Categories=GNOME;System;System-Tools;
+Categories=GNOME;System;
