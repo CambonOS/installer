@@ -10,5 +10,6 @@
       <property name="show-device-removable" type="bool" value="false"/>
       <property name="show-unknown-removable" type="bool" value="false"/>
     </property>
+    <property name="show-tooltips" type="bool" value="false"/>
   </property>
 </channel>
