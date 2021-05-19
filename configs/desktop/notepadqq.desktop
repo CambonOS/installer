@@ -1,0 +1,19 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Notepadqq
+GenericName=Notepadqq source code editor
+Comment=Edit source code files
+Icon=notepadqq
+Exec=notepadqq %U
+Actions=Window;Document;
+MimeType=text/plain;text/html;text/x-php;text/x-c;text/x-shellscript;
+Categories=Development;
+
+[Desktop Action Window]
+Name=Abrir una ventana nueva
+Exec=notepadqq --new-window
+
+[Desktop Action Document]
+Name=Abrir un documento nuevo
+Exec=notepadqq

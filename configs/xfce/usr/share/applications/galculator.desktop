@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Calculadora
+Comment=Realizar cálculos sencillos y científicos
+Icon=accessories-calculator
+Exec=galculator
+Actions=
+Categories=Utility;
+StartupNotify=true

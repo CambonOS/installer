@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Emulador de terminal
+Comment=Usar la línea de órdenes
+Icon=utilities-terminal
+OnlyShowIn=XFCE;
+Exec=exo-open --launch TerminalEmulator
+Actions=
+Categories=X-XFCE;X-Xfce-Toplevel;
+StartupNotify=true

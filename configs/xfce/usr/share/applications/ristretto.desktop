@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Visor de imágenes Ristretto
+GenericName=Visor de imágenes
+NoDisplay=true
+Comment=Mire sus imágenes fácilmente
+Icon=ristretto
+Exec=ristretto %F
+Actions=
+MimeType=image/png;image/gif;image/jpeg;image/bmp;image/x-pixmap;image/tiff;image/svg+xml;image/x-xpixmap;
+Categories=GTK;Graphics;Viewer;
+StartupNotify=true

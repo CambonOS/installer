@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Salir de la sesión
+Comment=Salir del escritorio de Xfce
+Icon=xfsm-logout
+OnlyShowIn=XFCE;
+Exec=xfce4-session-logout
+Actions=
+Categories=X-XFCE;X-Xfce-Toplevel;

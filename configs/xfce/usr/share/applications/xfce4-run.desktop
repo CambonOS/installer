@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Ejecutar programa…
+NoDisplay=true
+Comment=Ingrese un comando que desee lanzar
+Icon=org.xfce.appfinder
+OnlyShowIn=XFCE;
+Exec=xfce4-appfinder --collapsed
+Actions=
+Categories=Utility;X-XFCE;X-Xfce-Toplevel;
+Keywords=run;command;application;program;finder;search;launcher;everything;spotlight;sherlock;applesearch;unity dash;krunner;synapse;ulauncher;launchy;gnome do;pie;apwal;recoll;alfred;quicksilver;tracker;beagle;kupfer;
+StartupNotify=true

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Editor de textos
+GenericName=Editor de textos
+Comment=Editor de texto simple
+Icon=accessories-text-editor
+Exec=mousepad %F
+Actions=
+MimeType=text/plain;
+Categories=Utility;
+StartupNotify=true
