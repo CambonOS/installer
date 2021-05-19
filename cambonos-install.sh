@@ -72,7 +72,7 @@ DM () {
 
 INSTALL () {
 	case $CONT in
-		1) AL='Xfce'; APP='xfce4-appfinder xfce4-panel xfce4-power-manager xfce4-session xfce4-settings xfce4-screensaver xfconf xfdesktop xfwm4 network-manager-applet blueberry bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups nautilus gnome-disk-utility alacritty mousepad vlc epdfview ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre' && DM ;;
+		1) AL='Xfce'; APP='xfce4-appfinder xfce4-panel xfce4-power-manager xfce4-session xfce4-settings xfce4-screensaver xfconf xfdesktop xfwm4 network-manager-applet blueberry qt5-connectivity bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups nautilus gnome-disk-utility alacritty mousepad vlc epdfview ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre' && DM ;;
 		2) AL='KDE'; APP='plasma' && DM ;;
 		3) AL='Gnome'; APP='gnome' && DM ;;
 		4) AL='Mate'; APP='mate' && DM ;;
