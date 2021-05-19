@@ -72,7 +72,7 @@ DM () {
 
 INSTALL () {
 	case $CONT in
-		1) AL='Xfce'; APP='xfce4-appfinder xfce4-panel xfce4-power-manager xfce4-session xfce4-settings xfce4-screensaver xfconf xfdesktop xfwm4 network-manager-applet blueberry nautilus gnome-disk-utility alacritty mousepad vlc epdfview ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre' && DM ;;
+		1) AL='Xfce'; APP='xfce4-appfinder xfce4-panel xfce4-power-manager xfce4-session xfce4-settings xfce4-screensaver xfconf xfdesktop xfwm4 network-manager-applet blueberry bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups nautilus gnome-disk-utility alacritty mousepad vlc epdfview ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre' && DM ;;
 		2) AL='KDE'; APP='plasma' && DM ;;
 		3) AL='Gnome'; APP='gnome' && DM ;;
 		4) AL='Mate'; APP='mate' && DM ;;
@@ -118,7 +118,7 @@ INSTALL () {
 			cp -r grub/* /mnt/boot/grub
 			cp -r arch-distro/configs/cambonos/* /mnt && chmod 775 /mnt/usr/bin/cambonos
 			echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
-			echo "userdel -r $USER && useradd -m -s /bin/bash -g sudo -G rfkill $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
+			echo "userdel -r $USER && useradd -m -s /bin/bash -g sudo -G lp,rfkill $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 			echo "locale-gen" | ARCH
 			echo "cambonos upgrade" | ARCH
 			DONE ;;
