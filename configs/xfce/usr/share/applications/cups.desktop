@@ -1,5 +1,5 @@
 [Desktop Entry]
-Categories=Settings;
+Categories=Utility;
 Exec=/usr/bin/xdg-open http://localhost:631/
 Icon=cups
 StartupNotify=false
