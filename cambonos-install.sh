@@ -63,7 +63,7 @@ DM () {
 	if [[ $DM = false ]]
 	then
 		echo -e "\n>>Instalando display manager\c"
-		echo "trizen --noconfirm -Sy xorg-server lightdm lightdm-settings numlockx && systemctl enable lightdm.service" | ARCH && DONE || ERROR
+		echo "echo 'trizen --noconfirm -Sy xorg-server lightdm lightdm-settings numlockx' | su $USER && systemctl enable lightdm.service" | ARCH && DONE || ERROR
 		cp -r arch-distro/configs/lightdm/* /mnt
 		cp -r share/* /mnt/usr/share
 		DM='true'
