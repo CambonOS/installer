@@ -33,28 +33,28 @@ SOFTWARE () {
 	****** Software a instalar ******
 
  Entorno de escritorio:
-  1-Xfce		2-KDE			3-Gnome
-  4-Mate		5-Cinnamon		6-LXDE
+  1-Budgie		2-Xfce			3-LXDE
+  4-GNOME		5-Cinnamon		6-KDE
+  7-MATE		8-Deepin		9-UKUI
 
  Suite ofimatica:
-  7-LibreOffice		8-OpenOffice		9-Calligra
+  10-LibreOffice	11-OpenOffice		12-Calligra
 
  Editor de texto adicional:
-  10-Neovim		11-Sublime text		12-Notepad++
+  13-Neovim		14-Sublime text		15-Notepad++
 
  Gaming:
-  13-GameHub		14-Steam		15-Chiaki
-  16-Lutris
+  16-GameHub		17-Steam		18-Lutris
 
  Virtualizacion:
   19-VirtualBox		20-Gnome Boxes
 
  Musica:
-  22-Spotify		23-Apple music		24-Rhythmbox
+  22-Spotify		23-Rhythmbox
 
  Navegadores:
   25-Firefox		26-Brave		27-Chrome
-  28-Opera		29-Chromiun
+  28-Opera		29-Chromiun		30-Midori
 
  Escribir los numeros separados: \c" && read NUMBER
 }
@@ -72,48 +72,50 @@ DM () {
 
 INSTALL () {
 	case $CONT in
-		1) AL='Xfce'; APP='xfce4-appfinder xfce4-panel xfce4-power-manager xfce4-session xfce4-settings xfce4-screensaver xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet system-config-printer blueberry qt5-connectivity bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups nautilus gnome-disk-utility alacritty mousepad vlc epdfview ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre' && DM ;;
-		2) AL='KDE'; APP='plasma' && DM ;;
-		3) AL='Gnome'; APP='gnome' && DM ;;
-		4) AL='Mate'; APP='mate' && DM ;;
+		1) AL='Budgie'; APP='budgie-desktop' && DM ;;
+		2) AL='Xfce'; APP='xfce4-appfinder xfce4-panel xfce4-power-manager xfce4-session xfce4-settings xfce4-screensaver xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet system-config-printer blueberry qt5-connectivity bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups nautilus gnome-disk-utility alacritty mousepad vlc epdfview ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre' && DM ;;
+		3) AL='LXDE'; APP='lxde-gtk3' && DM ;;
+		4) AL='GNOME'; APP='gnome' && DM ;;
 		5) AL='Cinnamon'; APP='cinnamon' && DM ;;
-		6) AL='LXDE'; APP='lxde-gtk3' && DM ;;
-		7) AL='LibreOffice'; APP='libreoffice-fresh libreoffice-fresh-es' ;;
-		8) AL='OpenOffice'; APP='openoffice-bin' ;;
-		9) AL='Calligra'; APP='calligra' ;;
-		10) AL='Neovim'; APP='neovim' ;;
-		11) AL='Sublime text'; APP='sublime-text-3' ;;
-		12) AL='Notepad++'; APP='notepadqq' ;;
-		13) AL='Gamehub'; APP='gamehub wine-staging' ;;
-		14) AL='Steam'; APP='steam wine-staging' ;;
-		15) AL='Chiaki'; APP='chiaki' ;;
-		16) AL='Lutris'; APP='lutris wine-staging' ;;
+		6) AL='KDE'; APP='plasma' && DM ;;
+		7) AL='MATE'; APP='mate' && DM ;;
+		8) AL='Deepin'; APP='deepin' && DM ;;
+		9) AL='UKUI'; APP='ukui' && DM ;;
+		10) AL='LibreOffice'; APP='libreoffice-fresh libreoffice-fresh-es' ;;
+		11) AL='OpenOffice'; APP='openoffice-bin' ;;
+		12) AL='Calligra'; APP='calligra' ;;
+		13) AL='Neovim'; APP='neovim' ;;
+		14) AL='Sublime text'; APP='sublime-text-3' ;;
+		15) AL='Notepad++'; APP='notepadqq' ;;
+		16) AL='Gamehub'; APP='gamehub wine-staging' ;;
+		17) AL='Steam'; APP='steam wine-staging' ;;
+		18) AL='Lutris'; APP='lutris wine-staging' ;;
 		19) AL='VirtualBox'; APP='virtualbox virtualbox-guest-iso virtualbox-ext-oracle' ;;
 		20) AL='Gnome box'; APP='gnome-boxes' ;;
 		22) AL='Spotify'; APP='spotify-snap' ;;
-		23) AL='Apple Music'; APP='apple-music-electron' ;;
-		24) AL='Rhythmbox'; APP='rhythmbox' ;;
+		23) AL='Rhythmbox'; APP='rhythmbox' ;;
 		25) AL='Firefox'; APP='firefox-i18n-es-es' ;;
 		26) AL='Brave'; APP='brave-bin' ;;
 		27) AL='Chrome'; APP='google-chrome' ;;
 		28) AL='Opera'; APP='opera' ;;
 		29) AL='Chromium'; APP='chromium' ;;
+		30) AL='Midori'; APP='Midori' ;;
 		69) AL='paquetes del sistema'; APP='zramd xdg-user-dirs' ;;
 	esac
 	echo -e "\n>>Instalando $AL\c"
 	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 	case $CONT in
-		1) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service" | ARCH ;;
-		2) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
+		2) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service" | ARCH ;;
 		5) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
-		7) 
+		6) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
+		10) 
 			rm /mnt/usr/share/applications/libreoffice-draw.desktop && cp arch-distro/configs/desktop/libreoffice-draw.desktop /mnt/usr/share/applications
 			rm /mnt/usr/share/applications/libreoffice-math.desktop && cp arch-distro/configs/desktop/libreoffice-math.desktop /mnt/usr/share/applications
 			;;
-		9) cp arch-distro/configs/desktop/org.kde.karbon.desktop /mnt/usr/share/applications ;;
-		10) cp arch-distro/configs/desktop/nvim.desktop /mnt/usr/share/applications ;;
-		12) cp arch-distro/configs/desktop/notepadqq.desktop /mnt/usr/share/applications ;;
-		14) rm /mnt/usr/share/applications/steam.desktop && cp arch-distro/configs/desktop/steam.desktop /mnt/usr/share/applications ;;
+		12) cp arch-distro/configs/desktop/org.kde.karbon.desktop /mnt/usr/share/applications ;;
+		13) cp arch-distro/configs/desktop/nvim.desktop /mnt/usr/share/applications ;;
+		15) cp arch-distro/configs/desktop/notepadqq.desktop /mnt/usr/share/applications ;;
+		17) rm /mnt/usr/share/applications/steam.desktop && cp arch-distro/configs/desktop/steam.desktop /mnt/usr/share/applications ;;
 		19) cp arch-distro/configs/desktop/virtualbox.desktop /mnt/usr/share/applications ;;
 		20) cp arch-distro/configs/desktop/org.gnome.Boxes.desktop /mnt/usr/share/applications ;;
 		69)
