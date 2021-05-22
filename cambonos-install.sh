@@ -106,6 +106,10 @@ INSTALL () {
 		1) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service" | ARCH ;;
 		2) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
 		5) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
+		7) 
+			rm /mnt/usr/share/applications/libreoffice-draw.desktop && cp arch-distro/configs/desktop/libreoffice-draw.desktop /mnt/usr/share/applications
+			rm /mnt/usr/share/applications/libreoffice-math.desktop && cp arch-distro/configs/desktop/libreoffice-math.desktop /mnt/usr/share/applications
+			;;
 		9) cp arch-distro/configs/desktop/org.kde.karbon.desktop /mnt/usr/share/applications ;;
 		10) cp arch-distro/configs/desktop/nvim.desktop /mnt/usr/share/applications ;;
 		12) cp arch-distro/configs/desktop/notepadqq.desktop /mnt/usr/share/applications ;;
