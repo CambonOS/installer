@@ -28,7 +28,7 @@ case $1 in
 							
 		fi
 		sudo cp -r arch-distro/configs/cambonos/usr/bin/* /usr/bin || ERROR
-		sudo chmod 755 /usr/bin/* || ERROR
+		sudo chmod 755 /usr/bin/cambonos* || ERROR
 		;;
 	upgrade)
 		echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
