@@ -149,6 +149,15 @@ ROOT () {
 	fi
 }
 
+SECURE () {
+	echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar?[s/N]: \c"
+	read ANS
+	if [[ $ANS = s ]]
+	then sleep 0
+	else exit
+	fi
+}
+
 ############################################################################################################
 ############################################################################################################
 ############################################################################################################
@@ -156,6 +165,7 @@ ROOT () {
 HEAD
 echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 echo -e "\n>>En que disco quieres instalar el sistema: \c" && read -e -i "/dev/sd" DISCO
+SECURE
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 ROOT
 echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
