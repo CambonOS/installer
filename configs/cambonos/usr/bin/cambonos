@@ -18,7 +18,7 @@ DONE () {
 case $1 in
 	update)
 		sudo rm -rf /tmp/arch-distro
-		echo -e "${BLUE}>>Actualizando comandos de CambonOS ($2)${NOCOLOR}"
+		echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 		cd /tmp
 		if [[ $2 = "-b" ]]
 		then
