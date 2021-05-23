@@ -1,0 +1,119 @@
+[com/solus-project/budgie-panel]
+migration-level=1
+panels=['635af3c6-bbd9-11eb-a4b6-080027028e3f']
+
+[com/solus-project/budgie-panel/applets/{4a9d4f72-bbda-11eb-a4b6-080027028e3f}]
+alignment='end'
+name='User Indicator'
+position=5
+
+[com/solus-project/budgie-panel/applets/{636bbed6-bbd9-11eb-a4b6-080027028e3f}]
+alignment='start'
+name='Budgie Menu'
+position=0
+
+[com/solus-project/budgie-panel/applets/{6376c164-bbd9-11eb-a4b6-080027028e3f}]
+alignment='start'
+name='Spacer'
+position=1
+
+[com/solus-project/budgie-panel/applets/{6377e85a-bbd9-11eb-a4b6-080027028e3f}]
+alignment='start'
+name='Icon Task List'
+position=2
+
+[com/solus-project/budgie-panel/applets/{63819580-bbd9-11eb-a4b6-080027028e3f}]
+alignment='end'
+name='System Tray'
+position=0
+
+[com/solus-project/budgie-panel/applets/{6389f20c-bbd9-11eb-a4b6-080027028e3f}]
+alignment='end'
+name='Notifications'
+position=1
+
+[com/solus-project/budgie-panel/applets/{639a5f0c-bbd9-11eb-a4b6-080027028e3f}]
+alignment='end'
+name='Status Indicator'
+position=2
+
+[com/solus-project/budgie-panel/applets/{63a9b7b8-bbd9-11eb-a4b6-080027028e3f}]
+alignment='end'
+name='Clock'
+position=4
+
+[com/solus-project/budgie-panel/applets/{63ac4b0e-bbd9-11eb-a4b6-080027028e3f}]
+alignment='end'
+name='Raven Trigger'
+position=3
+
+[com/solus-project/budgie-panel/instance/budgie-menu/{636bbed6-bbd9-11eb-a4b6-080027028e3f}]
+enable-menu-label=true
+menu-categories-hover=true
+menu-compact=false
+menu-headers=false
+menu-icon='/boot/grub/themes/arch/icons/linux.png'
+menu-label='CambonOS'
+
+[com/solus-project/budgie-panel/instance/icon-tasklist/{6377e85a-bbd9-11eb-a4b6-080027028e3f}]
+grouping=false
+lock-icons=false
+middle-click-launch-new-instance=false
+only-pinned=false
+require-double-click-to-launch=false
+restrict-to-workspace=false
+show-all-windows-on-click=false
+
+[com/solus-project/budgie-panel/instance/status/{639a5f0c-bbd9-11eb-a4b6-080027028e3f}]
+spacing=3
+
+[com/solus-project/budgie-panel/panels/{635af3c6-bbd9-11eb-a4b6-080027028e3f}]
+applets=['63ac4b0e-bbd9-11eb-a4b6-080027028e3f', '63a9b7b8-bbd9-11eb-a4b6-080027028e3f', '4a9d4f72-bbda-11eb-a4b6-080027028e3f', '636bbed6-bbd9-11eb-a4b6-080027028e3f', '6377e85a-bbd9-11eb-a4b6-080027028e3f', '6389f20c-bbd9-11eb-a4b6-080027028e3f', '63819580-bbd9-11eb-a4b6-080027028e3f', '639a5f0c-bbd9-11eb-a4b6-080027028e3f', '6376c164-bbd9-11eb-a4b6-080027028e3f']
+dock-mode=false
+location='bottom'
+size=39
+transparency='none'
+
+[com/solus-project/budgie-wm]
+button-layout='appmenu:minimize,maximize,close'
+center-windows=false
+show-all-windows-tabswitcher=false
+
+[org/gnome/desktop/input-sources]
+current=uint32 0
+sources=[('xkb', 'es')]
+
+[org/gnome/desktop/interface]
+clock-show-date=false
+cursor-theme='Adwaita'
+gtk-im-module='gtk-im-context-simple'
+gtk-theme='Material-Black-Blueberry'
+icon-theme='Material-Black-Blueberry-Numix'
+
+[org/gnome/desktop/wm/preferences]
+button-layout='appmenu:minimize,maximize,close'
+num-workspaces=1
+
+[org/gnome/nautilus/preferences]
+default-folder-viewer='icon-view'
+search-filter-time-type='last_modified'
+
+[org/gnome/nautilus/window-state]
+maximized=true
+
+[org/gnome/settings-daemon/plugins/xsettings]
+overrides={'Gtk/ShellShowsAppMenu': <0>, 'Gtk/DecorationLayout': <'menu:minimize,maximize,close'>}
+
+[org/gtk/settings/file-chooser]
+date-format='regular'
+location-mode='path-bar'
+show-hidden=true
+show-size-column=true
+show-type-column=true
+sidebar-width=167
+sort-column='name'
+sort-directories-first=false
+sort-order='ascending'
+type-format='category'
+window-position=(0, 0)
+window-size=(800, 526)
