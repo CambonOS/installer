@@ -154,7 +154,7 @@ ROOT () {
 SECURE () {
 	echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
 	read ANS
-	if [[ $ANS = [s|S|Si|si|y|Y|yes|Yes] ]]
+	if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
 	then sleep 0
 	else exit
 	fi
