@@ -105,6 +105,7 @@ INSTALL () {
 	echo -e "\n>>Instalando $AL\c"
 	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 	case $CONT in
+		1) echo "dfconf load / < conf && rm conf" | ARCH ;;
 		2) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service" | ARCH ;;
 		5) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
 		6) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
