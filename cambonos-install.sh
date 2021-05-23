@@ -125,7 +125,7 @@ INSTALL () {
 			cp -r grub/* /mnt/boot/grub
 			cp -r arch-distro/configs/cambonos/* /mnt && chmod 775 /mnt/usr/bin/cambonos
 			echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
-			echo "userdel -r $USER && useradd -m -s /bin/bash -g sudo -G lp,rfkill $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
+			echo "userdel -r $USER && useradd -m -s /bin/bash -g sudo -G lp,rfkill,wheel $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 			echo "locale-gen" | ARCH
 			echo "cambonos upgrade" | ARCH
 			;;
@@ -154,7 +154,7 @@ ROOT () {
 SECURE () {
 	echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
 	read ANS
-	if [[ $ANS = s ]]
+	if [[ $ANS = s|S|Si|si|y|Y|yes|Yes ]]
 	then sleep 0
 	else exit
 	fi
@@ -169,7 +169,7 @@ echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 echo -e "\n>>En que disco quieres instalar el sistema: \c" && read -e -i "/dev/sd" DISCO
 SECURE
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
-ROOT
+#ROOT
 echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
 SUDO
 SOFTWARE
@@ -231,7 +231,8 @@ case $GRUB in
 esac
 
 echo -e "\n>>Configurando usuarios\c"
-(echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | ARCH) && echo -e "(echo -e '$SECRET\n$SECRET1' | passwd root) || exit 1" | ARCH && DONE || ERROR
+echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | ARCH && DONE || ERROR
+#&& echo -e "(echo -e '$SECRET\n$SECRET1' | passwd root) || exit 1" | ARCH && DONE || ERROR
 
 echo -e "\n>>Instalando trizen\c"
 echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
