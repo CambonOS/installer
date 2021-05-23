@@ -99,7 +99,7 @@ INSTALL () {
 		27) AL='Chrome'; APP='google-chrome' ;;
 		28) AL='Opera'; APP='opera' ;;
 		29) AL='Chromium'; APP='chromium' ;;
-		30) AL='Midori'; APP='Midori' ;;
+		30) AL='Midori'; APP='midori' ;;
 		69) AL='paquetes del sistema'; APP='zramd xdg-user-dirs' ;;
 	esac
 	echo -e "\n>>Instalando $AL\c"
