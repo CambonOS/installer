@@ -160,7 +160,7 @@ echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 echo -e "\n>>En que disco quieres instalar el sistema: \c" && read -e -i "/dev/sd" DISCO
 SECURE
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
-echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
+echo -e "\n>>Nombre para el nuevo usuario: \c" && read USER
 SUDO
 SOFTWARE
 HEAD
