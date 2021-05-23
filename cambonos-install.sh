@@ -104,6 +104,7 @@ INSTALL () {
 	esac
 	echo -e "\n>>Instalando $AL\c"
 	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+	echo -e "\n>>Configurando $AL\c"
 	case $CONT in
 		1) cp -r arch-distro/configs/budgie/* /mnt; echo "echo 'dfconf load / < conf && rm conf' | su $USER" | ARCH ;;
 		2) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service" | ARCH ;;
@@ -120,7 +121,6 @@ INSTALL () {
 		19) cp arch-distro/configs/desktop/virtualbox.desktop /mnt/usr/share/applications ;;
 		20) cp arch-distro/configs/desktop/org.gnome.Boxes.desktop /mnt/usr/share/applications ;;
 		69)
-			echo -e "\n>>Configurando CambonOS\c"
 			echo "systemctl enable zramd.service; systemctl enable xdg-user-dirs-update.service; systemctl enable cups.service" | ARCH
 			cp -r grub/* /mnt/boot/grub
 			cp -r arch-distro/configs/cambonos/* /mnt && chmod 775 /mnt/usr/bin/cambonos
@@ -128,8 +128,9 @@ INSTALL () {
 			echo "userdel -r $USER && useradd -m -s /bin/bash -g sudo -G lp,rfkill $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 			echo "locale-gen" | ARCH
 			echo "cambonos upgrade" | ARCH
-			DONE ;;
+			;;
 	esac
+	DONE
 }
 
 SUDO () {
