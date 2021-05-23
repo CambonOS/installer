@@ -151,7 +151,7 @@ ROOT () {
 }
 
 SECURE () {
-	echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar?[s/N]: \c"
+	echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
 	read ANS
 	if [[ $ANS = s ]]
 	then sleep 0
