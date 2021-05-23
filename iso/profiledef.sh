@@ -2,7 +2,7 @@
 # shellcheck disable=SC2034
 
 iso_name="CambonOS"
-iso_label="CAMBON_$(date +%y.%m)"
+iso_label="CambonOS_$(date +%y.%m)"
 iso_publisher="CambonOS <https://github.com/CambonOS/Arch-Distro>"
 iso_application="CambonOS Installer"
 iso_version="$(date +%y.%m)"
