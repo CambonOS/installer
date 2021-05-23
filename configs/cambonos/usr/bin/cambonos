@@ -94,7 +94,7 @@ case $1 in
 		rm -rf rtl88-Themes/Material-Black-*-FLAT
 		cp -r rtl88-Themes/Material-Black-* share/icons
 		rm -rf rtl88-Themes
-		cp -r arch-distro/iso/* /iso/perfil || ERROR
+		cp -r arch-distro/configs/iso/* /iso/perfil || ERROR
 		echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash arch-distro/cambonos-install.sh" >.zshrc
 		if [[ $2 = "-b" ]]
 		then
