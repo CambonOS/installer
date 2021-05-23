@@ -29,7 +29,7 @@ case $1 in
 		fi
 		sudo cp -r arch-distro/configs/cambonos/usr/bin/* /usr/bin || ERROR
 		sudo chmod 755 /usr/bin/cambonos* || ERROR
-		;;
+		DONE ;;
 	upgrade)
 		echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
 		sleep 2
@@ -42,8 +42,7 @@ case $1 in
 		echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 		sleep 2
 		sudo grub-mkconfig -o /boot/grub/grub.cfg || ERROR
-		DONE
-		;;
+		DONE ;;
 	clone)
 		rm -rf arch-distro
 		echo -e "${BLUE}>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
@@ -54,8 +53,7 @@ case $1 in
 			git clone https://github.com/CambonOS/Arch-Distro.git
 							
 		fi
-		DONE
-		;;
+		DONE ;;
 	mkiso)
 		if [[ $EUID -ne 0 ]]
 		then
@@ -113,8 +111,7 @@ case $1 in
 		sleep 2
 		rm -rf /iso
 		pacman --noconfirm -Rns archiso
-		DONE
-		;;
+		DONE ;;
 	*)
 		echo -e "${RED}Opción ${BLUE}$1${RED} no reconocida. Las opciones posibles:\n		${BLUE}cambonos upgrade\n		cambonos mkiso\n		cambonos clone\n	cambonos update${NOCOLOR}"
 		;;
