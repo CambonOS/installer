@@ -72,8 +72,8 @@ DM () {
 
 INSTALL () {
 	case $CONT in
-		1) AL='Budgie'; APP='budgie-desktop gnome-control-center alacritty nautilus gnome-calculator gedit eog totem evince' && DM ;;
-		2) AL='Xfce'; APP='xfce4-appfinder xfce4-panel xfce4-power-manager xfce4-session xfce4-settings xfce4-screensaver xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet system-config-printer blueberry qt5-connectivity bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups nautilus gnome-disk-utility alacritty mousepad parole atril ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre' && DM ;;
+		1) AL='Budgie'; APP='budgie-desktop gnome-control-center alacritty nautilus gnome-calculator gedit eog totem evince bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups gnome-disk-utility  menulibre' && DM ;;
+		2) AL='Xfce'; APP='xfce4-appfinder xfce4-panel xfce4-power-manager xfce4-settings xfce4-screensaver xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet system-config-printer blueberry bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups nautilus gnome-disk-utility alacritty mousepad parole atril ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre' && DM ;;
 		3) AL='LXDE'; APP='lxde-gtk3' && DM ;;
 		4) AL='GNOME'; APP='gnome' && DM ;;
 		5) AL='Cinnamon'; APP='cinnamon' && DM ;;
@@ -106,7 +106,7 @@ INSTALL () {
 	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 	echo -e "\n>>Configurando $AL\c"
 	case $CONT in
-		1) cp -r arch-distro/configs/budgie/* /mnt; echo "echo 'dfconf load / < conf && rm conf' | su $USER" | ARCH ;;
+		1) cp -r arch-distro/configs/budgie/* /mnt; echo "echo 'dfconf load / < conf && rm conf' | su $USER" | ARCH; echo "systemctl enable bluetooth.service" | ARCH ;;
 		2) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service" | ARCH ;;
 		5) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
 		6) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
