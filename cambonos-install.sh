@@ -106,8 +106,8 @@ INSTALL () {
 	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 	echo -e "\n>>Configurando $AL\c"
 	case $CONT in
-		1) cp -r arch-distro/configs/budgie/* /mnt; echo "echo 'dfconf load / < conf && rm conf' | su $USER" | ARCH; echo "systemctl enable bluetooth.service" | ARCH ;;
-		2) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service" | ARCH ;;
+		1) cp -r arch-distro/configs/budgie/* /mnt; echo "echo 'dfconf load / < conf && rm conf' | su $USER" | ARCH; echo "systemctl enable bluetooth.service; systemctl enable cups.service" | ARCH ;;
+		2) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service; systemctl enable cups.service" | ARCH ;;
 		5) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
 		6) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
 		10) 
