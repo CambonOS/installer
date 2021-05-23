@@ -106,7 +106,7 @@ INSTALL () {
 	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 	echo -e "\n>>Configurando $AL\c"
 	case $CONT in
-		1) cp -r arch-distro/configs/budgie/* /mnt; echo "echo 'dfconf load / < conf && rm conf' | su $USER" | ARCH; echo "systemctl enable bluetooth.service; systemctl enable cups.service" | ARCH ;;
+		1) cp -r arch-distro/configs/budgie/* /mnt; echo "systemctl enable bluetooth.service" | ARCH ;;
 		2) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service; systemctl enable cups.service" | ARCH ;;
 		5) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
 		6) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
@@ -142,15 +142,6 @@ SUDO () {
 	fi
 }
 
-ROOT () {
-	echo -e "\n>>Contraseña del usuario administrador (root): \c" && read -s SECRET
-	echo -e "\n\n>>Repetir contraseña: \c" && read -s SECRET1
-	if [[ $SECRET = $SECRET1 ]]
-	then sleep 0
-	else echo && ROOT
-	fi
-}
-
 SECURE () {
 	echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
 	read ANS
@@ -169,7 +160,6 @@ echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 echo -e "\n>>En que disco quieres instalar el sistema: \c" && read -e -i "/dev/sd" DISCO
 SECURE
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
-#ROOT
 echo -e "\n\n>>Nombre para el nuevo usuario: \c" && read USER
 SUDO
 SOFTWARE
@@ -232,7 +222,6 @@ esac
 
 echo -e "\n>>Configurando usuarios\c"
 echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | ARCH && DONE || ERROR
-#&& echo -e "(echo -e '$SECRET\n$SECRET1' | passwd root) || exit 1" | ARCH && DONE || ERROR
 
 echo -e "\n>>Instalando trizen\c"
 echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
