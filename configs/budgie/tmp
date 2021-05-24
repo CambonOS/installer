@@ -1,0 +1,4 @@
+
+dconf dump / > full-backup
+
+dconf load / < full-backup
