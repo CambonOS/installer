@@ -1,6 +1,7 @@
 [Desktop Entry]
 Version=1.1
 Type=Application
+NoDisplay=true
 Name=Configuración del gestor de archivos
 Comment=Configure el gestor de archivos Thunar
 Icon=org.xfce.thunar
