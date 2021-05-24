@@ -1,6 +1,7 @@
 [Desktop Entry]
 Version=1.1
 Type=Application
+NoDisplay=true
 Name=Gestor de archivos Thunar
 GenericName=Gestor de archivos
 Comment=Navegue por el sistema de archivos con el gestor de archivos
