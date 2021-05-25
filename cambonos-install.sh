@@ -106,30 +106,30 @@ INSTALL () {
 	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 	echo -e "\n>>Configurando $AL\c"
 	case $CONT in
-		1) cp -r arch-distro/configs/budgie/* /mnt; echo "systemctl enable bluetooth.service" | ARCH && DONE || ERROR ;;
-		2) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service; systemctl enable cups.service" | ARCH && DONE || ERROR ;;
-		4) mkdir /mnt/home/$USER/dash-to-panel; cp -r dash-to-panel/* /mnt/home/$USER/dash-to-panel && echo "echo 'cd dash-to-panel && make install' | su $USER" | ARCH && DONE || ERROR ;;
-		5) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH && DONE || ERROR ;;
-		6) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH && DONE || ERROR ;;
+		1) (cp -r arch-distro/configs/budgie/* /mnt; echo "systemctl enable bluetooth.service" | ARCH) && DONE || ERROR ;;
+		2) (cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service; systemctl enable cups.service" | ARCH) && DONE || ERROR ;;
+		4) (mkdir /mnt/home/$USER/dash-to-panel && cp -r dash-to-panel/* /mnt/home/$USER/dash-to-panel && echo "echo 'cd dash-to-panel && make install' | su $USER" | ARCH) && DONE || ERROR ;;
+		5) (echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH) && DONE || ERROR ;;
+		6) (echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH) && DONE || ERROR ;;
 		10) 
-			rm /mnt/usr/share/applications/libreoffice-draw.desktop && cp arch-distro/configs/desktop/libreoffice-draw.desktop /mnt/usr/share/applications
+			(rm /mnt/usr/share/applications/libreoffice-draw.desktop && cp arch-distro/configs/desktop/libreoffice-draw.desktop /mnt/usr/share/applications
 			rm /mnt/usr/share/applications/libreoffice-math.desktop && cp arch-distro/configs/desktop/libreoffice-math.desktop /mnt/usr/share/applications
-			&& DONE || ERROR ;;
-		12) cp arch-distro/configs/desktop/org.kde.karbon.desktop /mnt/usr/share/applications && DONE || ERROR ;;
-		13) cp arch-distro/configs/desktop/nvim.desktop /mnt/usr/share/applications && DONE || ERROR ;;
-		15) cp arch-distro/configs/desktop/notepadqq.desktop /mnt/usr/share/applications && DONE || ERROR ;;
-		17) rm /mnt/usr/share/applications/steam.desktop && cp arch-distro/configs/desktop/steam.desktop /mnt/usr/share/applications && DONE || ERROR ;;
-		19) cp arch-distro/configs/desktop/virtualbox.desktop /mnt/usr/share/applications && DONE || ERROR ;;
-		20) cp arch-distro/configs/desktop/org.gnome.Boxes.desktop /mnt/usr/share/applications && DONE || ERROR ;;
+			)&& DONE || ERROR ;;
+		12) (cp arch-distro/configs/desktop/org.kde.karbon.desktop /mnt/usr/share/applications) && DONE || ERROR ;;
+		13) (cp arch-distro/configs/desktop/nvim.desktop /mnt/usr/share/applications) && DONE || ERROR ;;
+		15) (cp arch-distro/configs/desktop/notepadqq.desktop /mnt/usr/share/applications) && DONE || ERROR ;;
+		17) (rm /mnt/usr/share/applications/steam.desktop && cp arch-distro/configs/desktop/steam.desktop /mnt/usr/share/applications) && DONE || ERROR ;;
+		19) (cp arch-distro/configs/desktop/virtualbox.desktop /mnt/usr/share/applications) && DONE || ERROR ;;
+		20) (cp arch-distro/configs/desktop/org.gnome.Boxes.desktop /mnt/usr/share/applications) && DONE || ERROR ;;
 		69)
-			echo "systemctl enable zramd.service; systemctl enable xdg-user-dirs-update.service; systemctl enable cups.service" | ARCH
+			(echo "systemctl enable zramd.service; systemctl enable xdg-user-dirs-update.service; systemctl enable cups.service" | ARCH
 			cp -r grub/* /mnt/boot/grub
 			cp -r arch-distro/configs/cambonos/* /mnt && chmod 775 /mnt/usr/bin/cambonos
 			echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
 			echo "userdel -r $USER && useradd -m -s /bin/bash -g sudo -G lp,rfkill,wheel $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 			echo "locale-gen" | ARCH
 			echo "cambonos upgrade" | ARCH
-			&& DONE || ERROR ;;
+			)&& DONE || ERROR ;;
 	esac
 }
 
