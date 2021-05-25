@@ -108,7 +108,7 @@ INSTALL () {
 	case $CONT in
 		1) cp -r arch-distro/configs/budgie/* /mnt; echo "systemctl enable bluetooth.service" | ARCH ;;
 		2) cp -r arch-distro/configs/xfce/* /mnt; echo "systemctl enable bluetooth.service; systemctl enable cups.service" | ARCH ;;
-		4) cp -r dash-to-panel /mnt/home/$USER/dash-to-panel && echo "echo 'cd dash-to-panel && make install' | su $USER" | ARCH ;;
+		4) mkdir /mnt/home/$USER/dash-to-panel; cp -r dash-to-panel/* /mnt/home/$USER/dash-to-panel && echo "echo 'cd dash-to-panel && make install' | su $USER" | ARCH ;;
 		5) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
 		6) echo "pacman --noconfirm -Rns xf86-video-intel" | ARCH ;;
 		10) 
