@@ -66,11 +66,11 @@ DM () {
 	if [[ $DM = false ]]
 	then
 		echo -e "\n>>Instalando display manager\c"
-		echo "echo 'trizen --noconfirm -Sy xorg-server lightdm lightdm-settings numlockx || exit 1' | su $USER" | ARCH || ERROR
-		cp -r arch-distro/configs/lightdm/* /mnt
-		cp -r share/* /mnt/usr/share
-		echo "systemctl enable cambonos-dm.service" | ARCH
-		DM='true'; DONE
+		echo "echo 'trizen --noconfirm -Sy xorg-server lightdm lightdm-settings numlockx || exit 1' | su $USER || exit 1" | ARCH && \
+		cp -r arch-distro/configs/lightdm/* /mnt && \
+		cp -r share/* /mnt/usr/share && \
+		echo "systemctl enable cambonos-dm.service || exit 1" | ARCH && \
+		DM='true' && DONE || ERROR
 	fi
 }
 
