@@ -1,0 +1,13 @@
+[Unit]
+Description=Cambonos Display Manager
+After=network.target
+
+[Service]
+Type=idle
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/usr/bin/lightdm
+
+[Install]
+WantedBy=multi-user.target

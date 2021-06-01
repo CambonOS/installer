@@ -29,7 +29,7 @@ case $1 in
 		fi
 		sudo cp -r arch-distro/configs/cambonos/usr/bin/* /usr/bin || ERROR
 		sudo chmod 755 /usr/bin/cambonos* || ERROR
-		;;
+		DONE ;;
 	upgrade)
 		echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
 		sleep 2
@@ -42,8 +42,7 @@ case $1 in
 		echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 		sleep 2
 		sudo grub-mkconfig -o /boot/grub/grub.cfg || ERROR
-		DONE
-		;;
+		DONE ;;
 	clone)
 		rm -rf arch-distro
 		echo -e "${BLUE}>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
@@ -54,8 +53,7 @@ case $1 in
 			git clone https://github.com/CambonOS/Arch-Distro.git
 							
 		fi
-		DONE
-		;;
+		DONE ;;
 	mkiso)
 		if [[ $EUID -ne 0 ]]
 		then
@@ -96,12 +94,12 @@ case $1 in
 		rm -rf rtl88-Themes/Material-Black-*-FLAT
 		cp -r rtl88-Themes/Material-Black-* share/icons
 		rm -rf rtl88-Themes
-		cp -r arch-distro/iso/* /iso/perfil || ERROR
+		cp -r arch-distro/configs/iso/* /iso/perfil || ERROR
 		echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash arch-distro/cambonos-install.sh" >.zshrc
 		if [[ $2 = "-b" ]]
 		then
-			sed "s/iso_version=\"\$(date +%y.%m)\"/iso_version=\"$2\"/" arch-distro/iso/profiledef.sh > /iso/perfil/profiledef.sh
-			sed -i "s/bash arch-distro\/cambonos-install.sh/rm -rf arch-distro\ngit clone -b $2 https:\/\/github.com\/cambonos\/arch-distro.git\nbash arch-distro\/cambonos-install.sh/" .zshrc
+			sed "s/iso_version=\"\$(date +%y.%m)\"/iso_version=\"$3\"/" arch-distro/configs/iso/profiledef.sh > /iso/perfil/profiledef.sh
+			sed -i "s/bash arch-distro\/cambonos-install.sh/rm -rf arch-distro\ngit clone -b $3 https:\/\/github.com\/cambonos\/arch-distro.git\nbash arch-distro\/cambonos-install.sh/" .zshrc
 		fi
 		DONE
 
@@ -113,8 +111,7 @@ case $1 in
 		sleep 2
 		rm -rf /iso
 		pacman --noconfirm -Rns archiso
-		DONE
-		;;
+		DONE ;;
 	*)
 		echo -e "${RED}Opción ${BLUE}$1${RED} no reconocida. Las opciones posibles:\n		${BLUE}cambonos upgrade\n		cambonos mkiso\n		cambonos clone\n	cambonos update${NOCOLOR}"
 		;;

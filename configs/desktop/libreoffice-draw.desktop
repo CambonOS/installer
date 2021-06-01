@@ -21,6 +21,5 @@ X-KDE-Protocols=file,http,ftp,webdav,webdavs
 Actions=NewDocument;
 [Desktop Action NewDocument]
 Name=New Drawing
-Name[en]=New Drawing
 Icon=libreoffice-document-new
 Exec=libreoffice --draw
