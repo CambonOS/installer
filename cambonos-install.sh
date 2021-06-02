@@ -169,7 +169,7 @@ INSTALL () {
 			;;
 		69)
 			CONFIG
-			echo "systemctl enable zramd.service && systemctl enable xdg-user-dirs-update.service && systemctl enable cups.service && systemctl enable bluetooth.service || exit 1" | ARCH && \
+			echo "systemctl enable zramd.service && systemctl enable cups.service && systemctl enable bluetooth.service || exit 1" | ARCH && \
 			cp -r grub/* /mnt/boot/grub && \
 			cp -r arch-distro/configs/cambonos/* /mnt && chmod 775 /mnt/usr/bin/cambonos && \
 			echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH && \
