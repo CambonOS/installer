@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Cajas
+GenericName=Gestor/visor de máquinas virtuales
+Comment=Ver y usar máquinas virtuales
+Icon=org.gnome.Boxes
+DBusActivatable=true
+Exec=gnome-boxes %U
+Actions=
+MimeType=application/x-cd-image;
+Categories=Development;
+Keywords=máquina virtual;vm;
+StartupNotify=true
