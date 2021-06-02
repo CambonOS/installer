@@ -80,7 +80,7 @@ CONFIG () {
 
 INSTALL () {
 	case $CONT in
-		1) AL='Xfce'; APP='xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings light-locker xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet system-config-printer blueberry gnome-disk-utility nautilus alacritty mousepad parole atril ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre brave-bin mugshot' && DM ;;
+		1) AL='Xfce'; APP='xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings light-locker xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet cups system-config-printer blueberry gnome-disk-utility nautilus alacritty mousepad parole atril ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre brave-bin mugshot' && DM ;;
 		3) AL='Xfce'; APP='xfce4 xfwm4 xfce4-panel xfce4-terminal thunar galculator mousepad ristretto parole brave-bin' && DM ;;
 		4) AL='GNOME'; APP='gnome-session gnome-shell gnome-control-center gnome-terminal nautilus gnome-calculator gedit eog totem evince brave-bin' && DM ;;
 		5) AL='Cinnamon'; APP='cinnamon gnome-terminal nemo gnome-calculator gedit eog totem evince brave-bin' && DM ;;
