@@ -1,5 +1,5 @@
 favorites=xfce4-web-browser.desktop,xfce4-file-manager.desktop,xfce4-terminal-emulator.desktop
-button-title=CambonOS 
+button-title=CambonOS\ 
 button-icon=/boot/grub/themes/arch/icons/linux.png
 button-single-row=false
 show-button-title=true
