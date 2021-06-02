@@ -1,15 +1,18 @@
 [Desktop Entry]
-Version=1.1
 Type=Application
-Name=Emulador de terminal
-GenericName=Terminal
-Comment=A fast, cross-platform, OpenGL terminal emulator
-Icon=utilities-terminal
 TryExec=alacritty
 Exec=alacritty
-Actions=New;
+Icon=Alacritty
+Terminal=false
 Categories=Utility;
+
+Name=Alacritty
+GenericName=Terminal
+Comment=A fast, cross-platform, OpenGL terminal emulator
 StartupWMClass=Alacritty
+Actions=New;
+
+X-Desktop-File-Install-Version=0.26
 
 [Desktop Action New]
 Name=New Terminal

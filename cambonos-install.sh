@@ -66,11 +66,11 @@ DM () {
 	if [[ $DM = false ]]
 	then
 		echo -e "\n>>Instalando display manager\c"
-		echo "echo 'trizen --noconfirm -Sy xorg-server lightdm lightdm-settings numlockx || exit 1' | su $USER" | ARCH || ERROR
-		cp -r arch-distro/configs/lightdm/* /mnt
-		cp -r share/* /mnt/usr/share
-		echo "systemctl enable cambonos-dm.service" | ARCH
-		DM='true'; DONE
+		echo "echo 'trizen --noconfirm -Sy xorg-server lightdm lightdm-settings numlockx || exit 1' | su $USER || exit 1" | ARCH && \
+		cp -r arch-distro/configs/lightdm/* /mnt && \
+		cp -r share/* /mnt/usr/share && \
+		echo "systemctl enable cambonos-dm.service || exit 1" | ARCH && \
+		DM='true' && DONE || ERROR
 	fi
 }
 
@@ -80,7 +80,7 @@ CONFIG () {
 
 INSTALL () {
 	case $CONT in
-		1) AL='Xfce'; APP='xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings light-locker xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet system-config-printer blueberry gnome-disk-utility nautilus alacritty mousepad parole atril ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre brave-bin mugshot' && DM ;;
+		1) AL='Xfce'; APP='xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings light-locker xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet cups system-config-printer blueberry gnome-disk-utility nautilus alacritty mousepad parole atril ristretto galculator xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre brave-bin mugshot' && DM ;;
 		3) AL='Xfce'; APP='xfce4 xfwm4 xfce4-panel xfce4-terminal thunar galculator mousepad ristretto parole brave-bin' && DM ;;
 		4) AL='GNOME'; APP='gnome-session gnome-shell gnome-control-center gnome-terminal nautilus gnome-calculator gedit eog totem evince brave-bin' && DM ;;
 		5) AL='Cinnamon'; APP='cinnamon gnome-terminal nemo gnome-calculator gedit eog totem evince brave-bin' && DM ;;
@@ -103,7 +103,7 @@ INSTALL () {
 		22) AL='Opera'; APP='opera' ;;
 		23) AL='Chromium'; APP='chromium' ;;
 		24) AL='Midori'; APP='midori' ;;
-		69) AL='paquetes del sistema'; APP='zramd xdg-user-dirs bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups' ;;
+		69) AL='paquetes del sistema'; APP='zramd xdg-user-dirs cups bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups' ;;
 	esac
 	echo -e "\n>>Instalando $AL\c"
 	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
@@ -169,7 +169,7 @@ INSTALL () {
 			;;
 		69)
 			CONFIG
-			echo "systemctl enable zramd.service; systemctl enable xdg-user-dirs-update.service; systemctl enable cups.service; systemctl enable bluetooth.service" | ARCH && \
+			echo "systemctl enable zramd.service && systemctl enable cups.service && systemctl enable bluetooth.service || exit 1" | ARCH && \
 			cp -r grub/* /mnt/boot/grub && \
 			cp -r arch-distro/configs/cambonos/* /mnt && chmod 775 /mnt/usr/bin/cambonos && \
 			echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH && \
