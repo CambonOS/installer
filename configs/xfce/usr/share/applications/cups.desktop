@@ -2,6 +2,7 @@
 Categories=Settings;
 Exec=/usr/bin/xdg-open http://localhost:631/
 Icon=cups
+NoDisplay=true
 StartupNotify=false
 Terminal=false
 Type=Application
