@@ -15,6 +15,7 @@
         <value type="int" value="1"/>
         <value type="int" value="10"/>
         <value type="int" value="11"/>
+        <value type="int" value="12"/>
         <value type="int" value="2"/>
         <value type="int" value="3"/>
         <value type="int" value="4"/>
@@ -31,12 +32,17 @@
     <property name="plugin-1" type="string" value="whiskermenu"/>
     <property name="plugin-10" type="string" value="launcher">
       <property name="items" type="array">
-        <value type="string" value="org.gnome.Nautilus.desktop"/>
+        <value type="string" value="xfce4-terminal-emulator.desktop"/>
       </property>
     </property>
     <property name="plugin-11" type="string" value="launcher">
       <property name="items" type="array">
-        <value type="string" value="brave-browser.desktop"/>
+        <value type="string" value="xfce4-file-manager.desktop"/>
+      </property>
+    </property>
+    <property name="plugin-12" type="string" value="launcher">
+      <property name="items" type="array">
+        <value type="string" value="xfce4-web-browser.desktop"/>
       </property>
     </property>
     <property name="plugin-2" type="string" value="tasklist">
