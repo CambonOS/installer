@@ -7,6 +7,7 @@ iso_publisher="CambonOS <https://github.com/CambonOS/Arch-Distro>"
 iso_application="CambonOS Installer"
 iso_version="$(date +%Y.%m.%d)"
 install_dir="cambonos"
+buildmodes=('iso')
 bootmodes=('bios.syslinux.mbr' 'bios.syslinux.eltorito' 'uefi-x64.systemd-boot.esp' 'uefi-x64.systemd-boot.eltorito')
 arch="x86_64"
 pacman_conf="pacman.conf"
