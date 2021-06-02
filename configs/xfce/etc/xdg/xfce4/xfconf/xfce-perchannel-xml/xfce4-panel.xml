@@ -43,7 +43,7 @@
       <property name="grouping" type="uint" value="0"/>
       <property name="show-labels" type="bool" value="true"/>
       <property name="flat-buttons" type="bool" value="false"/>
-      <property name="show-handle" type="bool" value="true"/>
+      <property name="show-handle" type="bool" value="false"/>
     </property>
     <property name="plugin-3" type="string" value="separator">
       <property name="expand" type="bool" value="true"/>
