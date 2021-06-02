@@ -103,7 +103,7 @@ INSTALL () {
 		22) AL='Opera'; APP='opera' ;;
 		23) AL='Chromium'; APP='chromium' ;;
 		24) AL='Midori'; APP='midori' ;;
-		69) AL='paquetes del sistema'; APP='zramd xdg-user-dirs bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups' ;;
+		69) AL='paquetes del sistema'; APP='zramd xdg-user-dirs cups bluez bluez-hid2hci bluez-libs bluez-plugins bluez-qt bluez-tools bluez-utils bluez-cups' ;;
 	esac
 	echo -e "\n>>Instalando $AL\c"
 	echo "echo 'trizen --noconfirm -Sy $APP || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
@@ -169,7 +169,7 @@ INSTALL () {
 			;;
 		69)
 			CONFIG
-			echo "systemctl enable zramd.service && systemctl enable bluetooth.service || exit 1" | ARCH && \
+			echo "systemctl enable zramd.service && systemctl enable cups.service && systemctl enable bluetooth.service || exit 1" | ARCH && \
 			cp -r grub/* /mnt/boot/grub && \
 			cp -r arch-distro/configs/cambonos/* /mnt && chmod 775 /mnt/usr/bin/cambonos && \
 			echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH && \
