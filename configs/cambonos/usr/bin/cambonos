@@ -73,7 +73,6 @@ case $1 in
 		mkdir /iso && mkdir /iso/perfil
 		cp -r /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
 		rm /iso/perfil/syslinux/splash.png
-		rm /iso/perfil/efiboot/loader/entries/archiso-x86_64-speech-linux.conf
 		cd /iso/perfil/airootfs/root
 		if [[ $2 = "-b" ]]
 		then
