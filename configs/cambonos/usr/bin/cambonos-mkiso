@@ -34,9 +34,9 @@ mkdir /iso && mkdir /iso/perfil
 cp -r /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
 rm /iso/perfil/efiboot/loader/entries/02-archiso-x86_64-speech-linux.conf
 cd /iso/perfil/airootfs/root
-if [[ $2 = "-b" ]]
+if [[ $1 = "-b" ]]
 then
-	git clone -b $3 https://github.com/CambonOS/arch-distro.git
+	git clone -b $2 https://github.com/CambonOS/arch-distro.git
 else
 	git clone https://github.com/CambonOS/arch-distro.git
 fi
@@ -55,10 +55,10 @@ cp -r rtl88-Themes/Material-Black-* share/icons
 rm -rf rtl88-Themes
 cp -r arch-distro/configs/iso/* /iso/perfil || ERROR
 echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash arch-distro/cambonos-install.sh" >.zshrc
-if [[ $2 = "-b" ]]
+if [[ $1 = "-b" ]]
 then
-	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$3\"/" arch-distro/configs/iso/profiledef.sh > /iso/perfil/profiledef.sh
-	sed -i "s/bash arch-distro\/cambonos-install.sh/rm -rf arch-distro\ngit clone -b $3 https:\/\/github.com\/cambonos\/arch-distro.git\nbash arch-distro\/cambonos-install.sh/" .zshrc
+	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" arch-distro/configs/iso/profiledef.sh > /iso/perfil/profiledef.sh
+	sed -i "s/bash arch-distro\/cambonos-install.sh/rm -rf arch-distro\ngit clone -b $2 https:\/\/github.com\/cambonos\/arch-distro.git\nbash arch-distro\/cambonos-install.sh/" .zshrc
 fi
 DONE
 
