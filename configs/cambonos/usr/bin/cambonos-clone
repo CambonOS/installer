@@ -1,0 +1,26 @@
+#!/bin/bash
+
+NOCOLOR='\033[0m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+BLUE='\033[1;34m'
+
+ERROR () {
+  echo -e "${RED}ERROR${NOCOLOR}"
+  exit
+}
+
+DONE () {
+  echo -e "${GREEN}DONE${NOCOLOR}"
+  sleep 1
+}
+
+rm -rf arch-distro
+echo -e "${BLUE}>>Clonando repositorio CambonOS/Arch-Distro${NOCOLOR}"
+if [[ $2 = "-b" ]]
+then
+  git clone -b $3 https://github.com/CambonOS/Arch-Distro.git
+else
+  git clone https://github.com/CambonOS/Arch-Distro.git
+fi
+DONE
