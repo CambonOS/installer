@@ -18,9 +18,9 @@ DONE () {
 sudo rm -rf /tmp/arch-distro
 echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 cd /tmp
-if [[ $2 = "-b" ]]
+if [[ $1 = "-b" ]]
 then
-  git clone -b $3 https://github.com/CambonOS/arch-distro.git
+  git clone -b $2 https://github.com/CambonOS/arch-distro.git
 else
   git clone https://github.com/CambonOS/arch-distro.git
 fi
