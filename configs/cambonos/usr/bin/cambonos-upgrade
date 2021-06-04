@@ -16,14 +16,14 @@ DONE () {
 }
 
 echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
-		sleep 2
-		trizen --noconfirm -Syyu || ERROR
-		DONE
-		echo -e "${BLUE}\n>>Eliminando paquetes guerfanos${NOCOLOR}"
-		sleep 2
-		trizen --noconfirm -Rns $(trizen -Qqdt)
-		DONE
-		echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
-		sleep 2
-		sudo grub-mkconfig -o /boot/grub/grub.cfg || ERROR
-		DONE
+sleep 2
+trizen --noconfirm -Syyu || ERROR
+DONE
+echo -e "${BLUE}\n>>Eliminando paquetes guerfanos${NOCOLOR}"
+sleep 2
+trizen --noconfirm -Rns $(trizen -Qqdt)
+DONE
+echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
+sleep 2
+sudo grub-mkconfig -o /boot/grub/grub.cfg || ERROR
+DONE
