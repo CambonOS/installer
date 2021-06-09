@@ -68,6 +68,6 @@ mkarchiso -v -w /iso/work -o $RUTAD /iso/perfil && DONE || ERROR
 
 echo -e "${BLUE}\n>>Eliminado ficheros/paquetes innecesarios${NOCOLOR}"
 sleep 2
-rm -rf /iso &
+rm -rf /iso
 pacman --noconfirm -Rns archiso
 DONE
