@@ -1,0 +1,29 @@
+#!/bin/bash
+
+NOCOLOR='\033[0m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+BLUE='\033[1;34m'
+
+ERROR () {
+  echo -e "${RED}ERROR${NOCOLOR}"
+  exit
+}
+
+DONE () {
+  echo -e "${GREEN}DONE${NOCOLOR}"
+  sleep 1
+}
+
+sudo rm -rf /tmp/arch-distro
+echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
+cd /tmp
+if [[ $1 = "-b" ]]
+then
+  git clone -b $2 https://github.com/CambonOS/arch-distro.git
+else
+  git clone https://github.com/CambonOS/arch-distro.git
+fi
+sudo cp -r arch-distro/cambonos-fs/usr/bin/* /usr/bin || ERROR
+sudo chmod 755 /usr/bin/cambonos* || ERROR
+DONE

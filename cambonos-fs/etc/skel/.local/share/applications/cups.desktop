@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Administrar impresión
+NoDisplay=true
+Comment=Interfaz Web de CUPS
+Icon=cups
+Exec=/usr/bin/xdg-open http://localhost:631/
+Actions=
+Categories=HardwareSettings;Printing;System;X-Red-Hat-Base;
