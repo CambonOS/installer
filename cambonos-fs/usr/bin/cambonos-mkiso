@@ -41,15 +41,13 @@ else
 	git clone https://github.com/CambonOS/arch-distro.git
 fi
 mkdir share && mkdir share/themes
-git clone -b MBC-Complete-Desktop https://github.com/rtlewis88/rtl88-Themes.git
-rm -rf rtl88-Themes/Material-Black-*-3*
-cp -r rtl88-Themes/Material-Black-* share/themes
-rm -rf rtl88-Themes
+git clone https://github.com/darkomarko42/Marwaita-manjaro
+cp -r Marwaita-manjaro/Marwaita\ Manjaro\ Dark share/themes
+rm -rf Marwaita-manjaro
 mkdir share/icons
-git clone -b MBC-Icon-SuperPack https://github.com/rtlewis88/rtl88-Themes.git
-rm -rf rtl88-Themes/Material-Black-*-FLAT
-cp -r rtl88-Themes/Material-Black-* share/icons
-rm -rf rtl88-Themes
+git clone https://github.com/PapirusDevelopmentTeam/papirus-icon-theme
+cp -r papirus-icon-theme/Papirus-Dark share/icons
+rm -rf papirus-icon-theme
 cp -r arch-distro/iso/* /iso/perfil || ERROR
 echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash arch-distro/cambonos-install.sh" >.zshrc
 if [[ $1 = "-b" ]]
