@@ -54,7 +54,7 @@ rm papirus-icon-theme/LICENSE
 rm papirus-icon-theme/Makefile
 rm papirus-icon-theme/preview.png
 rm papirus-icon-theme/README.md
-rm papirus-icon-theme/unistall.sh
+rm papirus-icon-theme/uninstall.sh
 rm -r papirus-icon-theme/tools
 cp -r papirus-icon-theme/* share/icons
 rm -rf papirus-icon-theme
