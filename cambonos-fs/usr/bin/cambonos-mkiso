@@ -47,8 +47,8 @@ cp -r Marwaita-manjaro/Marwaita\ Manjaro\ Dark share/themes
 rm -rf Marwaita-manjaro
 mkdir share/icons
 wget https://dl1.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE2MjgzMzA5MTciLCJ1IjpudWxsLCJsdCI6ImRvd25sb2FkIiwicyI6IjlkNDUyN2Y1ODVhZDllZDQwOWExNzA1MDkzYTNkMjM1ZmU5YjU2NTFkNjRhMDg0NjEzZGExZTg3ZGI4MDJiNDgwMjkyMjZiNWNhY2FiYTgzYTVjZjdiMDM2Y2Q3OWZhNDBkYWY1NmJjN2IxYmIwNmRkMzQ1NjMyNzEwNzBhZTY5IiwidCI6MTYyOTY2OTE2Mywic3RmcCI6IjNiYTYwYmUyMzVhZDE3NTczYzFjYWEyZWFhYzdiNzMwIiwic3RpcCI6IjgxLjM3LjEzMi4yMTcifQ.W4PeKjLNP-roML--XK3kQ3MOg9hbdAjJnnZx1iY-2Nk/Papirus-Green-Dark_20210802.tar.gz
-tar xzvf Papirus-Green-Dark_20210802.tar.gz
-cp -r Papirus-Green-Dark_20210802/Papirus-Green-Dark share/icons
+tar xzvf Papirus*
+cp -r Papirus-Green-Dark share/icons
 cp -r arch-distro/iso/* /iso/perfil || ERROR
 echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash arch-distro/cambonos-install.sh" >.zshrc
 if [[ $1 = "-b" ]]
