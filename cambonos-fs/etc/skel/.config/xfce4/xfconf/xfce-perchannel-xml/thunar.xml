@@ -7,10 +7,9 @@
   <property name="hidden-bookmarks" type="array">
     <value type="string" value="computer:///"/>
     <value type="string" value="file:///"/>
-    <value type="string" value="file:///home/usuario/Escritorio"/>
     <value type="string" value="trash:///"/>
   </property>
   <property name="misc-single-click" type="bool" value="false"/>
   <property name="misc-middle-click-in-tab" type="bool" value="true"/>
-  <property name="last-show-hidden" type="bool" value="true"/>
+  <property name="last-show-hidden" type="bool" value="false"/>
 </channel>
