@@ -36,6 +36,6 @@ terminal-border: "0"
   align = "center"
   id = "__timeout__"
   text = "Booting in %d seconds"
-  color = "#303030"
+  color = "#ffffff"
   font = "Unifont Regular 16"
 }
