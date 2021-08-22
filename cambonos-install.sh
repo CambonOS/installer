@@ -120,7 +120,7 @@ echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 echo -e "\n>>Instalando interfaz grafica\c"
-echo "echo 'trizen --noconfirm -Sy gvfs xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings light-locker xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet cups system-config-printer blueberry xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol gnome-disk-utility mousepad parole atril ristretto galculator menulibre mugshot alacritty xorg-server lightdm lightdm-settings lightdm-slick-greeter numlockx steam wine-staging virtualbox virtualbox-guest-iso virtualbox-ext-oracle spotify-snap zramd xdg-user-dirs brave-bin || exit 1' | su $USER || exit 1" | ARCH && \
+echo "echo 'trizen --noconfirm -Sy gvfs thunar-volman xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings light-locker xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet cups system-config-printer blueberry xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol gnome-disk-utility mousepad parole atril ristretto galculator menulibre mugshot alacritty xorg-server lightdm lightdm-settings lightdm-slick-greeter numlockx steam wine-staging virtualbox virtualbox-guest-iso virtualbox-ext-oracle spotify-snap zramd xdg-user-dirs brave-bin || exit 1' | su $USER || exit 1" | ARCH && \
 cp -r share/* /mnt/usr/share && \
 cp -r arch-distro/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
