@@ -40,9 +40,6 @@ then
 else
 	git clone https://github.com/CambonOS/arch-distro.git
 fi
-mkdir grub && mkdir grub/themes
-git clone https://github.com/AdisonCavani/distro-grub-themes.git
-cp -r distro-grub-themes/customize/arch grub/themes
 mkdir share && mkdir share/themes
 git clone -b MBC-Complete-Desktop https://github.com/rtlewis88/rtl88-Themes.git
 rm -rf rtl88-Themes/Material-Black-*-3*
