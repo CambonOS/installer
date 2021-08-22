@@ -1,0 +1,25 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Gestor de archivos Thunar
+GenericName=Gestor de archivos
+Comment=Navegue por el sistema de archivos con el gestor de archivos
+Icon=org.xfce.thunar
+Exec=thunar %F
+Actions=open-home;open-computer;open-trash;
+MimeType=inode/directory;
+Categories=Utility;
+Keywords=gestor;archivos;explorador;buscador;navegador;carpetas;directorios;particiones;unidades;red;dispositivos;renombrar;mover;copiar;borrar;permisos;inicio;papelera;
+StartupNotify=true
+
+[Desktop Action open-home]
+Name=Carpeta personal
+Exec=thunar %U
+
+[Desktop Action open-computer]
+Name=Equipo
+Exec=thunar computer:///
+
+[Desktop Action open-trash]
+Name=Papelera
+Exec=thunar trash:///
