@@ -26,7 +26,7 @@ read -e -i $(pwd) RUTAD
 
 echo -e "${BLUE}\n>>Instalando paquetes necesarios${NOCOLOR}"
 sleep 2
-pacman --noconfirm -Sy archiso && DONE || ERROR
+pacman --noconfirm -Sy archiso wget && DONE || ERROR
 
 echo -e "${BLUE}\n>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
 rm -rf /tmp/arch-distro; rm -rf /iso
@@ -42,22 +42,13 @@ else
 fi
 mkdir share && mkdir share/themes
 git clone https://github.com/darkomarko42/Marwaita-manjaro
-rm Marwaita-manjaro/README.md
-rm Marwaita-manjaro/LICENSE
-cp -r Marwaita-manjaro/* share/themes
+cp -r Marwaita-manjaro/Marwaita\ Manjaro share/themes
+cp -r Marwaita-manjaro/Marwaita\ Manjaro\ Dark share/themes
 rm -rf Marwaita-manjaro
 mkdir share/icons
-git clone https://github.com/PapirusDevelopmentTeam/papirus-icon-theme
-rm papirus-icon-theme/AUTHORS
-rm papirus-icon-theme/install.sh
-rm papirus-icon-theme/LICENSE
-rm papirus-icon-theme/Makefile
-rm papirus-icon-theme/preview.png
-rm papirus-icon-theme/README.md
-rm papirus-icon-theme/uninstall.sh
-rm -r papirus-icon-theme/tools
-cp -r papirus-icon-theme/* share/icons
-rm -rf papirus-icon-theme
+wget https://dl1.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE2MjgzMzA5MTciLCJ1IjpudWxsLCJsdCI6ImRvd25sb2FkIiwicyI6IjlkNDUyN2Y1ODVhZDllZDQwOWExNzA1MDkzYTNkMjM1ZmU5YjU2NTFkNjRhMDg0NjEzZGExZTg3ZGI4MDJiNDgwMjkyMjZiNWNhY2FiYTgzYTVjZjdiMDM2Y2Q3OWZhNDBkYWY1NmJjN2IxYmIwNmRkMzQ1NjMyNzEwNzBhZTY5IiwidCI6MTYyOTY2OTE2Mywic3RmcCI6IjNiYTYwYmUyMzVhZDE3NTczYzFjYWEyZWFhYzdiNzMwIiwic3RpcCI6IjgxLjM3LjEzMi4yMTcifQ.W4PeKjLNP-roML--XK3kQ3MOg9hbdAjJnnZx1iY-2Nk/Papirus-Green-Dark_20210802.tar.gz
+tar xzvf Papirus-Green-Dark_20210802.tar.gz
+cp -r Papirus-Green-Dark_20210802/Papirus-Green-Dark share/icons
 cp -r arch-distro/iso/* /iso/perfil || ERROR
 echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash arch-distro/cambonos-install.sh" >.zshrc
 if [[ $1 = "-b" ]]
