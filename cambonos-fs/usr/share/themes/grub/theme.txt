@@ -3,7 +3,7 @@
 title-text: ""
 desktop-image: "background.png"
 desktop-color: "#2f5595"
-terminal-font: "Unifont Regular 16"
+terminal-font: "Unifont Regular 30"
 terminal-left: "0"
 terminal-top: "0"
 terminal-width: "100%"
@@ -16,7 +16,7 @@ terminal-border: "0"
   top = 25%
   width = 50%
   height = 60%
-  item_font = "Unifont Regular 16"
+  item_font = "Unifont Regular 35"
   item_color = "#4b4b4b"
   selected_item_color = "#000000"
   icon_width = 0
@@ -37,5 +37,5 @@ terminal-border: "0"
   id = "__timeout__"
   text = "Booting in %d seconds"
   color = "#ffffff"
-  font = "Unifont Regular 16"
+  font = "Unifont Regular 25"
 }
