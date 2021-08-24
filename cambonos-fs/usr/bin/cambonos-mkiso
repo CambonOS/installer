@@ -50,12 +50,12 @@ wget https://dl1.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1
 tar xzvf Papirus*
 cp -r Papirus-Green-Dark share/icons
 cp -r arch-distro/iso/* /iso/perfil || ERROR
-echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash arch-distro/cambonos-install.sh" >.zshrc
 if [[ $1 = "-b" ]]
 then
 	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" arch-distro/iso/profiledef.sh > /iso/perfil/profiledef.sh
-	sed -i "s/bash arch-distro\/cambonos-install.sh/rm -rf arch-distro\ngit clone -b $2 https:\/\/github.com\/cambonos\/arch-distro.git\nbash arch-distro\/cambonos-install.sh/" .zshrc
+	echo -e "\nrm -rf arch-distro\ngit clone -b $2 https://github.com/cambonos/arch-distro.git" > .zshrc
 fi
+echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash arch-distro/cambonos-install.sh" >> .zshrc
 DONE
 
 echo -e "${BLUE}\n>>Creando la ISO${NOCOLOR}"

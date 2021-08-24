@@ -3,7 +3,7 @@
 <channel name="xsettings" version="1.0">
   <property name="Net" type="empty">
     <property name="ThemeName" type="string" value="Marwaita Manjaro Dark"/>
-    <property name="IconThemeName" type="string" value="Papirus-Green-Dark"/>
+    <property name="IconThemeName" type="string" value="Papirus-Dark"/>
     <property name="EnableInputFeedbackSounds" type="bool" value="false"/>
     <property name="EnableEventSounds" type="bool" value="false"/>
   </property>
