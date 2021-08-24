@@ -68,7 +68,7 @@ PARTICIONADO () {
 			DONE ;;
 	esac	
 }
-PAQUTESBASICOS () {
+PAQUETESBASICOS () {
 	echo -e "\n>>Instalando base del sistema\c"
 	(pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && genfstab -U /mnt >> /mnt/etc/fstab) && DONE || STOP
 	echo -e "\n>>Instalando paquetes basicos\c"
