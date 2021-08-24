@@ -116,10 +116,12 @@ TRIZEN () {
 }
 XFCE () {
 	echo -e "\n>>Instalando interfaz grafica\c"
-	echo "echo 'trizen --noconfirm -Sy gvfs thunar-volman thunar-archive-plugin file-roller xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings light-locker xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol gnome-disk-utility mousepad parole atril ristretto galculator menulibre mugshot alacritty xorg-server lightdm lightdm-settings lightdm-slick-greeter numlockx steam wine-staging virtualbox virtualbox-guest-iso virtualbox-ext-oracle spotify-snap xdg-user-dirs brave-bin || exit 1' | su $USER || exit 1" | ARCH
+	echo "echo 'trizen --noconfirm -Sy papirus-icon-theme papirus-folders gvfs thunar-volman thunar-archive-plugin file-roller xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings light-locker xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol gnome-disk-utility mousepad parole atril ristretto galculator menulibre mugshot alacritty xorg-server lightdm lightdm-settings lightdm-slick-greeter numlockx steam wine-staging virtualbox virtualbox-guest-iso virtualbox-ext-oracle spotify-snap xdg-user-dirs brave-bin || exit 1' | su $USER || exit 1" | ARCH
 }
 THEMES () {
 	cp -r share/* /mnt/usr/share
+	echo "echo 'papirus-folders -t Papirus-Dark -C green || exit 1' | su $USER || exit 1" | ARCH
+	echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH
 }
 SERVICES () {
 	echo "echo 'trizen --noconfirm -Sy cups system-config-printer blueberry zramd || exit 1' | su $USER || exit 1" | ARCH && \
