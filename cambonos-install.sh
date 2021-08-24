@@ -121,7 +121,7 @@ XFCE () {
 }
 THEMES () {
 	cp -r share/* /mnt/usr/share
-	echo "echo 'papirus-folders -t Papirus-Dark -C green || exit 1' | su $USER || exit 1" | ARCH
+	echo "papirus-folders -t Papirus-Dark -C green" | ARCH
 	echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH
 }
 SERVICES () {
