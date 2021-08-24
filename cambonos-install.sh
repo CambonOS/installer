@@ -68,7 +68,7 @@ PARTICIONADO () {
 			DONE ;;
 	esac	
 }
-PAQUTES-BASICOS () {
+PAQUTESBASICOS () {
 	echo -e "\n>>Instalando base del sistema\c"
 	(pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && genfstab -U /mnt >> /mnt/etc/fstab) && DONE || STOP
 	echo -e "\n>>Instalando paquetes basicos\c"
@@ -134,6 +134,6 @@ CONFIG () {
 	echo "cambonos-upgrade" | ARCH && DONE || ERROR
 }
 if [[ $1 = --expert ]]
-then PREGUNTAS; PAQUETES-BASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
-else PREGUNTAS; PARTICIONADO; PAQUETES-BASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
+then PREGUNTAS; PAQUETESBASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
+else PREGUNTAS; PARTICIONADO; PAQUETESBASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
 fi
