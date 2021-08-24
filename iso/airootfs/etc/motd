@@ -5,3 +5,9 @@
   ██║  ██╗██╔══██║██║╚██╔╝██║██╔══██╗██║  ██║██║╚████║██║  ██║ ╚═══██╗
   ╚█████╔╝██║  ██║██║ ╚═╝ ██║██████╦╝╚█████╔╝██║ ╚███║╚█████╔╝██████╔╝
    ╚════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═════╝  ╚════╝ ╚═╝  ╚══╝ ╚════╝ ╚═════╝
+
+--Para la intalacion normal use el comando "bash cambonos-install.sh"
+--Para la intalacion con un particionado avanzado primero particione
+  el disco por linea de comados, despues formatea y monta las
+  particiones en /mnt y por ultimo ejecute el comando 
+  "bash cambons-install.sh --expert"
