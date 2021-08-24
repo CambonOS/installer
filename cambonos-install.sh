@@ -52,7 +52,6 @@ PARTICIONADO () {
 	fi
 	HEAD
 	echo -e "\n>>Particionando disco\c"
-	ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 	case $GRUB in
 		uefi) 
 			(echo -e "g\nn\n1\n\n+512M\nn\n2\n\n\nt\n1\n1\nt\n2\n23\nw\n" | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP 
@@ -102,6 +101,7 @@ DRIVERS () {
 }
 GRUB () {
 	echo -e "\n>>Instalando grub\c"
+	ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 	case $GRUB in
 		bios)
 			echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc $DISCO || exit 1" | ARCH && DONE || STOP ;;
