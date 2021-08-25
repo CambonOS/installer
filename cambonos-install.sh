@@ -52,6 +52,7 @@ PARTICIONADO () {
 	fi
 	HEAD
 	echo -e "\n>>Particionando disco\c"
+	ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 	case $GRUB in
 		uefi) 
 			(echo -e "g\nn\n1\n\n+512M\nn\n2\n\n\nt\n1\n1\nt\n2\n23\nw\n" | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP 
@@ -104,6 +105,8 @@ GRUB () {
 	ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 	case $GRUB in
 		bios)
+			echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
+			echo -e "\n>>En que disco quieres instalar el grub: \c" && read -e -i "/dev/" DISCO
 			echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc $DISCO || exit 1" | ARCH && DONE || STOP ;;
 		uefi)
 			echo "pacman --noconfirm -Sy grub efibootmgr os-prober && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | ARCH && DONE || STOP ;;
@@ -117,7 +120,7 @@ TRIZEN () {
 }
 XFCE () {
 	echo -e "\n>>Instalando interfaz grafica\c"
-	echo "echo 'trizen --noconfirm -Sy papirus-icon-theme papirus-folders gvfs thunar-volman thunar-archive-plugin file-roller xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings light-locker xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol gnome-disk-utility mousepad parole atril ristretto galculator menulibre mugshot alacritty xorg-server lightdm lightdm-settings lightdm-slick-greeter numlockx steam wine-staging virtualbox virtualbox-guest-iso virtualbox-ext-oracle spotify-snap xdg-user-dirs brave-bin || exit 1' | su $USER || exit 1" | ARCH
+	echo "echo 'trizen --noconfirm -Sy papirus-icon-theme papirus-folders gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings light-locker xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol gnome-disk-utility mousepad parole atril ristretto galculator menulibre mugshot alacritty xorg-server lightdm lightdm-settings lightdm-slick-greeter numlockx steam wine-staging virtualbox virtualbox-guest-iso virtualbox-ext-oracle spotify-snap xdg-user-dirs brave-bin || exit 1' | su $USER || exit 1" | ARCH
 }
 THEMES () {
 	cp -r share/* /mnt/usr/share
