@@ -36,6 +36,9 @@ SUDO () {
 }
 PREGUNTAS () {
 	HEAD
+	if [[ $1 = --expert ]]
+	then echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d && echo -e "\n>>En que disco quieres instalar el grub: \c" && read -e -i "/dev/" DISCO
+	fi
 	echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 	echo -e "\n>>Nombre para el nuevo usuario: \c" && read USER
 	SUDO
@@ -105,8 +108,6 @@ GRUB () {
 	ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 	case $GRUB in
 		bios)
-			echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
-			echo -e "\n>>En que disco quieres instalar el grub: \c" && read -e -i "/dev/" DISCO
 			echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc $DISCO || exit 1" | ARCH && DONE || STOP ;;
 		uefi)
 			echo "pacman --noconfirm -Sy grub efibootmgr os-prober && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | ARCH && DONE || STOP ;;
