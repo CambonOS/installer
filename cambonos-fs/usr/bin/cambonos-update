@@ -20,10 +20,10 @@ echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 cd /tmp
 if [[ $1 = "-b" ]]
 then
-  git clone -b $2 https://github.com/CambonOS/arch-distro.git
+  git clone -b $2 https://github.com/CambonOS/linux.git
 else
-  git clone https://github.com/CambonOS/arch-distro.git
+  git clone https://github.com/CambonOS/linux.git
 fi
-sudo cp -r arch-distro/cambonos-fs/usr/bin/* /usr/bin || ERROR
+sudo cp -r linux/cambonos-fs/usr/bin/* /usr/bin || ERROR
 sudo chmod 755 /usr/bin/cambonos* || ERROR
 DONE
