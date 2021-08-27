@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
 
-iso_name="CambonOS"
-iso_label="CambonOS_$(date +%y.%m)"
-iso_publisher="CambonOS <https://github.com/CambonOS/Arch-Distro>"
-iso_application="CambonOS Installer"
+iso_name="CambonOS-Archie"
+iso_label="CambonOS-Archie_$(date +%y.%m)"
+iso_publisher="CambonOS <https://github.com/CambonOS/Linux>"
+iso_application="CambonOS Archie Installer"
 iso_version="$(date +%Y.%m.%d)"
-install_dir="cambonos"
+install_dir="cambonos-archie"
 buildmodes=('iso')
 bootmodes=('bios.syslinux.mbr' 'bios.syslinux.eltorito' 'uefi-x64.systemd-boot.esp' 'uefi-x64.systemd-boot.eltorito')
 arch="x86_64"
