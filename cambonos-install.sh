@@ -77,7 +77,7 @@ PAQUETESBASICOS () {
 	(pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && genfstab -U /mnt >> /mnt/etc/fstab) && DONE || STOP
 	echo -e "\n>>Instalando paquetes basicos\c"
 	(grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-	echo "pacman --noconfirm -Sy neovim man man-db man-pages man-pages-es bash-completion neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
+	echo "pacman --noconfirm -Sy tree neovim man man-db man-pages man-pages-es bash-completion neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 }
 RED () {
 	echo -e "\n>>Configurando red\c"
