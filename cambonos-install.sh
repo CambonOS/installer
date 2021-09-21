@@ -141,6 +141,6 @@ CONFIG () {
 	echo "cambonos-upgrade" | ARCH && DONE || ERROR
 }
 if [[ $1 = --expert ]]
-then PREGUNTAS; PAQUETESBASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
-else PREGUNTAS; echo -e "\n>>En que disco quieres instalar el grub: \c"; read -e -i "/dev/" DISCO; PARTICIONADO; PAQUETESBASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
+then PREGUNTAS; echo -e "\n>>En que disco quieres instalar el grub: \c"; read -e -i "/dev/"; PAQUETESBASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
+else PREGUNTAS; DISCO; PARTICIONADO; PAQUETESBASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
 fi
