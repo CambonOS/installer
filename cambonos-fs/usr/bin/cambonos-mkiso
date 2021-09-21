@@ -26,7 +26,7 @@ read -e -i $(pwd) RUTAD
 
 echo -e "${BLUE}\n>>Instalando paquetes necesarios${NOCOLOR}"
 sleep 2
-pacman --noconfirm -Sy archiso wget && DONE || ERROR
+pacman --noconfirm -Sy archiso && DONE || ERROR
 
 echo -e "${BLUE}\n>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
 rm -rf /tmp/linux; rm -rf /iso
