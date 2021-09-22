@@ -36,9 +36,6 @@ SUDO () {
 }
 PREGUNTAS () {
 	HEAD
-	if [[ $1 = --expert ]]
-	then echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d && echo -e "\n>>En que disco quieres instalar el sistema: \c" && read -e -i "/dev/" DISCO
-	fi
 	echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 	echo -e "\n>>Nombre para el nuevo usuario: \c" && read USER
 	SUDO
@@ -141,6 +138,6 @@ CONFIG () {
 	echo "cambonos-upgrade" | ARCH && DONE || ERROR
 }
 if [[ $1 = --expert ]]
-then PREGUNTAS; echo -e "\n>>En que disco quieres instalar el grub: \c"; read -e -i "/dev/"; PAQUETESBASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
+then PREGUNTAS; echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d; echo -e "\n>>En que disco quieres instalar el grub: \c"; read -e -i "/dev/"; PAQUETESBASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
 else PREGUNTAS; DISCO; PARTICIONADO; PAQUETESBASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG
 fi
