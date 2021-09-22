@@ -15,7 +15,7 @@ DONE () {
   sleep 1
 }
 
-sudo rm -rf /tmp/arch-distro
+sudo rm -rf /tmp/linux
 echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 cd /tmp
 if [[ $1 = "-b" ]]
