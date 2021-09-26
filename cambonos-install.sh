@@ -59,8 +59,8 @@ DOMAIN () {
         then LDAP=true
 	echo -e "\n>>Base DN (dc=example,dc=local): \c" && read BASEDN
 	echo -e "\n>>Bind DN (cn=admin,dc=example,dc=local): \c" && read BINDDN
-	echo -e "\n>>Bind PW (secret): \c" && read BINDPW
 	echo -e "\n>>Uri (ldap://192.168.1.5): \c" && read URI
+	echo -e "\n>>Bind PW (secret): \c" && read BINDPW
 	else sleep 0
 	fi
 }
