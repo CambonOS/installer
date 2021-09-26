@@ -53,7 +53,7 @@ cp -r linux/iso/* /iso/perfil || ERROR
 if [[ $1 = "-b" ]]
 then
 	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" linux/iso/profiledef.sh > /iso/perfil/profiledef.sh
-	echo -e "\nrm -rf arch-distro\ngit clone -b $2 https://github.com/cambonos/linux.git" > .zshrc
+	echo -e "\nrm -rf linux\ngit clone -b $2 https://github.com/cambonos/linux.git" > .zshrc
 fi
 echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash linux/cambonos-install.sh" >> .zshrc
 DONE
