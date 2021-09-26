@@ -61,13 +61,6 @@ DOMAIN () {
 	echo -e "\n>>Bind DN (cn=admin,dc=example,dc=local): \c" && read BINDDN
 	echo -e "\n>>Bind PW (secret): \c" && read BINDPW
 	echo -e "\n>>Uri (ldap://192.168.1.5): \c" && read URI
-	echo -e "\n>>Desea conceder permiso de sudo a algun grupo? [s/N]: \c"
-        read ANS
-        if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
-        then SUDOLDAP=true
-	echo -e "\n>>Nombre del grupo: \c" && read GSUDO
-	else sleep 0
-        fi
 }
 PARTICIONADO () {
 	echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
@@ -190,11 +183,6 @@ LDAP () {
 	sed -i '/session/i session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/su-l && \
 	sed -i '/pam_env/a session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/system-login && \
 	DONE || ERROR
-	if [[ $SUDOLDAP = true ]]
-	then sed -i "/\%sudo/a \%$GSUDO   ALL=(ALL) ALL" /mnt/etc/sudoers
-	sed -i '/auth/i auth    sufficient   pam_ldap.so' /mnt/etc/pam.d/sudo
-	else sleep 0
-	else sleep 0
 }
 if [[ $1 = "expert" ]]
 then PREGUNTASE; PAQUETESBASICOS; RED; DRIVERS; GRUB; TRIZEN; XFCE; THEMES; SERVICES; CONFIG; LDAP
