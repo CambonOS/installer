@@ -168,7 +168,7 @@ LDAP () {
 	sed -i "/#URI/c URI $URI" /mnt/etc/openldap/ldap.conf && \
 	sed -i '/passwd\|group\|shadow/s/$/\ ldap/' /etc/nsswitch.conf && \
 	sed -i "/^uri/c uri $URI" /mnt/etc/nslcd.conf && \
-	sed -i "/^base/c base $BASE" /mnt/etc/nslcd.conf && \
+	sed -i "/^base/c base $BASEDN" /mnt/etc/nslcd.conf && \
 	sed -i "/^#binddn/c binddn $BINDDN" /mnt/etc/nslcd.conf && \
 	sed -i "/^#bindpw/c bindpw $BINDPW" /mnt/etc/nslcd.conf && \
 	echo 'chown nslcd /etc/nslcd.conf || exit 1' | ARCH && \
