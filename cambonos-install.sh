@@ -192,6 +192,7 @@ LDAP () {
 	DONE || ERROR
 	if [[ $SUDOLDAP = true ]]
 	then sed -i "/\%sudo/a \%$GSUDO   ALL=(ALL) ALL" /mnt/etc/sudoers
+	sed -i '/auth/i auth    sufficient   pam_ldap.so' /mnt/etc/pam.d/sudo
 	else sleep 0
 	else sleep 0
 }
