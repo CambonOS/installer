@@ -163,7 +163,7 @@ CONFIG () {
 LDAP () {
 	if [[ $LDAP = true ]]
 	then echo -e "\n>>Uniendose al dominio LDAP\c"
-	echo "pacman --noconfirm -Sy openldap nss-pam-ldap || exit 1" | ARCH && \
+	echo "pacman --noconfirm -Sy openldap nss-pam-ldapd || exit 1" | ARCH && \
 	sed -i "/#BASE/c BASE $BASEDN" /mnt/etc/openldap/ldap.conf && \
 	sed -i "/#URI/c URI $URI" /mnt/etc/openldap/ldap.conf && \
 	sed -i '/passwd\|group\|shadow/s/$/\ ldap/' /etc/nsswitch.conf && \
