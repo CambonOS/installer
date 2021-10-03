@@ -166,7 +166,7 @@ LDAP () {
 	echo "pacman --noconfirm -Sy openldap nss-pam-ldapd || exit 1" | ARCH && \
 	sed -i "/#BASE/c BASE $BASEDN" /mnt/etc/openldap/ldap.conf && \
 	sed -i "/#URI/c URI $URI" /mnt/etc/openldap/ldap.conf && \
-	sed -i '/passwd\|group\|shadow/s/$/\ ldap/' /etc/nsswitch.conf && \
+	sed -i '/passwd\|group\|shadow/s/$/\ ldap/' /mnt/etc/nsswitch.conf && \
 	sed -i "/^uri/c uri $URI" /mnt/etc/nslcd.conf && \
 	sed -i "/^base/c base $BASEDN" /mnt/etc/nslcd.conf && \
 	sed -i "/^#binddn/c binddn $BINDDN" /mnt/etc/nslcd.conf && \
