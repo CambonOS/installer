@@ -32,7 +32,8 @@ echo -e "${BLUE}\n>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
 rm -rf /tmp/linux; rm -rf /iso
 mkdir /iso && mkdir /iso/perfil
 cp -r /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
-rm /iso/perfil/efiboot/loader/entries/02-archiso-x86_64-speech-linux.conf
+rm /iso/perfil/efiboot/loader/entries/02*
+rm /iso/perfil/efiboot/loader/entries/03*
 cd /iso/perfil/airootfs/root
 if [[ $1 = "-b" ]]
 then
