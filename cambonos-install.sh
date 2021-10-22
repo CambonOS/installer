@@ -11,7 +11,7 @@ Para continuar su intalacion escoga entre:
   3-Cancelar'
 echo -e "\n(1,2,3): \c" && read OPTION
 case $OPTION in
-  1) bash cambonos-archie.sh;;
-  2) bash cambonos-debbie.sh;;
+  1) bash linux/cambonos-archie.sh;;
+  2) bash linux/cambonos-debbie.sh;;
   3) exit;;
 esac
