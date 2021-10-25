@@ -1,0 +1,18 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=LibreOffice Math
+GenericName=Formula Editor
+Comment=Create and edit scientific formulas and equations by using Math.
+Icon=libreoffice-math
+Exec=libreoffice --math %U
+Actions=NewDocument;
+MimeType=application/vnd.oasis.opendocument.formula;application/vnd.sun.xml.math;application/vnd.oasis.opendocument.formula-template;text/mathml;application/mathml+xml;
+Categories=Office;
+Keywords=Equation;OpenDocument Formula;Formula;odf;MathML;
+StartupNotify=true
+StartupWMClass=libreoffice-math
+
+[Desktop Action NewDocument]
+Name=New Formula
+Exec=libreoffice --math
