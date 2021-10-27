@@ -157,7 +157,7 @@ CONFIG () {
 	chmod 775 /mnt/usr/bin/cambonos* && \
 	chmod 755 /media && \
 	echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH && \
-	echo "userdel -r $USER && useradd -m -s /bin/bash -g sudo -G lp,rfkill,wheel $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH && \
+	echo "userdel -r $USER && useradd -m -s /bin/bash -g sudo -G lp,rfkill,wheel,sys $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH && \
 	echo "locale-gen" | ARCH && \
 	echo "cambonos-upgrade" | ARCH && DONE || ERROR
 }
