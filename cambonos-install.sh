@@ -88,6 +88,7 @@ done
 if [ $PART -eq 1 ]
 then PART='n'
 else PART='g\nn'
+fi
 case $GRUB in
 	uefi) 
 		(echo -e "$PART\n\n\n+512M\nn\n\n\n+50G\nn\n\n\n\nw\n" | fdisk -w always $DISCO >>$SALIDA 2>&1) || STOP 
