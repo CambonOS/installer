@@ -112,7 +112,13 @@ case $GRUB in
 		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
 		DONE ;;
 	bios) 
-		(echo -e "$PART\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+		if [ $N -eq 1 ]
+		then
+			(echo -e "$PART\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+		else
+			(echo -e "$PART\ne\n\n\n\nn\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+			N=5
+		fi
 		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
 		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N+1))
 		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
