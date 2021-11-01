@@ -97,6 +97,7 @@ else
 		PART='g\nn'
 	else
 		PART='o\nn'
+	fi
 fi
 case $GRUB in
 	uefi) 
