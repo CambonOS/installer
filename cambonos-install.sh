@@ -215,6 +215,4 @@ then
 	sed -i '/session/i session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/su-l && \
 	sed -i '/pam_env/a session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/system-login && \
 	DONE || ERROR
-else 
-	sleep 0
 fi
