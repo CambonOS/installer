@@ -67,7 +67,7 @@ echo -e "\n\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 echo -e "\n>>En que disco quieres instalar el sistema(sda,nvme0n1): \c" && read DISCO
 echo -e "\n>>Instalar en el espacio libre al final del disco(1) o borrar todo el disco e instalar(2):\c"
 read PART
-echo -e "\n\n>>Desea unirse a un dominio LDAP? [s/N]: \c"
+echo -e "\n>>Desea unirse a un dominio LDAP? [s/N]: \c"
 read ANS
 if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
   then LDAP=true
@@ -95,7 +95,7 @@ then
 	case $TD in
 		mbr)
 			echo -e "\n>>El disco esta en mbr y no es posible instalar el sistema en el espacio libre"
-			ERROR
+			STOP
 			;;
 		gpt)
 			(echo -e "n\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
@@ -118,7 +118,7 @@ mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N-1))
 mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
 mount /dev/$DISCOP$N /mnt/boot >>$SALIDA 2>&1 || STOP && N=$(($N+2))
 mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
+mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP
 
 ##Paquetes basicos y drivers
 echo -e "\n>>Instalando base del sistema\c"
