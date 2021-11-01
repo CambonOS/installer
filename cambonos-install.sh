@@ -191,28 +191,30 @@ echo "cambonos-upgrade" | ARCH && DONE || ERROR
 
 ##Dominio LDAP
 if [[ $LDAP = true ]]
-then echo -e "\n>>Uniendose al dominio LDAP\c"
-echo "pacman --noconfirm -Sy openldap nss-pam-ldapd || exit 1" | ARCH && \
-sed -i "/#BASE/c BASE $BASEDN" /mnt/etc/openldap/ldap.conf && \
-sed -i "/#URI/c URI $URI" /mnt/etc/openldap/ldap.conf && \
-sed -i '/passwd\|group\|shadow/s/$/\ ldap/' /mnt/etc/nsswitch.conf && \
-sed -i "/^uri/c uri $URI" /mnt/etc/nslcd.conf && \
-sed -i "/^base/c base $BASEDN" /mnt/etc/nslcd.conf && \
-sed -i "/^#binddn/c binddn $BINDDN" /mnt/etc/nslcd.conf && \
-sed -i "/^#bindpw/c bindpw $BINDPW" /mnt/etc/nslcd.conf && \
-echo 'chown nslcd /etc/nslcd.conf || exit 1' | ARCH && \
-chmod 0600 /mnt/etc/nslcd.conf && \
-echo 'systemctl enable nslcd.service || exit 1' | ARCH && \
-sed -i '/auth.*pam_unix/i auth   sufficient   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
-sed -i '/account.*pam_unix/i account   sufficient   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
-sed -i '/password.*pam_unix/i password   sufficient   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
-sed -i '/session.*pam_unix/a session   optional   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
-sed -i '/auth.*pam_rootok/a auth   sufficient   pam_ldap.so' /mnt/etc/pam.d/su && \
-sed -i '/auth.*pam_rootok/a auth   sufficient   pam_ldap.so' /mnt/etc/pam.d/su-l && \
-sed -i '/pam_cracklib/i password   sufficient   pam_ldap.so' /mnt/etc/pam.d/passwd && \
-sed -i '/session/i session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/su && \
-sed -i '/session/i session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/su-l && \
-sed -i '/pam_env/a session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/system-login && \
-DONE || ERROR
-else sleep 0
+then 
+	echo -e "\n>>Uniendose al dominio LDAP\c"
+	echo "pacman --noconfirm -Sy openldap nss-pam-ldapd || exit 1" | ARCH && \
+	sed -i "/#BASE/c BASE $BASEDN" /mnt/etc/openldap/ldap.conf && \
+	sed -i "/#URI/c URI $URI" /mnt/etc/openldap/ldap.conf && \
+	sed -i '/passwd\|group\|shadow/s/$/\ ldap/' /mnt/etc/nsswitch.conf && \
+	sed -i "/^uri/c uri $URI" /mnt/etc/nslcd.conf && \
+	sed -i "/^base/c base $BASEDN" /mnt/etc/nslcd.conf && \
+	sed -i "/^#binddn/c binddn $BINDDN" /mnt/etc/nslcd.conf && \
+	sed -i "/^#bindpw/c bindpw $BINDPW" /mnt/etc/nslcd.conf && \
+	echo 'chown nslcd /etc/nslcd.conf || exit 1' | ARCH && \
+	chmod 0600 /mnt/etc/nslcd.conf && \
+	echo 'systemctl enable nslcd.service || exit 1' | ARCH && \
+	sed -i '/auth.*pam_unix/i auth   sufficient   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
+	sed -i '/account.*pam_unix/i account   sufficient   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
+	sed -i '/password.*pam_unix/i password   sufficient   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
+	sed -i '/session.*pam_unix/a session   optional   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
+	sed -i '/auth.*pam_rootok/a auth   sufficient   pam_ldap.so' /mnt/etc/pam.d/su && \
+	sed -i '/auth.*pam_rootok/a auth   sufficient   pam_ldap.so' /mnt/etc/pam.d/su-l && \
+	sed -i '/pam_cracklib/i password   sufficient   pam_ldap.so' /mnt/etc/pam.d/passwd && \
+	sed -i '/session/i session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/su && \
+	sed -i '/session/i session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/su-l && \
+	sed -i '/pam_env/a session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/system-login && \
+	DONE || ERROR
+else 
+	sleep 0
 fi
