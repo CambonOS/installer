@@ -189,7 +189,7 @@ echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-
 
 ##Instalacion Qtile
 echo -e "\n>>Instalando Qtile\c"
-echo "echo 'trizen --noconfirm -Sy qtile rofi feh ttf-dejavu ttf-liberation noto-fonts brightnessctl volumeicon cbatticon xorg-xinit kvantum || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+echo "echo 'trizen --noconfirm -Sy qtile rofi feh ttf-dejavu ttf-liberation noto-fonts brightnessctl volumeicon cbatticon xorg-xinit kvantum-qt5 || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion Apps
 echo -e "\n>>Instalando aplicaciones\c"
