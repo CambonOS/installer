@@ -63,7 +63,7 @@ if [[ $PASS = $PASS1 ]]
 fi
 }
 SUDO
-echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
+echo -e "\n\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 echo -e "\n>>En que disco quieres instalar el sistema(sda,nvme0n1): \c" && read DISCO
 echo -e "\n>>Instalar en el espacio libre al final del disco(1) o borrar todo el disco e instalar(2):\c"
 read PART
@@ -112,7 +112,7 @@ case $GRUB in
 		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
 		DONE ;;
 	bios) 
-		(echo -e "$PART\n\n\n+50G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+		(echo -e "$PART\n\n\n\n+50G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
 		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
 		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N+1))
 		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
