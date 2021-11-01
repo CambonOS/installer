@@ -116,7 +116,7 @@ case $GRUB in
 		then
 			(echo -e "$PART\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
 		else
-			(echo -e "$PART\ne\n\n\n\nn\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+			(echo -e "$PART\ne\n\n\n\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
 			N=5
 		fi
 		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
