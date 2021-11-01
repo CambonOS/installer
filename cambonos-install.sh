@@ -82,7 +82,7 @@ fi
 HEAD
 echo -e "\n>>Particionando disco\c"
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
-(echo $DISCO | grep nvme) && DISCOP=$(echo /dev/)$DISCO$(echo p) || DISCOP=$(echo /dev/)$DISCO
+(echo $DISCO | grep nvme) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
 N=1 && LIBRE=0
 if [ $PART -eq 1 ]
 then 
@@ -97,22 +97,22 @@ fi
 case $GRUB in
 	uefi) 
 		(echo -e "$PART\n\n\n+512M\nn\n\n\n+50G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP 
-		yes | mkfs.vfat -F32 $DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-		yes | mkfs.ext4 $DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-		yes | mkfs.ext4 $DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N-1))
-		mount $DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N-1))
+		yes | mkfs.vfat -F32 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
+		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
+		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N-1))
+		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N-1))
 		mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
-		mount $DISCOP$N /mnt/boot >>$SALIDA 2>&1 || STOP && N=$(($N+2))
+		mount /dev/$DISCOP$N /mnt/boot >>$SALIDA 2>&1 || STOP && N=$(($N+2))
 		mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-		mount $DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
+		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
 		DONE ;;
 	bios) 
 		(echo -e "$PART\n\n\n+50G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
-		yes | mkfs.ext4 $DISCOP$N >>$SALIDA 2>&1 || STOP
-		mount $DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-		yes | mkfs.ext4 $DISCOP$N >>$SALIDA 2>&1 || STOP
+		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
+		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N+1))
+		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
 		mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-		mount $DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
+		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
 		DONE ;;
 esac
 
