@@ -91,41 +91,33 @@ then
 	do 
   		lsblk | grep $DISCO$N && N=$(($N+1)) || LIBRE=1
 	done
+	fdisk -l /dev/$DISCO | grep gpt && TD=gpt || TD=mbr
+	case $TD in
+		mbr)
+			echo -e "\n>>El disco esta en mbr y no es posible instalar el sistema en el espacio libre"
+			ERROR
+			;;
+		gpt)
+			(echo -e "n\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+			;;
 else 
-	if [[ $GRUB = "uefi" ]]
-	then
-		PART='g\nn'
-	else
-		PART='o\nn'
-	fi
+	case $GRUB in
+	uefi)
+		(echo -e "g\nn\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+		;;
+	bios)
+		(echo -e "o\nn\n\n\n\n+512M\nn\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+		;;
+	esac
 fi
-case $GRUB in
-	uefi) 
-		(echo -e "$PART\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP 
-		yes | mkfs.vfat -F32 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N-1))
-		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N-1))
-		mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
-		mount /dev/$DISCOP$N /mnt/boot >>$SALIDA 2>&1 || STOP && N=$(($N+2))
-		mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
-		DONE ;;
-	bios) 
-		if [ $N -eq 1 ]
-		then
-			(echo -e "$PART\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
-		else
-			(echo -e "$PART\ne\n\n\n\nn\n\n+30G\nn\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
-			N=5
-		fi
-		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
-		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
-		mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
-		DONE ;;
-esac
+yes | mkfs.vfat /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
+yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
+yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N-1))
+mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N-1))
+mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
+mount /dev/$DISCOP$N /mnt/boot >>$SALIDA 2>&1 || STOP && N=$(($N+2))
+mkdir /mnt/home >>$SALIDA 2>&1 || STOP
+mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
 
 ##Paquetes basicos y drivers
 echo -e "\n>>Instalando base del sistema\c"
