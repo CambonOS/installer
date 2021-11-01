@@ -142,7 +142,7 @@ echo -e "\n>>Instalando grub\c"
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 case $GRUB in
 	bios)
-		echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc $DISCO || exit 1" | ARCH && DONE || STOP ;;
+		echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc /dev/$DISCO || exit 1" | ARCH && DONE || STOP ;;
 	uefi)
 		echo "pacman --noconfirm -Sy grub efibootmgr os-prober && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | ARCH && DONE || STOP ;;
 esac
