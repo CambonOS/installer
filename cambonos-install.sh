@@ -186,7 +186,8 @@ echo "echo 'trizen --noconfirm -Sy qtile rofi feh ttf-dejavu ttf-liberation noto
 
 ##Instalacion Apps
 echo -e "\n>>Instalando aplicaciones\c"
-echo "echo 'trizen --noconfirm -Sy thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh brave-bin || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+echo "echo 'trizen --noconfirm -Sy thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty xclip python-pip steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh brave-bin || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+python3 -m pip install neovim >>$SALIDA 2>&1
 
 ##Configuracion CambonOS
 echo -e "\n>>Configurando el sistema"
