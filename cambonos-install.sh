@@ -171,7 +171,7 @@ echo -e "\n>>Instalando LightDM\c"
 echo "echo 'trizen --noconfirm -Sy papirus-icon-theme papirus-folders light-locker lightdm lightdm-settings lightdm-slick-greeter numlockx || exit 1' | su $USER || exit 1" | ARCH
 cp -r share/* /mnt/usr/share
 echo "papirus-folders -t Papirus-Dark -C green" | ARCH
-echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH
+echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalando mezclador de audio
 echo "echo 'trizen --noconfirm -Sy pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol || exit 1' | su $USER || exit 1" | ARCH
@@ -179,17 +179,18 @@ echo "echo 'trizen --noconfirm -Sy pulseaudio pulseaudio-jack pulseaudio-bluetoo
 
 ##Instalacion XFCE
 echo -e "\n>>Instalando XFCE\c"
-echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings  xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet xfce4-pulseaudio-plugin menulibre mugshot || exit 1' | su $USER || exit 1" | ARCH
+echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings  xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet xfce4-pulseaudio-plugin menulibre mugshot || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion Qtile
 echo -e "\n>>Instalando Qtile\c"
-echo "echo 'trizen --noconfirm -Sy qtile rofi feh ttf-dejavu ttf-liberation noto-fonts brightnessctl volumeicon cbatticon xorg-xinit kvantum || exit 1' | su $USER || exit 1" | ARCH
+echo "echo 'trizen --noconfirm -Sy qtile rofi feh ttf-dejavu ttf-liberation noto-fonts brightnessctl volumeicon cbatticon xorg-xinit kvantum || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion Apps
 echo -e "\n>>Instalando aplicaciones\c"
-echo "echo 'trizen --noconfirm -Sy thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh brave-bin || exit 1' | su $USER || exit 1" | ARCH
+echo "echo 'trizen --noconfirm -Sy thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh brave-bin || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Configuracion CambonOS
+echo -e "\n>>Configurando el sistema"
 echo "echo 'trizen --noconfirm -Sy cups system-config-printer blueberry zramd || exit 1' | su $USER || exit 1" | ARCH && \
 echo "systemctl enable zramd.service && systemctl enable lightdm.service && systemctl enable cups.service && systemctl enable bluetooth.service || exit 1" | ARCH
 cp -r linux/cambonos-fs/* /mnt && \
