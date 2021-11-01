@@ -54,12 +54,15 @@ NETWORK
 HEAD
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 echo -e "\n>>Nombre para el nuevo usuario: \c" && read USER
+SUDO () {
 echo -e "\n>>Contraseña del usuario: \c" && read -s PASS
 echo -e "\n\n>>Repetir contraseña: \c" && read -s PASS1
 if [[ $PASS = $PASS1 ]]
   then sleep 0
   else echo && SUDO
 fi
+}
+SUDO
 echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 echo -e "\n>>En que disco quieres instalar el sistema(sda,nvme0n1): \c" && read DISCO
 echo -e "\n>>Instalar en el espacio libre al final del disco(1) o borrar todo el disco e instalar(2):\c"
