@@ -190,7 +190,7 @@ echo "echo 'trizen --noconfirm -Sy thunar xdg-user-dirs gvfs gvfs-smb thunar-vol
 python3 -m pip install neovim >>$SALIDA 2>&1
 
 ##Configuracion CambonOS
-echo -e "\n>>Configurando el sistema"
+echo -e "\n>>Configurando el sistema\c"
 echo "echo 'trizen --noconfirm -Sy cups system-config-printer blueberry zramd || exit 1' | su $USER || exit 1" | ARCH && \
 echo "systemctl enable zramd.service && systemctl enable lightdm.service && systemctl enable cups.service && systemctl enable bluetooth.service || exit 1" | ARCH
 cp -r linux/cambonos-fs/* /mnt && \
