@@ -61,7 +61,7 @@ if [[ $PASS = $PASS1 ]]
   else echo && SUDO
 fi
 echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
-echo -e "\n>>En que disco quieres instalar el sistema(sda,nvme0n1): \c" && read -e -i DISCO
+echo -e "\n>>En que disco quieres instalar el sistema(sda,nvme0n1): \c" && read DISCO
 echo -e "\n>>Instalar en el espacio libre al final del disco(1) o borrar todo el disco e instalar(2):\c"
 read PART
 echo -e "\n\n>>Desea unirse a un dominio LDAP? [s/N]: \c"
