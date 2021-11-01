@@ -100,6 +100,7 @@ then
 		gpt)
 			(echo -e "n\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
 			;;
+	esac
 else 
 	case $GRUB in
 	uefi)
