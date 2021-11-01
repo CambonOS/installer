@@ -92,7 +92,7 @@ then
   		lsblk | grep $DISCO$N && N=$(($N+1)) || LIBRE=1
 	done
 else 
-	if [ $GRUB -eq "uefi" ]
+	if [[ $GRUB = "uefi" ]]
 	then
 		PART='g\nn'
 	else
