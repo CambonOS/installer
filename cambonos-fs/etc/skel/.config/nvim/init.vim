@@ -1,6 +1,7 @@
 set title
 set number
 set background=dark
+set mouse=a
 colorscheme peachpuff
 
 
