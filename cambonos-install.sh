@@ -126,7 +126,7 @@ echo -e "\n>>Instalando base del sistema\c"
 
 echo -e "\n>>Instalando paquetes basicos\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-echo "pacman --noconfirm -Sy xorg tree neovim zsh zsh-completions man man-db man-pages man-pages-es bash-completion neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
+echo "pacman --noconfirm -Sy xorg tree neovim zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k man man-db man-pages man-pages-es bash-completion neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 
 echo -e "\n>>Instalando drivers graficos\c"
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GRUB="DESCONOCIDA"
