@@ -180,10 +180,6 @@ echo "echo 'trizen --noconfirm -Sy pulseaudio pulseaudio-jack pulseaudio-bluetoo
 echo -e "\n>>Instalando XFCE\c"
 echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings  xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet xfce4-pulseaudio-plugin menulibre mugshot || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
-##Instalacion Qtile
-echo -e "\n>>Instalando Qtile\c"
-echo "echo 'trizen --noconfirm -Sy qtile rofi feh ttf-dejavu ttf-liberation noto-fonts brightnessctl volumeicon cbatticon xorg-xinit kvantum-qt5 || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
-
 ##Instalacion Apps
 echo -e "\n>>Instalando aplicaciones\c"
 echo "echo 'trizen --noconfirm -Sy thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty xclip python-pip steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh brave-bin || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
