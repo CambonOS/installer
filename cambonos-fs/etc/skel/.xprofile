@@ -1,5 +1,0 @@
-nm-applet &
-udiskie -t &
-volumeicon &
-cbatticon &
-export QT_STYLE_OVERRIDE=kvantum
