@@ -82,7 +82,7 @@ fi
 HEAD
 echo -e "\n>>Particionando disco\c"
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
-(echo $DISCO | grep nvme) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
+(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
 N=1 && LIBRE=0
 if [ $PART -eq 1 ]
 then 
