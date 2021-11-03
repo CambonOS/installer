@@ -115,18 +115,18 @@ else
 		(echo -e "g\nn\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
 		;;
 	bios)
-		(echo -e "o\nn\n\n\n\n+512M\nn\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+		(echo -e "g\nn\n\n\n+512M\nt\n4\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
 		;;
 	esac
 fi
-yes | mkfs.vfat /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
+yes | mkfs.vfat -F 32 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
 yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
 yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N-1))
 mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N-1))
 mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
 mount /dev/$DISCOP$N /mnt/boot >>$SALIDA 2>&1 || STOP && N=$(($N+2))
 mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP
+mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP && N=$(($N-2))
 
 ##Paquetes basicos y drivers
 echo -e "\n>>Instalando base del sistema\c"
@@ -159,7 +159,7 @@ echo -e "\n>>Instalando grub\c"
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 case $GRUB in
 	bios)
-		echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc /dev/$DISCO || exit 1" | ARCH && DONE || STOP ;;
+		echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc /dev/$DISCO$N || exit 1" | ARCH && DONE || STOP ;;
 	uefi)
 		echo "pacman --noconfirm -Sy grub efibootmgr os-prober && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | ARCH && DONE || STOP ;;
 esac
