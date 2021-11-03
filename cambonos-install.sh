@@ -57,6 +57,7 @@ case $GRUB in
 	uefi)
 		echo '
 Bienvenido al instalador oficial de CambonOS!!!
+
 Para continuar su intalacion escoga entre:
   1-Instalacion borrando todo el disco
   2-Instalar sistema en el espacio libre al final del disco'
