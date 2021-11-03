@@ -46,11 +46,10 @@ case $OPTION in
   echo Connecting...
   sleep 2
   NETWORK ;;
-  3) exit ;;
-  *) exit ;;
+  *) exit 1 ;;
 esac)
 }
-NETWORK
+NETWORK || exit
 
 ##Particionado
 HEAD
