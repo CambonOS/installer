@@ -172,13 +172,9 @@ cp -r share/* /mnt/usr/share
 echo "papirus-folders -t Papirus-Dark -C green" | ARCH
 echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
-##Instalando mezclador de audio
-echo "echo 'trizen --noconfirm -Sy pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol || exit 1' | su $USER || exit 1" | ARCH
-
-
 ##Instalacion XFCE
 echo -e "\n>>Instalando XFCE\c"
-echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings  xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet xfce4-pulseaudio-plugin menulibre mugshot || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings  xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre mugshot || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion Apps
 echo -e "\n>>Instalando aplicaciones\c"
