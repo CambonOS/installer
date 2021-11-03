@@ -102,7 +102,7 @@ Para continuar su intalacion escoga entre:
 		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP
 		;;
 	bios)
-		echo -e "\nBienvenido al instalador oficial de CambonOS!!!\n\n>>Con el istalador arrancado en bios solo se puede instalar CambonOS borrando todo el disco. Quiere continuar?(s/N): \c"
+		echo -e "\nBienvenido al instalador oficial de CambonOS!!!\n\n>>Con el istalador arrancado en bios solo se puede instalar borrando todo el disco.\nQuiere continuar?(s/N): \c"
 		read ANS
 		if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
 		then
