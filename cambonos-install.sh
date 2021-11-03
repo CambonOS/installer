@@ -89,7 +89,7 @@ then
 	PART='n'
 	while [ $LIBRE -eq 0 ]
 	do 
-  		lsblk | grep $DISCO$N && N=$(($N+1)) || LIBRE=1
+  		lsblk | grep $DISCO$N >>$SALIDA 2>&1 && N=$(($N+1)) || LIBRE=1
 	done
 	fdisk -l /dev/$DISCO | grep gpt && TD=gpt || TD=mbr
 	case $TD in
