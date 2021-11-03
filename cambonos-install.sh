@@ -178,7 +178,7 @@ echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-
 
 ##Instalacion Apps
 echo -e "\n>>Instalando aplicaciones\c"
-echo "echo 'trizen --noconfirm -Sy zsh-sudo-git thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty python-pip steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh brave-bin || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+echo "echo 'trizen --noconfirm -Sy zsh-sudo-git thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty python-pip steam virtualbox virtualbox-guest-iso virtualbox-ext-oracle gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh firefox-i18n-es-es || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 python3 -m pip install neovim >>$SALIDA 2>&1
 
 ##Configuracion CambonOS
