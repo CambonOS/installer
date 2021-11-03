@@ -39,9 +39,6 @@ Fallo en la conecxion a internet, selecciona opcion:
 	2.Configurar wifi
 	3.Cancelar' && \
 echo -e "\n(1,2,3): \c" && read OPTION
-if [[ $OPTION != 1 ]] && [[ $OPTION != 2 ]]
-then exit 1
-fi || exit
 case $OPTION in
   1) sleep 1 && NETWORK ;;
   2) echo -e '\n>>Introduce el SSID: \c' && read SSID && \
@@ -49,6 +46,7 @@ case $OPTION in
   echo Connecting...
   sleep 2
   NETWORK ;;
+  *) exit ;;
 esac)
 }
 NETWORK
