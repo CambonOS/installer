@@ -50,6 +50,80 @@ esac)
 }
 NETWORK
 
+##Particionado
+HEAD
+ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
+case $GRUB in
+	uefi)
+		echo -e "\n	(1)Borrando todo el disco\n	(2)Instalar en el espacio libre al final de disco\n>>Selecciona el tipo de particionado:(1,2)\c"
+		read PART
+		echo -e "\n\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
+		echo -e "\n>>En que disco desea instalar el sistema:(sda,nvme0n1,...): \c" && read DISCO
+		(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
+		N=1 && LIBRE=0
+		if [ $PART -eq 2 ]
+		then
+			fdisk -l /dev/$DISCO | grep gpt >>$SALIDA 2>&1 && TD=gpt || TD=mbr
+			case $TD in
+			mbr)
+				echo -e "\n>>El disco NO esta en gpt y no es posible instalar el sistema en el espacio libre"
+				STOP
+				;;
+			gpt)
+				while [ $LIBRE -eq 0 ]
+				do 
+					lsblk | grep $DISCO$N >>$SALIDA 2>&1 && N=$(($N+1)) || LIBRE=1
+				done
+				echo -e "\n>>Particionando disco\c"
+				(echo -e "n\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+				;;
+			esac
+		else 
+			echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
+			read ANS
+			if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
+			then sleep 0
+			else exit
+			fi
+			echo -e "\n>>Particionando disco\c"
+			(echo -e "g\nn\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+		fi
+		yes | mkfs.vfat -F 32 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
+		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
+		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N-1))
+		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N-1))
+		mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
+		mount /dev/$DISCOP$N /mnt/boot >>$SALIDA 2>&1 || STOP && N=$(($N+2))
+		mkdir /mnt/home >>$SALIDA 2>&1 || STOP
+		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP
+		;;
+	bios)
+		echo -e "\n>>Con el istalador arrancado en bios solo se puede instalar CambonOS borrando todo el disco. Quiere continuar?(s/N): \¢"
+		read ANS
+		if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
+		then
+			echo -e "\n\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
+			echo -e "\n>>En que disco desea instalar el sistema:(sda,nvme0n1,...): \c" && read DISCO
+			echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
+			read ANS
+			if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
+			then sleep 0
+			else exit
+			fi
+		else 
+			exit
+		fi
+		echo -e "\n>>Particionando disco\c"
+		(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
+		(echo -e "o\nn\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP && N=1
+		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
+		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N+1))
+		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
+		mkdir /mnt/home >>$SALIDA 2>&1 || STOP
+		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP
+		;;
+esac
+
 ##Preguntas para la instalacion
 HEAD
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
@@ -63,19 +137,6 @@ if [[ $PASS = $PASS1 ]]
 fi
 }
 SUDO
-echo -e "\n\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
-echo -e "\n>>En que disco quieres instalar el sistema(sda,nvme0n1,...): \c" && read DISCO
-echo -e "\n>>Instalar en el espacio libre al final del disco(1) o borrar todo el disco e instalar(2):\c"
-read PART
-if [[ $PART != 1 ]]
-then
-	echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
-	read ANS
-	if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
-	then sleep 0
-	else exit
-	fi
-fi
 echo -e "\n>>Desea unirse a un dominio LDAP? [s/N]: \c"
 read ANS
 if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
@@ -86,47 +147,6 @@ if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
   echo -e "\n>>Bind PW (secret): \c" && read BINDPW
   else LDAP=false
 fi
-
-##Particionado
-HEAD
-echo -e "\n>>Particionando disco\c"
-ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
-(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
-N=1 && LIBRE=0
-if [ $PART -eq 1 ]
-then
-	while [ $LIBRE -eq 0 ]
-	do 
-  		lsblk | grep $DISCO$N >>$SALIDA 2>&1 && N=$(($N+1)) || LIBRE=1
-	done
-	fdisk -l /dev/$DISCO | grep gpt >>$SALIDA 2>&1 && TD=gpt || TD=mbr
-	case $TD in
-	mbr)
-		echo -e "\n>>El disco NO esta en gpt y no es posible instalar el sistema en el espacio libre"
-		STOP
-		;;
-	gpt)
-		(echo -e "n\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
-		;;
-	esac
-else 
-	case $GRUB in
-	uefi)
-		(echo -e "g\nn\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
-		;;
-	bios)
-		(echo -e "o\nn\n\n\n\n+512M\nn\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
-		;;
-	esac
-fi
-yes | mkfs.vfat -F 32 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N-1))
-mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N-1))
-mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
-mount /dev/$DISCOP$N /mnt/boot >>$SALIDA 2>&1 || STOP && N=$(($N+2))
-mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP
 
 ##Paquetes basicos y drivers
 echo -e "\n>>Instalando base del sistema\c"
@@ -155,13 +175,6 @@ case $GPU in
 			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | ARCH && DONE || ERROR ;;
 esac
 echo -e "\n>>Instalando grub\c"
-
-if [[ $PART = 1 ]]
-then
-	GRUB='uefi'
-else
-	ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
-fi
 case $GRUB in
 	bios)
 		echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc /dev/$DISCO || exit 1" | ARCH && DONE || STOP ;;
