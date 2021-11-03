@@ -32,7 +32,8 @@ STOP () {
 NETWORK () {
 ping -c 3 google.com >/dev/null 2>&1 || \
 (HEAD && \
-echo 'Fallo en la conecxion a internet, selecciona opcion:
+echo '
+Fallo en la conecxion a internet, selecciona opcion:
 
 	1.Reintentar conecxion cableada
 	2.Configurar wifi
@@ -45,7 +46,7 @@ case $OPTION in
   echo Connecting...
   sleep 2
   NETWORK ;;
-  3) exit ;;
+  *) exit ;;
 esac)
 }
 NETWORK
