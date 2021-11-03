@@ -25,7 +25,7 @@ ARCH () {
 
 STOP () {
 	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
-	umount /mnt/boot >>$SALIDA 2>&1; umount /mnt/home >>$SALIDA 2>&1;; umount /mnt >>$SALIDA 2>&1 rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt; exit
+	umount /mnt/boot >>$SALIDA 2>&1; umount /mnt/home >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt; exit
 }
 
 ##Comprobacion de red
