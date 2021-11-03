@@ -75,7 +75,7 @@ Para continuar su intalacion escoga entre:
 			fdisk -l /dev/$DISCO | grep gpt >>$SALIDA 2>&1 && TD=gpt || TD=mbr
 			case $TD in
 			mbr)
-				echo -e "\n>>El disco NO esta en gpt \c"
+				echo -e "\n>>El disco NO esta en GPT \c"
 				STOP
 				;;
 			gpt)
