@@ -13,6 +13,7 @@ SAVEHIST=100000
 
 ##Alias
 alias ls="ls --color=auto"
+alias untar="tar -xvf"
 
 ##Variables
 export EDITOR="nvim"
