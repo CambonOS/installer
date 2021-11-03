@@ -67,6 +67,15 @@ echo -e "\n\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 echo -e "\n>>En que disco quieres instalar el sistema(sda,nvme0n1,...): \c" && read DISCO
 echo -e "\n>>Instalar en el espacio libre al final del disco(1) o borrar todo el disco e instalar(2):\c"
 read PART
+if [[ $PART != 1 ]]
+then
+	echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
+	read ANS
+	if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
+	then sleep 0
+	else exit
+	fi
+fi
 echo -e "\n>>Desea unirse a un dominio LDAP? [s/N]: \c"
 read ANS
 if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
@@ -85,8 +94,7 @@ ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 (echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
 N=1 && LIBRE=0
 if [ $PART -eq 1 ]
-then 
-	PART='n'
+then
 	while [ $LIBRE -eq 0 ]
 	do 
   		lsblk | grep $DISCO$N >>$SALIDA 2>&1 && N=$(($N+1)) || LIBRE=1
