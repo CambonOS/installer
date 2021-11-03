@@ -30,13 +30,13 @@ STOP () {
 
 ##Comprobacion de red
 NETWORK () {
-HEAD
 ping -c 3 google.com >/dev/null 2>&1 || \
-(clear && cat /etc/motd && \
+(HEAD && \
 echo 'Fallo en la conecxion a internet, selecciona opcion:
-1.Reintentar conecxion cableada
-2.Configurar wifi
-3.Cancelar' && \
+
+	1.Reintentar conecxion cableada
+	2.Configurar wifi
+	3.Cancelar' && \
 echo -e "\n(1,2,3): \c" && read OPTION
 case $OPTION in
   1) sleep 1 && NETWORK ;;
@@ -59,6 +59,7 @@ case $GRUB in
 Bienvenido al instalador oficial de CambonOS!!!
 
 Para continuar su intalacion escoga entre:
+
   1-Instalacion borrando todo el disco
   2-Instalar sistema en el espacio libre al final del disco
   3-Cancelar'
