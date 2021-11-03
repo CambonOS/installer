@@ -61,8 +61,8 @@ Para continuar su intalacion escoga entre:
   1-Instalacion borrando todo el disco
   2-Instalar sistema en el espacio libre al final del disco'
 		echo -e "\n\n(1,2): \c" && read PART
-		echo -e "\n\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
-		echo -e "\n>>En que disco desea instalar el sistema:(sda,nvme0n1,...): \c" && read DISCO
+		echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
+		echo -e "\n>>En que disco desea instalar el sistema (sda,nvme0n1,...): \c" && read DISCO
 		(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
 		N=1 && LIBRE=0
 		if [ $PART -eq 2 ]
@@ -78,18 +78,18 @@ Para continuar su intalacion escoga entre:
 				do 
 					lsblk | grep $DISCO$N >>$SALIDA 2>&1 && N=$(($N+1)) || LIBRE=1
 				done
-				echo -e "\n>>Particionando disco\c"
+				echo -e "\n>>Particionando disco...\c"
 				(echo -e "n\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
 				;;
 			esac
 		else 
-			echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
+			echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? (s/N): \c"
 			read ANS
 			if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
 			then sleep 0
 			else exit
 			fi
-			echo -e "\n>>Particionando disco\c"
+			echo -e "\n>>Particionando disco...\c"
 			(echo -e "g\nn\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
 		fi
 		yes | mkfs.vfat -F 32 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
@@ -102,13 +102,13 @@ Para continuar su intalacion escoga entre:
 		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP
 		;;
 	bios)
-		echo -e "\nBienvenido al instalador oficial de CambonOS!!!\n\n>>Con el istalador arrancado en BIOS solo se puede instalar borrando todo el disco.\n\n>>Quiere continuar?(s/N): \c"
+		echo -e "\nBienvenido al instalador oficial de CambonOS!!!\n\n>>Con el istalador arrancado en BIOS solo se puede instalar borrando todo el disco.\n\n>>Quiere continuar? (s/N): \c"
 		read ANS
 		if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
 		then
 			echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
-			echo -e "\n>>En que disco desea instalar el sistema:(sda,nvme0n1,...): \c" && read DISCO
-			echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
+			echo -e "\n>>En que disco desea instalar el sistema (sda,nvme0n1,...): \c" && read DISCO
+			echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? (s/N): \c"
 			read ANS
 			if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
 			then sleep 0
@@ -117,7 +117,7 @@ Para continuar su intalacion escoga entre:
 		else 
 			exit
 		fi
-		echo -e "\n>>Particionando disco\c"
+		echo -e "\n>>Particionando disco...\c"
 		(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
 		(echo -e "o\nn\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP && N=1
 		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
@@ -141,7 +141,7 @@ if [[ $PASS = $PASS1 ]]
 fi
 }
 SUDO
-echo -e "\n>>Desea unirse a un dominio LDAP? [s/N]: \c"
+echo -e "\n\n>>Desea unirse a un dominio LDAP? (s/N): \c"
 read ANS
 if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
   then LDAP=true
