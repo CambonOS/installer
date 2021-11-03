@@ -66,7 +66,7 @@ Para continuar su intalacion escoga entre:
 		echo -e "\n>>En que disco desea instalar el sistema (sda,nvme0n1,...): \c" && read DISCO
 		(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
 		N=1 && LIBRE=0
-		if [ $PART -eq 2 ]
+		if [[ $PART = 2 ]]
 		then
 			fdisk -l /dev/$DISCO | grep gpt >>$SALIDA 2>&1 && TD=gpt || TD=mbr
 			case $TD in
@@ -75,7 +75,8 @@ Para continuar su intalacion escoga entre:
 				STOP
 				;;
 			gpt)
-				while [ $LIBRE -eq 0 ]
+				LIBRE=0
+				while [[ $LIBRE = 0 ]]
 				do 
 					lsblk | grep $DISCO$N >>$SALIDA 2>&1 && N=$(($N+1)) || LIBRE=1
 				done
