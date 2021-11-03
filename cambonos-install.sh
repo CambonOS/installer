@@ -60,8 +60,12 @@ Bienvenido al instalador oficial de CambonOS!!!
 
 Para continuar su intalacion escoga entre:
   1-Instalacion borrando todo el disco
-  2-Instalar sistema en el espacio libre al final del disco'
-		echo -e "\n\n(1,2): \c" && read PART
+  2-Instalar sistema en el espacio libre al final del disco
+  3-Cancelar'
+		echo -e "\n(1,2,3): \c" && read PART
+		if [[ $PART != 1 ]] && [[ $PART != 2 ]]
+		then exit
+		fi
 		echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 		echo -e "\n>>En que disco desea instalar el sistema (sda,nvme0n1,...): \c" && read DISCO
 		(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
