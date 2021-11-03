@@ -189,10 +189,15 @@ case $GPU in
 esac
 echo -e "\n>>Instalando grub\c"
 case $GRUB in
-	bios)
-		echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc /dev/$DISCO || exit 1" | ARCH && DONE || STOP ;;
 	uefi)
-		echo "pacman --noconfirm -Sy grub efibootmgr os-prober && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | ARCH && DONE || STOP ;;
+		echo "pacman --noconfirm -Sy grub efibootmgr os-prober && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=COS || exit 1" | ARCH && DONE || STOP
+		;;
+	bios)
+		echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc /dev/$DISCO || exit 1" | ARCH && DONE || STOP
+		;;
+	*)
+		STOP
+		;;
 esac
 
 echo -e "\n>>Configurando red\c"
