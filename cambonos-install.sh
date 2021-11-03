@@ -55,8 +55,12 @@ HEAD
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 case $GRUB in
 	uefi)
-		echo -e "\n	(1)Borrando todo el disco\n	(2)Instalar en el espacio libre al final de disco\n>>Selecciona el tipo de particionado:(1,2)\c"
-		read PART
+		echo '
+Bienbenido al instalador oficial de CambonOS!!!
+Para continuar su intalacion escoga entre:
+  1-Instalacion borrando todo el disco
+  2-Instalar sistema en el espacio libre al final del disco'
+		echo -e "\n(1,2): \c" && read PART
 		echo -e "\n\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 		echo -e "\n>>En que disco desea instalar el sistema:(sda,nvme0n1,...): \c" && read DISCO
 		(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
@@ -98,7 +102,7 @@ case $GRUB in
 		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP
 		;;
 	bios)
-		echo -e "\n>>Con el istalador arrancado en bios solo se puede instalar CambonOS borrando todo el disco. Quiere continuar?(s/N): \¢"
+		echo -e "\nBienbenido al instalador oficial de CambonOS!!!\n>>Con el istalador arrancado en bios solo se puede instalar CambonOS borrando todo el disco. Quiere continuar?(s/N): \¢"
 		read ANS
 		if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
 		then
