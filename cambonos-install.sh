@@ -106,7 +106,7 @@ Para continuar su intalacion escoga entre:
 		read ANS
 		if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
 		then
-			echo -e "\n\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
+			echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
 			echo -e "\n>>En que disco desea instalar el sistema:(sda,nvme0n1,...): \c" && read DISCO
 			echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? [s/N]: \c"
 			read ANS
