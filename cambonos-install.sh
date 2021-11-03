@@ -46,6 +46,7 @@ case $OPTION in
   echo Connecting...
   sleep 2
   NETWORK ;;
+  3) exit ;;
   *) exit ;;
 esac)
 }
