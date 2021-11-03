@@ -40,7 +40,7 @@ Fallo en la conecxion a internet, selecciona opcion:
 	3.Cancelar' && \
 echo -e "\n(1,2,3): \c" && read OPTION
 if [[ $OPTION != 1 ]] && [[ $OPTION != 2 ]]
-then exit
+then STOP
 fi
 case $OPTION in
   1) sleep 1 && NETWORK ;;
