@@ -196,9 +196,6 @@ case $GRUB in
 	bios)
 		echo "pacman --noconfirm -Sy grub os-prober && grub-install --target=i386-pc /dev/$DISCO || exit 1" | ARCH && DONE || STOP
 		;;
-	*)
-		STOP
-		;;
 esac
 
 echo -e "\n>>Configurando red\c"
