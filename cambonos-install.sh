@@ -215,7 +215,7 @@ echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exi
 
 ##Instalacion XFCE
 echo -e "\n>>Instalando XFCE\c"
-echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings  xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre mugshot || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings  xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet networkmanager-openvpn xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre mugshot || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion Apps
 echo -e "\n>>Instalando aplicaciones\c"
