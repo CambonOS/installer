@@ -221,7 +221,7 @@ echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-
 echo -e "\n>>Instalando aplicaciones\c"
 echo "echo 'trizen --noconfirm -Sy zsh-sudo-git thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty python-pip steam gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh firefox-i18n-es-es firefox-adblock-plus || exit 1' | su $USER || exit 1" | ARCH && \
 if [[ $GPU = vmware ]]
-then echo "echo 'trizen --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "echo yes | rcvboxadd setup; /sbin/rcvboxadd quicksetup all" && DONE || ERROR
+then echo "echo 'trizen --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo 'echo -e "yes\n" | rcvboxadd setup; /sbin/rcvboxadd quicksetup all' | ARCH || ERROR
 else echo "echo 'trizen --noconfirm -Sy virtualbox virtualbox-guest-iso virtualbox-ext-oracle || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 fi
 
