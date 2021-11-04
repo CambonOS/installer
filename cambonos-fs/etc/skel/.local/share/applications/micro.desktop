@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Micro
+GenericName=Text Editor
+NoDisplay=true
+Comment=Edit text files in a terminal
+Icon=micro
+Exec=micro %F
+Terminal=true
+Actions=
+MimeType=text/plain;text/x-chdr;text/x-csrc;text/x-c++hdr;text/x-c++src;text/x-java;text/x-dsrc;text/x-pascal;text/x-perl;text/x-python;application/x-php;application/x-httpd-php3;application/x-httpd-php4;application/x-httpd-php5;application/xml;text/html;text/css;text/x-sql;text/x-diff;
+Categories=Development;TextEditor;Utility;
+Keywords=text;editor;syntax;terminal;
