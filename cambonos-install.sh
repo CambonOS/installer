@@ -219,7 +219,7 @@ echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-
 
 ##Instalacion Apps
 echo -e "\n>>Instalando aplicaciones\c"
-echo "echo 'trizen --noconfirm -Sy zsh-sudo-git thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty python-pip steam gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh firefox-i18n-es-es firefox-adblock-plus || exit 1' | su $USER || exit 1" | ARCH && \
+echo "echo 'trizen --noconfirm -Sy zsh-sudo-git thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty python-pip steam gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh firefox-i18n-es-es firefox-adblock-plus || exit 1' | su $USER || exit 1" | ARCH
 if [[ $GPU = vmware ]]
 then echo "echo 'trizen --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH || ERROR
 else echo "echo 'trizen --noconfirm -Sy virtualbox virtualbox-guest-iso virtualbox-ext-oracle || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
@@ -232,7 +232,7 @@ echo "systemctl enable zramd.service && systemctl enable lightdm.service && syst
 cp -r linux/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 mkdir /mnt/media && \
-echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH && \
+echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
 if [[ $GPU = vmware ]]
 then echo echo "userdel -r $USER && useradd -m -s /bin/zsh -g sudo -G rfkill,wheel,video,audio,storage,vboxguest,vboxsf $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 else echo "userdel -r $USER && useradd -m -s /bin/zsh -g sudo -G rfkill,wheel,video,audio,storage $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
