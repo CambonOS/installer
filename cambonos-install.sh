@@ -234,7 +234,7 @@ chmod 775 /mnt/usr/bin/cambonos* && \
 mkdir /mnt/media && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
 if [[ $GPU = vmware ]]
-then echo "userdel -r $USER && useradd -m -s /bin/zsh -g sudo -G rfkill,wheel,video,audio,storage,vboxguest,vboxsf $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
+then echo "userdel -r $USER && useradd -m -s /bin/zsh -g sudo -G rfkill,wheel,video,audio,storage,vboxsf $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 else echo "userdel -r $USER && useradd -m -s /bin/zsh -g sudo -G rfkill,wheel,video,audio,storage $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 fi
 echo "locale-gen" | ARCH && \
