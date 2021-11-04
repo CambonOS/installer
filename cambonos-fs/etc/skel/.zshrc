@@ -1,5 +1,6 @@
 ##Completado de ZSH
 setopt autocd
+setopt correct
 autoload -U compinit
 compinit
 zstyle ':completion:*' menu select
