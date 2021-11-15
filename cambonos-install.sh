@@ -172,22 +172,24 @@ echo "pacman --noconfirm -Sy xorg tree neovim xclip micro zsh zsh-completions zs
 
 echo -e "\n>>Instalando drivers graficos\c"
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GRUB="DESCONOCIDA"
-(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia'
-(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd'
-(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel'
-(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware'
+(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia' && GPUINSTALL
+(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd' && GPUINSTALL
+(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel' && GPUINSTALL
+(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware' && GPUINSTALL
+GPUINSTALL () {
 case $GPU in
 	amd)
 		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
 	nvidia)
 		echo "pacman --noconfirm -Sy xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
   	intel)
-    echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
+  		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
 	vmware)
 		echo "pacman --noconfirm -Sy virtualbox-guest-utils xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | ARCH && DONE || ERROR ;;
 	*)
 		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | ARCH && DONE || ERROR ;;
 esac
+}
 echo -e "\n>>Instalando grub\c"
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 case $GRUB in
