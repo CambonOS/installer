@@ -148,7 +148,7 @@ if [[ $PASS = $PASS1 ]]
 fi
 }
 SUDO
-echo -e "\n\n>>Que entorno de encritorio desea instalar:\n\n       1-XFCE(Recomendado)\n\n       2-Qtile(Beta)\n\n       3-Ambos"
+echo -e "\n\n>>Que entorno de encritorio desea instalar:\n\n       1-XFCE(Recomendado)\n\n       2-Qtile(Cambon18)\n\n       3-I3(ManuCr19)"
 read ESCRITORIO
 echo -e "\n>>Desea unirse a un dominio LDAP? (s/N): \c"
 read ANS
@@ -216,16 +216,22 @@ echo "papirus-folders -t Papirus-Dark -C green" | ARCH
 echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion XFCE
-if [[ $ESCRITORIO = 1 ]] || [[ $ESCRITORIO = 3 ]]
+if [[ $ESCRITORIO = 1 ]]
 then	
 	echo -e "\n>>Instalando XFCE\c"
 	echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings  xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet networkmanager-openvpn xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre mugshot || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Qtile
-if [[ $ESCRITORIO = 2 ]] || [[ $ESCRITORIO = 3 ]]
+if [[ $ESCRITORIO = 2 ]]
 then
 	echo "echo 'cd /tmp; git clone https://github.com/CambonOS/qtile && bash qtile/install.sh' | su $USER || exit 1" | ARCH && DONE || ERROR
+fi
+
+##Instalacion I3
+if [[ $ESCRITORIO = 3 ]]
+then
+	echo "echo 'cd /tmp; git clone https://github.com/ManuCr19/i3wm && bash i3wm/install.sh' | su $USER || exit 1" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Apps
