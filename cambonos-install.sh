@@ -148,8 +148,8 @@ if [[ $PASS = $PASS1 ]]
 fi
 }
 SUDO
-echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && DG
-echo -e "\n>>Desea instalar el gestor de inicico de sesion? (s/N): \c" && Dm
+echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
+echo -e "\n>>Desea instalar el gestor de inicico de sesion? (s/N): \c" && read DM
 echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-CambonOS/XFCE(Recomendado)\n\n       2-CambonOS/Qtile\n\n       3-ManuCr19/i3wm"
 echo -e "\n>>Seleccione uno, varios separados por espacios o ninguno: \c" && read ESCRITORIO
 echo -e "\n>>Desea unirse a un dominio LDAP? (s/N): \c"
