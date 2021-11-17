@@ -148,8 +148,10 @@ if [[ $PASS = $PASS1 ]]
 fi
 }
 SUDO
-echo -e "\n\n>>Que entorno de encritorio desea instalar:\n\n       1-XFCE(Recomendado)\n\n       2-Qtile(Cambon18)\n\n       3-I3(ManuCr19)"
-read ESCRITORIO
+echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && DG
+echo -e "\n>>Desea instalar el gestor de inicico de sesion? (s/N): \c" && Dm
+echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-CambonOS/XFCE(Recomendado)\n\n       2-CambonOS/Qtile\n\n       3-ManuCr19/i3wm"
+echo -e "\n>>Seleccionje uno, varios separados por espacios o ninguno: \c" && read ESCRITORIO
 echo -e "\n>>Desea unirse a un dominio LDAP? (s/N): \c"
 read ANS
 if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
@@ -168,28 +170,31 @@ echo -e "\n>>Instalando base del sistema\c"
 
 echo -e "\n>>Instalando paquetes basicos\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-echo "pacman --noconfirm -Sy xorg tree neovim xclip micro zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k man man-db man-pages man-pages-es bash-completion neofetch networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
+echo "pacman --noconfirm -Sy tree neovim xclip micro man man-db man-pages man-pages-es bash-completion networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 
 echo -e "\n>>Instalando drivers graficos\c"
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GRUB="DESCONOCIDA"
-GPUINSTALL () {
-case $GPU in
-	amd)
-		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
-	nvidia)
-		echo "pacman --noconfirm -Sy xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
-  	intel)
-  		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
-	vmware)
-		echo "pacman --noconfirm -Sy virtualbox-guest-utils xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | ARCH && DONE || ERROR ;;
-	*)
-		echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | ARCH && DONE || ERROR ;;
-esac
-}
-(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia' && GPUINSTALL
-(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd' && GPUINSTALL
-(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel' && GPUINSTALL
-(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware' && GPUINSTALL
+if [[ $DG = s ]] || [[ $DG = S ]] || [[ $DG = si ]] || [[ $DG = Si ]]
+then
+	GPUINSTALL () {
+	case $GPU in
+		amd)
+			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
+		nvidia)
+			echo "pacman --noconfirm -Sy xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
+  		intel)
+  			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
+		vmware)
+			echo "pacman --noconfirm -Sy virtualbox-guest-utils xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | ARCH && DONE || ERROR ;;
+		*)
+			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | ARCH && DONE || ERROR ;;
+	esac
+	}
+	(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia' && GPUINSTALL
+	(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd' && GPUINSTALL
+	(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel' && GPUINSTALL
+	(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware' && GPUINSTALL
+fi
 
 echo -e "\n>>Instalando grub\c"
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
@@ -212,48 +217,51 @@ echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion LightDM
-echo -e "\n>>Instalando LightDM\c"
-echo "echo 'trizen --noconfirm -Sy papirus-icon-theme papirus-folders light-locker lightdm lightdm-settings lightdm-slick-greeter numlockx || exit 1' | su $USER || exit 1" | ARCH
-cp -r share/* /mnt/usr/share
-echo "papirus-folders -t Papirus-Dark -C green" | ARCH
-echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+if [[ $DM = s ]] || [[ $DM = S ]] || [[ $DM = si ]] || [[ $DM = Si ]]
+
+then	
+	echo -e "\n>>Instalando LightDM\c"
+	echo "echo 'trizen --noconfirm -Sy papirus-icon-theme papirus-folders light-locker lightdm lightdm-settings lightdm-slick-greeter numlockx || exit 1' | su $USER || exit 1" | ARCH
+	cp -r share/* /mnt/usr/share
+	echo "papirus-folders -t Papirus-Dark -C green" | ARCH
+	echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH
+	echo "systemctl enable lightdm.service || exit 1" | ARCH && DONE || ERROR
+fi
 
 ##Instalacion XFCE
-echo $ESCRITORIO | grep 1 >/dev/nul && INSTALL=1 || INSTALL=0
-if [[ $INSTALL = 1 ]]
+echo $ESCRITORIO | grep 1 >/dev/nul && INSTALL=true || INSTALL=false
+if [[ $INSTALL = true ]]
 then	
 	echo -e "\n>>Instalando Xfce\c"
 	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/xfce && cd xfce && bash install.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Qtile
-echo $ESCRITORIO | grep 2 >/dev/nul && INSTALL=1 || INSTALL=0
-if [[ $$INSTALL = 1 ]]
+echo $ESCRITORIO | grep 2 >/dev/nul && INSTALL=true || INSTALL=false
+if [[ $$INSTALL = true ]]
 then
 	echo -e "\n>>Instalando Qtile\c"
 	echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash install.sh" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion I3
-echo $ESCRITORIO | grep 3 >/dev/nul && INSTALL=1 || INSTALL=0
-if [[ $INSTALL = 1 ]]
+echo $ESCRITORIO | grep 3 >/dev/nul && INSTALL=true || INSTALL=false
+if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando I3wm\c"
 	echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash install.sh" | ARCH && DONE || ERROR
 fi
 
-##Instalacion Apps
-echo -e "\n>>Instalando aplicaciones\c"
-echo "echo 'trizen --noconfirm -Sy zsh-sudo-git thunar xdg-user-dirs gvfs gvfs-smb thunar-volman thunar-archive-plugin file-roller gnome-disk-utility mousepad vlc atril ristretto galculator alacritty python-pip steam gnome-mines gnome-mahjongg gnome-sudoku mgba-qt libreoffice-fresh firefox-i18n-es-es firefox-adblock-plus || exit 1' | su $USER || exit 1" | ARCH
+##Instalacion de utilidades adicionales
+echo -e "\n>>Instalando utilidades adicionales\c"
+echo "echo 'trizen --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k zsh-sudo-git xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
+echo "systemctl enable zramd.service || exit 1" | ARCH
 if [[ $GPU = vmware ]]
 then echo "echo 'trizen --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH && DONE || ERROR
-else echo "echo 'trizen --noconfirm -Sy virtualbox virtualbox-guest-iso virtualbox-ext-oracle || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 fi
 
 ##Configuracion CambonOS
 echo -e "\n>>Configurando el sistema\c"
-echo "echo 'trizen --noconfirm -Sy cups system-config-printer blueberry zramd || exit 1' | su $USER || exit 1" | ARCH && \
-echo "systemctl enable zramd.service && systemctl enable lightdm.service && systemctl enable cups.service && systemctl enable bluetooth.service || exit 1" | ARCH
 cp -r linux/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 mkdir /mnt/media && \
