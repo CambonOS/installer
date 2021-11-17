@@ -222,15 +222,14 @@ echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exi
 echo $ESCRITORIO | grep 1 && INSTALL=1 || INSTALL=0
 if [[ $INSTALL = 1 ]]
 then	
-	echo -e "\n>>Instalando XFCE\c"
-	echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings  xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet networkmanager-openvpn xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre mugshot || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/xfce && cd xfce && bash install.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Qtile
 echo $ESCRITORIO | grep 2 && INSTALL=1 || INSTALL=0
 if [[ $$INSTALL = 1 ]]
 then
-	echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash install.sh && mkdir /etc/skel/.config; cp -r qtile /etc/skel/.config" | ARCH && DONE || ERROR
+	echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash install.sh" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion I3
