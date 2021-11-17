@@ -256,7 +256,7 @@ fi
 ##Instalacion de utilidades adicionales
 echo -e "\n>>Instalando utilidades adicionales\c"
 echo "echo 'trizen --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k zsh-sudo-git xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
-echo "systemctl enable zramd.service || exit 1" | ARCH
+echo "systemctl enable zramd.service || exit 1" | ARCH && DONE || ERROR
 if [[ $GPU = vmware ]]
 then echo "echo 'trizen --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH && DONE || ERROR
 fi
