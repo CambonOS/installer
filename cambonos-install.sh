@@ -239,7 +239,7 @@ fi
 
 ##Instalacion Qtile
 echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
-if [[ $$INSTALL = true ]]
+if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando Qtile\c"
 	echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash install.sh" | ARCH && DONE || ERROR
