@@ -227,13 +227,13 @@ fi
 ##Instalacion Qtile
 if [[ $ESCRITORIO = 2 ]]
 then
-	echo "echo 'cd /tmp; git clone https://github.com/CambonOS/qtile && bash qtile/install.sh' | su $USER || exit 1" | ARCH && DONE || ERROR
+	echo "HOME=/etc/skel; cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash install.sh" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion I3
 if [[ $ESCRITORIO = 3 ]]
 then
-	echo "echo 'cd /tmp; git clone https://github.com/ManuCr19/i3wm && bash i3wm/install.sh' | su $USER || exit 1" | ARCH && DONE || ERROR
+	echo "HOME=/etc/skel; echo cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash install.sh" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Apps
