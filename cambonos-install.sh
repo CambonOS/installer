@@ -230,7 +230,7 @@ then
 fi
 
 ##Instalacion XFCE
-echo $ESCRITORIO | grep 1 >/dev/nul && INSTALL=true || INSTALL=false
+echo $ESCRITORIO | grep "1" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then	
 	echo -e "\n>>Instalando Xfce\c"
@@ -238,7 +238,7 @@ then
 fi
 
 ##Instalacion Qtile
-echo $ESCRITORIO | grep 2 >/dev/nul && INSTALL=true || INSTALL=false
+echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $$INSTALL = true ]]
 then
 	echo -e "\n>>Instalando Qtile\c"
@@ -246,7 +246,7 @@ then
 fi
 
 ##Instalacion I3
-echo $ESCRITORIO | grep 3 >/dev/nul && INSTALL=true || INSTALL=false
+echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando I3wm\c"
