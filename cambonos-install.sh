@@ -219,26 +219,26 @@ echo "papirus-folders -t Papirus-Dark -C green" | ARCH
 echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion XFCE
-echo -e "\n>>Instalando Xfce\c"
 echo $ESCRITORIO | grep 1 >/dev/nul && INSTALL=1 || INSTALL=0
 if [[ $INSTALL = 1 ]]
 then	
+	echo -e "\n>>Instalando Xfce\c"
 	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/xfce && cd xfce && bash install.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Qtile
-echo -e "\n>>Instalando Qtile\c"
 echo $ESCRITORIO | grep 2 >/dev/nul && INSTALL=1 || INSTALL=0
 if [[ $$INSTALL = 1 ]]
 then
+	echo -e "\n>>Instalando Qtile\c"
 	echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash install.sh" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion I3
-echo -e "\n>>Instalando I3wm\c"
 echo $ESCRITORIO | grep 3 >/dev/nul && INSTALL=1 || INSTALL=0
 if [[ $INSTALL = 1 ]]
 then
+	echo -e "\n>>Instalando I3wm\c"
 	echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash install.sh" | ARCH && DONE || ERROR
 fi
 
