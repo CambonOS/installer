@@ -242,7 +242,7 @@ echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando Qtile\c"
-	echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash install.sh" | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash install.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion I3
@@ -250,7 +250,7 @@ echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando I3wm\c"
-	echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash install.sh" | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash install.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion de utilidades adicionales
