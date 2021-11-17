@@ -219,20 +219,23 @@ echo "papirus-folders -t Papirus-Dark -C green" | ARCH
 echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion XFCE
-if [[ $ESCRITORIO = 1 ]]
+echo $ESCRITORIO | grep 1 && INSTALL=1 || INSTALL=0
+if [[ $INSTALL = 1 ]]
 then	
 	echo -e "\n>>Instalando XFCE\c"
 	echo "echo 'trizen --noconfirm -Sy xfce4-whiskermenu-plugin xfce4-session xfce4-panel xfce4-power-manager xfce4-settings  xfce4-screenshooter xfconf xfdesktop xfwm4 network-manager-applet networkmanager-openvpn xfce4-pulseaudio-plugin pulseaudio pulseaudio-jack pulseaudio-bluetooth pavucontrol menulibre mugshot || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Qtile
-if [[ $ESCRITORIO = 2 ]]
+echo $ESCRITORIO | grep 2 && INSTALL=1 || INSTALL=0
+if [[ $$INSTALL = 1 ]]
 then
 	echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash install.sh && mkdir /etc/skel/.config; cp -r qtile /etc/skel/.config" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion I3
-if [[ $ESCRITORIO = 3 ]]
+echo $ESCRITORIO | grep 3 && INSTALL=1 || INSTALL=0
+if [[ $INSTALL = 1 ]]
 then
 	echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash install.sh" | ARCH && DONE || ERROR
 fi
