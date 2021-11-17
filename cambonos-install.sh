@@ -172,10 +172,10 @@ echo -e "\n>>Instalando paquetes basicos\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
 echo "pacman --noconfirm -Sy tree neovim xclip micro man man-db man-pages man-pages-es bash-completion networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 
-echo -e "\n>>Instalando drivers graficos\c"
-echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GRUB="DESCONOCIDA"
 if [[ $DG = s ]] || [[ $DG = S ]] || [[ $DG = si ]] || [[ $DG = Si ]]
 then
+	echo -e "\n>>Instalando drivers graficos\c"
+	echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GRUB="DESCONOCIDA"
 	GPUINSTALL () {
 	case $GPU in
 		amd)
