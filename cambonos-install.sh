@@ -36,7 +36,7 @@ echo '
 Fallo en la conecxion a internet, selecciona opcion:
 
 	1.Reintentar conecxion cableada
-	2.Configurar wifi
+	2.Configurar wifi (2.4Ghz)
 	3.Cancelar' && \
 echo -e "\n(1,2,3): \c" && read OPTION
 case $OPTION in
