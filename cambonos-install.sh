@@ -139,7 +139,7 @@ esac
 HEAD
 echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
 echo -e "\n>>Nombre para el nuevo usuario: \c" && read USERNAME
-USER=$(echo $USER | awk '{print tolower($0)}')
+USER=$(echo $USERNAME | awk '{print tolower($0)}')
 SUDO () {
 echo -e "\n>>Contraseña del usuario: \c" && read -s PASS
 echo -e "\n\n>>Repetir contraseña: \c" && read -s PASS1
