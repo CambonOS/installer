@@ -257,8 +257,8 @@ fi
 ##Instalacion ssh
 if [[ $SSH = s ]] || [[ $SSH = si ]] || [[ $SSH = S ]] || [[ $SSH = Si ]]
 then
-	echo -e "\n>>Instalando SSH\c"
-	echo "pacman --noconfirm -Sy openssh && sed -i s/#X11Forward/X11Fordward/ /etc/openssh/conf && systemctl enable sshd.service || exit 1" | ARCH && DONE || ERROR
+	echo -e "\n>>Instalando SSH server\c"
+	echo "pacman --noconfirm -Sy openssh && sed -i s/#X11Forwarding no/X11Fordwarding yes/ /etc/ssh/sshd_config && systemctl enable sshd.service || exit 1" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion de utilidades adicionales
