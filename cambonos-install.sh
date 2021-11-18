@@ -150,11 +150,11 @@ fi
 }
 SUDO
 echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
+echo -e "\n>>Desea instalar servidor SSH? (s/N): \c" && read SSH
 echo -e "\n>>Desea instalar el gestor de inicico de sesion? (s/N): \c" && read DM
 echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-CambonOS/XFCE(Recomendado)\n\n       2-CambonOS/Qtile\n\n       3-ManuCr19/i3wm"
 echo -e "\n>>Seleccione uno, varios separados por espacios o ninguno: \c" && read ESCRITORIO
-echo -e "\n>>Desea unirse a un dominio LDAP? (s/N): \c"
-read ANS
+echo -e "\n>>Desea unirse a un dominio LDAP? (s/N): \c" && read ANS
 if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
   then LDAP=true
   echo -e "\n>>Base DN (dc=example,dc=local): \c" && read BASEDN
@@ -252,6 +252,13 @@ if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando I3wm\c"
 	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash install.sh" | su $USER' | ARCH && DONE || ERROR
+fi
+
+##Instalacion ssh
+if [[ $SSH = s ]] || [[ $SSH = si ]] || [[ $SSH = S ]] || [[ $SSH = Si ]]
+then
+	echo -e "\n>>Instalando SSH\c"
+	echo "pacman --noconfirm -Sy openssh && sed -i s/#X11Forward/X11Fordward/ /etc/openssh/conf && systemctl enable sshd.service || exit 1" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion de utilidades adicionales
