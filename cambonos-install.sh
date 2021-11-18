@@ -175,19 +175,23 @@ echo "pacman --noconfirm -Sy tree neovim xclip micro man man-db man-pages man-pa
 
 if [[ $DG = s ]] || [[ $DG = S ]] || [[ $DG = si ]] || [[ $DG = Si ]]
 then
-	echo -e "\n>>Instalando drivers graficos\c"
 	echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GRUB="DESCONOCIDA"
 	GPUINSTALL () {
 	case $GPU in
 		amd)
+			echo -e "\n>>Instalando drivers graficos de AMD\c"
 			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
 		nvidia)
+			echo -e "\n>>Instalando drivers graficos de Nvidia\c"
 			echo "pacman --noconfirm -Sy xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
   		intel)
-  			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
+  			echo -e "\n>>Instalando drivers graficos Intel\c"
+			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
 		vmware)
+			echo -e "\n>>Instalando drivers graficos para maquinas virtuales\c"
 			echo "pacman --noconfirm -Sy virtualbox-guest-utils xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | ARCH && DONE || ERROR ;;
 		*)
+			echo -e "\n>>Instalando drivers graficos\c"
 			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | ARCH && DONE || ERROR ;;
 	esac
 	}
@@ -255,12 +259,12 @@ fi
 if [[ $SSH = s ]] || [[ $SSH = si ]] || [[ $SSH = S ]] || [[ $SSH = Si ]]
 then
 	echo -e "\n>>Instalando SSH server\c"
-	echo "pacman --noconfirm -Sy openssh && sed -i s/#X11Forwarding no/X11Fordwarding yes/ /etc/ssh/sshd_config && systemctl enable sshd.service || exit 1" | ARCH && DONE || ERROR
+	echo "pacman --noconfirm -Sy openssh && sed -e -i s/#X11Forwarding\ no/X11Fordwarding\ yes/ /etc/ssh/sshd_config && systemctl enable sshd.service || exit 1" | ARCH && DONE || ERROR
 fi
 
 ##Instalacion de utilidades adicionales
 echo -e "\n>>Instalando utilidades adicionales\c"
-echo "echo 'trizen --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k zsh-sudo-git xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
+echo "echo 'trizen --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-sudo-git zsh-theme-powerlevel10k ttf-font-awesome xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
 echo "systemctl enable zramd.service || exit 1" | ARCH && DONE || ERROR
 if [[ $GPU = vmware ]]
 then echo "echo 'trizen --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
