@@ -222,11 +222,8 @@ if [[ $DM = s ]] || [[ $DM = S ]] || [[ $DM = si ]] || [[ $DM = Si ]]
 
 then	
 	echo -e "\n>>Instalando LightDM\c"
-	echo "echo 'trizen --noconfirm -Sy papirus-icon-theme papirus-folders light-locker lightdm lightdm-settings lightdm-slick-greeter numlockx || exit 1' | su $USER || exit 1" | ARCH
-	cp -r share/* /mnt/usr/share
+	echo "echo 'trizen --noconfirm -Sy light-locker lightdm lightdm-settings lightdm-slick-greeter numlockx materia-gtk-theme || exit 1' | su $USER || exit 1" | ARCH
 	cp -r linux/lightdm/* /mnt
-	echo "papirus-folders -t Papirus-Dark -C green" | ARCH
-	echo "echo 'trizen --noconfirm -Rns papirus-folders || exit 1' | su $USER || exit 1" | ARCH
 	echo "systemctl enable lightdm.service || exit 1" | ARCH && DONE || ERROR
 fi
 
