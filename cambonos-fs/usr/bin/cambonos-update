@@ -18,7 +18,7 @@ DONE () {
 sudo rm -rf /tmp/linux
 echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 cd /tmp
-if [[ $1 = "-b" ]]
+if [[ $1 = "-b" ]]  || [[ $1 = "--branch" ]]
 then
   git clone -b $2 https://github.com/CambonOS/linux.git
 else
