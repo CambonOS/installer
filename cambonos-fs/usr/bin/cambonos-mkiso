@@ -44,9 +44,9 @@ fi
 cp -r linux/iso/* /iso/perfil || ERROR
 if [[ $1 = "-b" ]]
 then
-	rm -rf linux
 	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" linux/iso/profiledef.sh > /iso/perfil/profiledef.sh
 	echo -e "\nrm -rf linux\ngit clone -b $2 https://github.com/cambonos/linux.git" > .zshrc
+	rm -rf linux
 fi
 echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash linux/cambonos-install.sh" >> .zshrc
 DONE
