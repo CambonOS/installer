@@ -35,14 +35,14 @@ cp -r /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
 rm /iso/perfil/efiboot/loader/entries/02*
 rm /iso/perfil/efiboot/loader/entries/03*
 cd /iso/perfil/airootfs/root
-if [[ $1 = "-b" ]]
+if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
 then
 	git clone -b $2 https://github.com/CambonOS/linux.git
 else
 	git clone https://github.com/CambonOS/linux.git
 fi
 cp -r linux/iso/* /iso/perfil || ERROR
-if [[ $1 = "-b" ]]
+if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
 then
 	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" linux/iso/profiledef.sh > /iso/perfil/profiledef.sh
 	echo -e "\nrm -rf linux\ngit clone -b $2 https://github.com/cambonos/linux.git" > .zshrc
