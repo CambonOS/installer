@@ -41,15 +41,6 @@ then
 else
 	git clone https://github.com/CambonOS/linux.git
 fi
-mkdir share && mkdir share/themes
-git clone https://github.com/darkomarko42/Marwaita-manjaro
-cp -r Marwaita-manjaro/Marwaita\ Manjaro share/themes
-cp -r Marwaita-manjaro/Marwaita\ Manjaro\ Dark share/themes
-rm -rf Marwaita-manjaro
-git clone https://github.com/darkomarko42/Marwaita.git
-cp -r Marwaita/Marwaita share/themes
-cp -r Marwaita/Marwaita\ Dark share/themes
-rm -rf Marwaita
 cp -r linux/iso/* /iso/perfil || ERROR
 if [[ $1 = "-b" ]]
 then
