@@ -151,7 +151,6 @@ fi
 SUDO
 echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
 echo -e "\n>>Desea instalar servidor SSH? (s/N): \c" && read SSH
-echo -e "\n>>Desea instalar el gestor de inicico de sesion? (s/N): \c" && read DM
 echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-CambonOS/XFCE(Recomendado)\n\n       2-CambonOS/Qtile\n\n       3-ManuCr19/i3wm"
 echo -e "\n>>Seleccione uno, varios separados por espacios o ninguno: \c" && read ESCRITORIO
 echo -e "\n>>Desea unirse a un dominio LDAP? (s/N): \c" && read ANS
@@ -220,16 +219,6 @@ echo -e "\n>>Instalando trizen\c"
 echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | ARCH
 echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
-
-##Instalacion LightDM
-if [[ $DM = s ]] || [[ $DM = S ]] || [[ $DM = si ]] || [[ $DM = Si ]]
-
-then	
-	echo -e "\n>>Instalando LightDM\c"
-	echo "echo 'trizen --noconfirm -Sy light-locker lightdm lightdm-settings lightdm-slick-greeter numlockx materia-gtk-theme || exit 1' | su $USER || exit 1" | ARCH
-	cp -r linux/lightdm/* /mnt
-	echo "systemctl enable lightdm.service || exit 1" | ARCH && DONE || ERROR
-fi
 
 ##Instalacion XFCE
 echo $ESCRITORIO | grep "1" >/dev/nul && INSTALL=true || INSTALL=false
