@@ -261,7 +261,7 @@ fi
 
 ##Configuracion CambonOS
 echo -e "\n>>Configurando el sistema\c"
-cp -r linux/cambonos-fs/* /mnt && \
+cp -r archie/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 mkdir /mnt/media && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
