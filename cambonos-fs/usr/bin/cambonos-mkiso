@@ -37,18 +37,18 @@ rm /iso/perfil/efiboot/loader/entries/03*
 cd /iso/perfil/airootfs/root
 if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
 then
-	git clone -b $2 https://github.com/CambonOS/linux.git
+	git clone -b $2 https://github.com/CambonOS/archie.git
 else
-	git clone https://github.com/CambonOS/linux.git
+	git clone https://github.com/CambonOS/archie.git
 fi
 cp -r linux/iso/* /iso/perfil || ERROR
 if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
 then
-	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" linux/iso/profiledef.sh > /iso/perfil/profiledef.sh
-	echo -e "\nrm -rf linux\ngit clone -b $2 https://github.com/cambonos/linux.git" > .zshrc
+	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" archie/iso/profiledef.sh > /iso/perfil/profiledef.sh
+	echo -e "\nrm -rf archie\ngit clone -b $2 https://github.com/cambonos/archie.git" > .zshrc
 	rm -rf linux
 fi
-echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash linux/cambonos-install.sh" >> .zshrc
+echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash archie/cambonos-install.sh" >> .zshrc
 DONE
 
 echo -e "${BLUE}\n>>Creando la ISO${NOCOLOR}"
