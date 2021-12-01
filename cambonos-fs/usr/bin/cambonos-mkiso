@@ -29,7 +29,7 @@ sleep 2
 pacman --noconfirm -Sy archiso && DONE || ERROR
 
 echo -e "${BLUE}\n>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
-rm -rf /tmp/linux; rm -rf /iso
+rm -rf /iso
 mkdir /iso && mkdir /iso/perfil
 cp -r /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
 rm /iso/perfil/efiboot/loader/entries/02*
@@ -41,7 +41,7 @@ then
 else
 	git clone https://github.com/CambonOS/archie.git
 fi
-cp -r linux/iso/* /iso/perfil || ERROR
+cp -r archie/iso/* /iso/perfil || ERROR
 if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
 then
 	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" archie/iso/profiledef.sh > /iso/perfil/profiledef.sh
