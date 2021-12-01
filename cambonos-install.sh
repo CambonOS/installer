@@ -225,7 +225,7 @@ echo $ESCRITORIO | grep "1" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then	
 	echo -e "\n>>Instalando Xfce\c"
-	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/xfce && cd xfce && bash install.sh" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/xfce && cd xfce && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Qtile
@@ -233,7 +233,7 @@ echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando Qtile\c"
-	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash install.sh" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion I3
