@@ -15,15 +15,15 @@ DONE () {
   sleep 1
 }
 
-sudo rm -rf /tmp/linux
+sudo rm -rf /tmp/archie
 echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 cd /tmp
-if [[ $1 = "-b" ]]
+if [[ $1 = "-b" ]]  || [[ $1 = "--branch" ]]
 then
-  git clone -b $2 https://github.com/CambonOS/linux.git
+  git clone -b $2 https://github.com/CambonOS/archie.git
 else
-  git clone https://github.com/CambonOS/linux.git
+  git clone https://github.com/CambonOS/archie.git
 fi
-sudo cp -r linux/cambonos-fs/usr/bin/* /usr/bin || ERROR
+sudo cp -r archie/cambonos-fs/usr/bin/* /usr/bin || ERROR
 sudo chmod 755 /usr/bin/cambonos* || ERROR
 DONE

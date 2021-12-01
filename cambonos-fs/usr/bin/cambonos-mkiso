@@ -29,34 +29,26 @@ sleep 2
 pacman --noconfirm -Sy archiso && DONE || ERROR
 
 echo -e "${BLUE}\n>>Creando ficheros de configuracion de la ISO${NOCOLOR}"
-rm -rf /tmp/linux; rm -rf /iso
+rm -rf /iso
 mkdir /iso && mkdir /iso/perfil
 cp -r /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
 rm /iso/perfil/efiboot/loader/entries/02*
 rm /iso/perfil/efiboot/loader/entries/03*
 cd /iso/perfil/airootfs/root
-if [[ $1 = "-b" ]]
+if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
 then
-	git clone -b $2 https://github.com/CambonOS/linux.git
+	git clone -b $2 https://github.com/CambonOS/archie.git
 else
-	git clone https://github.com/CambonOS/linux.git
+	git clone https://github.com/CambonOS/archie.git
 fi
-mkdir share && mkdir share/themes
-git clone https://github.com/darkomarko42/Marwaita-manjaro
-cp -r Marwaita-manjaro/Marwaita\ Manjaro share/themes
-cp -r Marwaita-manjaro/Marwaita\ Manjaro\ Dark share/themes
-rm -rf Marwaita-manjaro
-git clone https://github.com/darkomarko42/Marwaita.git
-cp -r Marwaita/Marwaita share/themes
-cp -r Marwaita/Marwaita\ Dark share/themes
-rm -rf Marwaita
-cp -r linux/iso/* /iso/perfil || ERROR
-if [[ $1 = "-b" ]]
+cp -r archie/iso/* /iso/perfil || ERROR
+if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
 then
-	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" linux/iso/profiledef.sh > /iso/perfil/profiledef.sh
-	echo -e "\nrm -rf linux\ngit clone -b $2 https://github.com/cambonos/linux.git" > .zshrc
+	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" archie/iso/profiledef.sh > /iso/perfil/profiledef.sh
+	echo -e "\nrm -rf archie\ngit clone -b $2 https://github.com/cambonos/archie.git" > .zshrc
+	rm -rf linux
 fi
-echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash linux/cambonos-install.sh" >> .zshrc
+echo -e "timedatectl set-ntp true\nreflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist\nbash archie/cambonos-install.sh" >> .zshrc
 DONE
 
 echo -e "${BLUE}\n>>Creando la ISO${NOCOLOR}"
