@@ -4,6 +4,14 @@ set background=dark
 set mouse=a
 colorscheme peachpuff
 
+" Autocierre
+inoremap ( ()<Esc>i
+inoremap [ []<Esc>i
+inoremap { {}<Esc>i
+inoremap {<CR> {<CR><CR>}<Esc>ki	
+inoremap < <><Esc>i
+inoremap ' ''<Esc>i
+inoremap " ""<Esc>i
 
 nnoremap <C-s> :w<CR>  " Guardar con <líder> + s
 
