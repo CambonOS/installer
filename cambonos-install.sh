@@ -35,16 +35,16 @@ ping -c 3 google.com >/dev/null 2>&1 || \
 echo '
 Fallo en la conecxion a internet, selecciona opcion:
 
-	1.Reintentar conecxion cableada
+	1.Reintentar conexion
 	2.Configurar wifi (2.4Ghz)
 	3.Cancelar' && \
 echo -e "\n(1,2,3): \c" && read OPTION
 case $OPTION in
-  1) sleep 1 && NETWORK ;;
+  1) sleep 5 && NETWORK ;;
   2) echo -e '\n>>Introduce el SSID: \c' && read SSID && \
   (iwctl station wlan0 connect-hidden $SSID 2>/dev/null|| iwctl station wlan0 connect $SSID 2>/dev/null)
   echo Connecting...
-  sleep 2
+  sleep 5
   NETWORK ;;
   *) exit 1 ;;
 esac)
