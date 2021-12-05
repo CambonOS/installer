@@ -19,7 +19,7 @@ echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
 sleep 2
 trizen --noconfirm -Syyu || ERROR
 DONE
-echo -e "${BLUE}\n>>Eliminando paquetes guerfanos${NOCOLOR}"
+echo -e "${BLUE}\n>>Eliminando paquetes huerfanos${NOCOLOR}"
 sleep 2
 trizen --noconfirm -Rns $(trizen -Qqdt)
 DONE
