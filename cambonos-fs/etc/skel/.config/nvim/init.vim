@@ -12,6 +12,8 @@ inoremap {<CR> {<CR><CR>}<Esc>ki
 inoremap < <><Esc>i
 inoremap ' ''<Esc>i
 inoremap " ""<Esc>i
+inoremap `p ```python<CR><CR>```<Esc>ki
+inoremap `b ```bash<CR><CR>```<Esc>ki
 
 nnoremap <C-s> :w<CR>  " Guardar con <líder> + s
 
