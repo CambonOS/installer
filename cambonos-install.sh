@@ -194,10 +194,10 @@ then
 			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | ARCH && DONE || ERROR ;;
 	esac
 	}
-	(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia' && GPUINSTALL
 	(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd' && GPUINSTALL
 	(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel' && GPUINSTALL
 	(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware' && GPUINSTALL
+	(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia' && GPUINSTALL
 fi
 
 echo -e "\n>>Instalando grub\c"
