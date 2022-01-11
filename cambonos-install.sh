@@ -250,7 +250,7 @@ echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando I3wm\c"
-	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone -b beta https://github.com/ManuCr19/i3wm && cd i3wm && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion ssh
