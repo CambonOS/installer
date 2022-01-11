@@ -274,6 +274,7 @@ fi
 SALIDA='/tmp/system-configuration.log'
 echo -e "\n>>Configurando el sistema\c"
 cp -r archie/cambonos-fs/* /mnt && \
+cp -r /mnt/etc/skel/.* /mnt/root && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 mkdir /mnt/media && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
@@ -281,6 +282,7 @@ echo "userdel -r $USER && useradd -m -c $USERNAME -s /bin/zsh -g sudo -G rfkill,
 if [[ $GPU = vmware ]]
 then echo "usermod -aG vboxsf $USER" | ARCH
 fi
+echo "usermod -s /bin/bash root" | ARCH && \
 echo "locale-gen" | ARCH && \
 echo "cambonos-upgrade" | ARCH && DONE || ERROR
 
