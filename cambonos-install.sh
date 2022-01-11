@@ -170,7 +170,7 @@ echo -e "\n>>Instalando base del sistema\c"
 (pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && \
 genfstab -U /mnt >> /mnt/etc/fstab && \
 echo "usermod -s /bin/bash root" | ARCH && \
-cp -r /mnt/etc/skel/.* /mnt/root) && DONE || STOP
+cp -r archie/cambonos-fs/etc/skel/.* /mnt/root) && DONE || STOP
 
 SALIDA='/tmp/packages-base'
 echo -e "\n>>Instalando paquetes basicos\c"
