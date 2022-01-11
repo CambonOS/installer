@@ -4,7 +4,6 @@
 NOCOLOR='\033[0m'
 RED='\033[1;31m'
 GREEN='\033[1;32m'
-SALIDA='/tmp/salida'
 
 ##Definicion de grupos
 HEAD () {
@@ -52,6 +51,7 @@ esac)
 NETWORK || exit
 
 ##Particionado
+SALIDA='/tmp/particionado.log'
 HEAD
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 case $GRUB in
@@ -164,14 +164,17 @@ if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
 fi
 
 ##Paquetes basicos y drivers
+SALIDA='/tmp/system-base.log'
 HEAD
 echo -e "\n>>Instalando base del sistema\c"
 (pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && genfstab -U /mnt >> /mnt/etc/fstab) && DONE || STOP
 
+SALIDA='/tmp/packages-base'
 echo -e "\n>>Instalando paquetes basicos\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
 echo "pacman --noconfirm -Sy lsb-release tree neovim xclip micro man man-db man-pages man-pages-es bash-completion networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 
+SALIDA='/tmp/video-drivers.log'
 if [[ $DG = s ]] || [[ $DG = S ]] || [[ $DG = si ]] || [[ $DG = Si ]]
 then
 	echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GRUB="DESCONOCIDA"
@@ -200,6 +203,7 @@ then
 	(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia' && GPUINSTALL
 fi
 
+SALIDA='/tmp/grub.log'
 echo -e "\n>>Instalando grub\c"
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 case $GRUB in
@@ -211,16 +215,19 @@ case $GRUB in
 		;;
 esac
 
+SALIDA='/tmp/network.log'
 echo -e "\n>>Configurando red\c"
 echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service || exit 1' | ARCH && DONE || ERROR
 
 ##Instalacion de trizen
+SALIDA='/tmp/trizen.log'
 echo -e "\n>>Instalando trizen\c"
 echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | ARCH
 echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion XFCE
+SALIDA='/tmp/xfce.log'
 echo $ESCRITORIO | grep "1" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then	
@@ -229,6 +236,7 @@ then
 fi
 
 ##Instalacion Qtile
+SALIDA='/tmp/qtile.log'
 echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
@@ -237,6 +245,7 @@ then
 fi
 
 ##Instalacion I3
+SALIDA='/tmp/i3.log'
 echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
@@ -245,6 +254,7 @@ then
 fi
 
 ##Instalacion ssh
+SALIDA='/tmp/ssh.log'
 if [[ $SSH = s ]] || [[ $SSH = si ]] || [[ $SSH = S ]] || [[ $SSH = Si ]]
 then
 	echo -e "\n>>Instalando SSH server\c"
@@ -252,14 +262,16 @@ then
 fi
 
 ##Instalacion de utilidades adicionales
+SALIDA='/tmp/aditional-packages.log'
 echo -e "\n>>Instalando utilidades adicionales\c"
-echo "echo 'trizen --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-sudo-git zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
+echo "echo 'trizen --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
 echo "systemctl enable zramd.service || exit 1" | ARCH && DONE || ERROR
 if [[ $GPU = vmware ]]
 then echo "echo 'trizen --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
 fi
 
 ##Configuracion CambonOS
+SALIDA='/tmp/system-configuration.log'
 echo -e "\n>>Configurando el sistema\c"
 cp -r archie/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
@@ -273,6 +285,7 @@ echo "locale-gen" | ARCH && \
 echo "cambonos-upgrade" | ARCH && DONE || ERROR
 
 ##Dominio LDAP
+SALIDA='/tmp/ldap.log'
 if [[ $LDAP = true ]]
 then 
 	echo -e "\n>>Uniendose al dominio LDAP\c"
