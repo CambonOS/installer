@@ -24,6 +24,7 @@ then
 else
   git clone https://github.com/CambonOS/archie.git
 fi
-sudo cp -r archie/cambonos-fs/usr/bin/* /usr/bin || ERROR
+sudo cp -rv archie/cambonos-fs/usr/bin/* /usr/bin || ERROR
 sudo chmod 755 /usr/bin/cambonos* || ERROR
+sudo rm -rf archie 
 DONE
