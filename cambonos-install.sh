@@ -181,8 +181,11 @@ echo "pacman --noconfirm -Sy lsb-release tree neovim xclip micro man man-db man-
 SALIDA='/tmp/video-drivers.log'
 if [[ $DG = s ]] || [[ $DG = S ]] || [[ $DG = si ]] || [[ $DG = Si ]]
 then
-	echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GRUB="DESCONOCIDA"
-	GPUINSTALL () {
+	echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GPU='DESCONOCIDA'
+	(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware'
+	(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel'
+	(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd'
+	(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia'
 	case $GPU in
 		amd)
 			echo -e "\n>>Instalando drivers graficos de AMD\c"
@@ -198,13 +201,8 @@ then
 			echo "pacman --noconfirm -Sy virtualbox-guest-utils xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | ARCH && DONE || ERROR ;;
 		*)
 			echo -e "\n>>Instalando drivers graficos\c"
-			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | ARCH && DONE || ERROR ;;
+			echo "pacman --noconfirm -Sy xf86-video-vesa lib32-mesa mesa vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
 	esac
-	}
-	(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd' && GPUINSTALL
-	(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel' && GPUINSTALL
-	(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware' && GPUINSTALL
-	(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia' && GPUINSTALL
 fi
 
 SALIDA='/tmp/grub.log'
