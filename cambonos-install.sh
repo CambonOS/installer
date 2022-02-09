@@ -221,12 +221,12 @@ SALIDA='/tmp/network.log'
 echo -e "\n>>Configurando red\c"
 echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service || exit 1' | ARCH && DONE || ERROR
 
-##Instalacion de trizen
-SALIDA='/tmp/trizen.log'
-echo -e "\n>>Instalando trizen\c"
+##Instalacion de yay
+SALIDA='/tmp/yay.log'
+echo -e "\n>>Instalando yay\c"
 echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | ARCH
 echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
-echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion XFCE
 SALIDA='/tmp/xfce.log'
@@ -266,10 +266,10 @@ fi
 ##Instalacion de utilidades adicionales
 SALIDA='/tmp/aditional-packages.log'
 echo -e "\n>>Instalando utilidades adicionales\c"
-echo "echo 'trizen --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
+echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
 echo "systemctl enable zramd.service || exit 1" | ARCH && DONE || ERROR
 if [[ $GPU = vmware ]]
-then echo "echo 'trizen --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
+then echo "echo 'yay --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
 fi
 
 ##Configuracion CambonOS
