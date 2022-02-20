@@ -17,11 +17,11 @@ DONE () {
 
 echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
 sleep 2
-trizen --noconfirm -Syyu || ERROR
+yay --noconfirm -Syyu || ERROR
 DONE
 echo -e "${BLUE}\n>>Eliminando paquetes huerfanos${NOCOLOR}"
 sleep 2
-trizen --noconfirm -Rns $(trizen -Qqdt)
+yay --noconfirm -Rns $(yay -Qqdt)
 DONE
 echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 sleep 2

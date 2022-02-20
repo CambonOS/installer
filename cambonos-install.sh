@@ -167,7 +167,11 @@ fi
 SALIDA='/tmp/system-base.log'
 HEAD
 echo -e "\n>>Instalando base del sistema\c"
-(pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && genfstab -U /mnt >> /mnt/etc/fstab) && DONE || STOP
+(pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && \
+genfstab -U /mnt >> /mnt/etc/fstab && \
+echo "usermod -s /bin/zsh root" | ARCH && \
+cp -r archie/cambonos-fs/etc/skel/.config /mnt/root) && DONE || STOP
+cp archie/cambonos-fs/etc/skel/.* /mnt/root/ 2>/dev/null
 
 SALIDA='/tmp/packages-base'
 echo -e "\n>>Instalando paquetes basicos\c"
@@ -177,8 +181,11 @@ echo "pacman --noconfirm -Sy lsb-release tree neovim xclip micro man man-db man-
 SALIDA='/tmp/video-drivers.log'
 if [[ $DG = s ]] || [[ $DG = S ]] || [[ $DG = si ]] || [[ $DG = Si ]]
 then
-	echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GRUB="DESCONOCIDA"
-	GPUINSTALL () {
+	echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GPU='DESCONOCIDA'
+	(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware'
+	(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel'
+	(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd'
+	(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia'
 	case $GPU in
 		amd)
 			echo -e "\n>>Instalando drivers graficos de AMD\c"
@@ -194,13 +201,8 @@ then
 			echo "pacman --noconfirm -Sy virtualbox-guest-utils xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | ARCH && DONE || ERROR ;;
 		*)
 			echo -e "\n>>Instalando drivers graficos\c"
-			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms xf86-video-vmware || exit 1" | ARCH && DONE || ERROR ;;
+			echo "pacman --noconfirm -Sy xf86-video-vesa lib32-mesa mesa vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH && DONE || ERROR ;;
 	esac
-	}
-	(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd' && GPUINSTALL
-	(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel' && GPUINSTALL
-	(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware' && GPUINSTALL
-	(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia' && GPUINSTALL
 fi
 
 SALIDA='/tmp/grub.log'
@@ -219,12 +221,12 @@ SALIDA='/tmp/network.log'
 echo -e "\n>>Configurando red\c"
 echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service || exit 1' | ARCH && DONE || ERROR
 
-##Instalacion de trizen
-SALIDA='/tmp/trizen.log'
-echo -e "\n>>Instalando trizen\c"
+##Instalacion de yay
+SALIDA='/tmp/yay.log'
+echo -e "\n>>Instalando yay\c"
 echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | ARCH
 echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
-echo "echo 'cd /tmp && git clone https://aur.archlinux.org/trizen.git && cd trizen && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion XFCE
 SALIDA='/tmp/xfce.log'
@@ -250,7 +252,7 @@ echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando I3wm\c"
-	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone -b beta https://github.com/ManuCr19/i3wm && cd i3wm && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion ssh
@@ -264,10 +266,10 @@ fi
 ##Instalacion de utilidades adicionales
 SALIDA='/tmp/aditional-packages.log'
 echo -e "\n>>Instalando utilidades adicionales\c"
-echo "echo 'trizen --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
+echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
 echo "systemctl enable zramd.service || exit 1" | ARCH && DONE || ERROR
 if [[ $GPU = vmware ]]
-then echo "echo 'trizen --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
+then echo "echo 'yay --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
 fi
 
 ##Configuracion CambonOS
@@ -277,7 +279,7 @@ cp -r archie/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 mkdir /mnt/media && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
-echo "userdel -r $USER && useradd -m -c $USERNAME -s /bin/zsh -g sudo -G rfkill,wheel,video,audio,storage $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
+echo "userdel -r $USER && useradd -m -c $USERNAME -s /bin/zsh -g sudo -G rfkill,wheel $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 if [[ $GPU = vmware ]]
 then echo "usermod -aG vboxsf $USER" | ARCH
 fi
