@@ -255,6 +255,15 @@ then
 	echo 'echo "cd /tmp; git clone -b beta https://github.com/ManuCr19/i3wm && cd i3wm && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
+##Instalacion KDE
+SALIDA='/tmp/kde.log'
+echo $ESCRITORIO | grep "4" >/dev/nul && INSTALL=true || INSTALL=false
+if [[ $INSTALL = true ]]
+then
+	echo -e "\n>>Instalando KDE\c"
+	echo 'echo "cd /tmp; git clone https://github.com/MrArdillo/kde && cd kde && bash kdeinstall.sh" | su $USER' | ARCH && DONE || ERROR
+fi
+
 ##Instalacion ssh
 SALIDA='/tmp/ssh.log'
 if [[ $SSH = s ]] || [[ $SSH = si ]] || [[ $SSH = S ]] || [[ $SSH = Si ]]
