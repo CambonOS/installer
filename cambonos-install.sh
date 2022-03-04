@@ -243,7 +243,7 @@ echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando Qtile\c"
-	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone -b beta https://github.com/CambonOS/qtile && cd qtile && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion I3
