@@ -270,7 +270,7 @@ echo $ESCRITORIO | grep "5" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando Qtile\c"
-	echo 'echo "cd /tmp; git clone -b python https://github.com/ManuCr19/qtile && cd qtile && phyton3 install.py" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone -b beta https://github.com/ManuCr19/qtile && cd qtile && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion ssh
