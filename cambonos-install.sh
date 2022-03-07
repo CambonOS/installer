@@ -179,9 +179,10 @@ echo -e "\n>>Instalando paquetes basicos\c"
 echo "pacman --noconfirm -Sy lsb-release tree neovim xclip micro man man-db man-pages man-pages-es bash-completion networkmanager $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 
 SALIDA='/tmp/video-drivers.log'
+echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf
 if [[ $DG = s ]] || [[ $DG = S ]] || [[ $DG = si ]] || [[ $DG = Si ]]
 then
-	echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf && GPU='DESCONOCIDA'
+	GPU='DESCONOCIDA'
 	(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware'
 	(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel'
 	(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd'
