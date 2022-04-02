@@ -256,6 +256,24 @@ then
 	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
+##Instalacion KDE
+SALIDA='/tmp/kde.log'
+echo $ESCRITORIO | grep "4" >/dev/nul && INSTALL=true || INSTALL=false
+if [[ $INSTALL = true ]]
+then
+	echo -e "\n>>Instalando KDE\c"
+	echo 'echo "cd /tmp; git clone https://github.com/MrArdillo/kde && cd kde && bash kdeinstall.sh" | su $USER' | ARCH && DONE || ERROR
+fi
+
+##Instalacion Qtile
+SALIDA='/tmp/qtile.log'
+echo $ESCRITORIO | grep "5" >/dev/nul && INSTALL=true || INSTALL=false
+if [[ $INSTALL = true ]]
+then
+	echo -e "\n>>Instalando Qtile\c"
+	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/qtile && cd qtile && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
+fi
+
 ##Instalacion ssh
 SALIDA='/tmp/ssh.log'
 if [[ $SSH = s ]] || [[ $SSH = si ]] || [[ $SSH = S ]] || [[ $SSH = Si ]]
@@ -278,7 +296,6 @@ SALIDA='/tmp/system-configuration.log'
 echo -e "\n>>Configurando el sistema\c"
 cp -r archie/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
-mkdir /mnt/media && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
 echo "userdel -r $USER && useradd -m -c $USERNAME -s /bin/zsh -g sudo -G rfkill,wheel $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 if [[ $GPU = vmware ]]
