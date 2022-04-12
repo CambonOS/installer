@@ -20,11 +20,11 @@ echo -e "${BLUE}>>Actualizando comandos de CambonOS${NOCOLOR}"
 cd /tmp
 if [[ $1 = "-b" ]]  || [[ $1 = "--branch" ]]
 then
-  git clone -b $2 https://github.com/CambonOS/archie.git
+  git clone -b $2 https://github.com/CambonOS/installer
 else
-  git clone https://github.com/CambonOS/archie.git
+  git clone https://github.com/CambonOS/installer
 fi
-sudo cp -rv archie/cambonos-fs/usr/bin/* /usr/bin || ERROR
+sudo cp -rv installer/cambonos-fs/usr/bin/* /usr/bin || ERROR
 sudo chmod 755 /usr/bin/cambonos* || ERROR
-sudo rm -rf archie 
+sudo rm -rf installer
 DONE
