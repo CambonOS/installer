@@ -151,7 +151,7 @@ fi
 SUDO
 echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
 echo -e "\n>>Desea instalar servidor SSH? (s/N): \c" && read SSH
-echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-CambonOS/XFCE(Recomendado)\n\n       2-CambonOS/Qtile\n\n       3-ManuCr19/i3wm"
+echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/Qtile\n\n       3-ManuCr19/i3wm"
 echo -e "\n>>Seleccione uno, varios separados por espacios o ninguno: \c" && read ESCRITORIO
 echo -e "\n>>Desea unirse a un dominio LDAP? (s/N): \c" && read ANS
 if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
@@ -170,8 +170,8 @@ echo -e "\n>>Instalando base del sistema\c"
 (pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && \
 genfstab -U /mnt >> /mnt/etc/fstab && \
 echo "usermod -s /bin/zsh root" | ARCH && \
-cp -r archie/cambonos-fs/etc/skel/.config /mnt/root) && DONE || STOP
-cp archie/cambonos-fs/etc/skel/.* /mnt/root/ 2>/dev/null
+cp -r installer/cambonos-fs/etc/skel/.config /mnt/root) && DONE || STOP
+cp installer/cambonos-fs/etc/skel/.* /mnt/root/ 2>/dev/null
 
 SALIDA='/tmp/packages-base'
 echo -e "\n>>Instalando paquetes basicos\c"
@@ -238,8 +238,8 @@ SALIDA='/tmp/xfce.log'
 echo $ESCRITORIO | grep "1" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then	
-	echo -e "\n>>Instalando Xfce\c"
-	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/xfce && cd xfce && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
+	echo -e "\n>>Instalando Cambon18/Xfce\c"
+	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Qtile
@@ -247,8 +247,8 @@ SALIDA='/tmp/qtile.log'
 echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
-	echo -e "\n>>Instalando Qtile\c"
-	echo 'echo "cd /tmp; git clone https://github.com/CambonOS/qtile && cd qtile && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
+	echo -e "\n>>Instalando Cambon18/Qtile\c"
+	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/qtile && cd qtile && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion I3
@@ -256,7 +256,7 @@ SALIDA='/tmp/i3.log'
 echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
-	echo -e "\n>>Instalando I3wm\c"
+	echo -e "\n>>Instalando ManuCr19/I3wm\c"
 	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
@@ -265,7 +265,7 @@ SALIDA='/tmp/kde.log'
 echo $ESCRITORIO | grep "4" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
-	echo -e "\n>>Instalando KDE\c"
+	echo -e "\n>>Instalando MrArdillo/KDE\c"
 	echo 'echo "cd /tmp; git clone https://github.com/MrArdillo/kde && cd kde && bash kdeinstall.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
@@ -274,7 +274,7 @@ SALIDA='/tmp/qtile.log'
 echo $ESCRITORIO | grep "5" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
-	echo -e "\n>>Instalando Qtile\c"
+	echo -e "\n>>Instalando ManuCr19/Qtile\c"
 	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/qtile && cd qtile && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
 fi
 
@@ -298,7 +298,7 @@ fi
 ##Configuracion CambonOS
 SALIDA='/tmp/system-configuration.log'
 echo -e "\n>>Configurando el sistema\c"
-cp -r archie/cambonos-fs/* /mnt && \
+cp -r installer/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
 echo "userdel -r $USER && useradd -m -c $USERNAME -s /bin/zsh -g sudo -G rfkill,wheel $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
