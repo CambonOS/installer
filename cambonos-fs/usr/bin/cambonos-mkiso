@@ -41,10 +41,10 @@ then
 else
 	git clone https://github.com/CambonOS/installer
 fi
-cp -rv archie/iso/* /iso/perfil || ERROR
+cp -rv installer/iso/* /iso/perfil || ERROR
 if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
 then
-	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" archie/iso/profiledef.sh > /iso/perfil/profiledef.sh
+	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" installer/iso/profiledef.sh > /iso/perfil/profiledef.sh
 	echo -e "\nrm -rf installer\ngit clone -b $2 https://github.com/cambonos/installer" > .zshrc
 	rm -rf linux
 fi
