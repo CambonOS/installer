@@ -187,6 +187,10 @@ then
 	(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel'
 	(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd'
 	(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia'
+	(lspci | grep "3D controller") | grep -o 'VMware' >/dev/null && GPU='vmware'
+	(lspci | grep "3D controller") | grep -o 'Intel' >/dev/null && GPU='intel'
+	(lspci | grep "3D controller") | grep -o 'AMD' >/dev/null && GPU='amd'
+	(lspci | grep "3D controller") | grep -o 'NVIDIA' >/dev/null && GPU='nvidia'
 	case $GPU in
 		amd)
 			echo -e "\n>>Instalando drivers graficos de AMD\c"
