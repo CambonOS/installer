@@ -15,13 +15,19 @@ DONE () {
   sleep 1
 }
 
+if [[ $EUID -ne 0 ]]
+then
+	echo -e "${RED}Debese ejecutar como usuario con privilejios${NOCOLOR}"
+	exit
+fi
+
 echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
 sleep 2
-yay --noconfirm -Syyu || ERROR
+su - updates -c 'yay --noconfirm -Syyu' || ERROR
 DONE
 echo -e "${BLUE}\n>>Eliminando paquetes huerfanos${NOCOLOR}"
 sleep 2
-yay --noconfirm -Rns $(yay -Qqdt)
+su - updates -c 'yay --noconfirm -Rns $(yay -Qqdt)'
 DONE
 echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 sleep 2
