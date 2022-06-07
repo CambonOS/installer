@@ -229,8 +229,8 @@ echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhos
 ##Instalacion de yay
 SALIDA='/tmp/yay.log'
 echo -e "\n>>Instalando yay\c"
-echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | ARCH
-echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
+echo "useradd -m -d /home/.updates updates && passwd --lock updates || exit 1" | ARCH
+echo -e "\n%updates ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion XFCE
@@ -301,7 +301,7 @@ echo -e "\n>>Configurando el sistema\c"
 cp -r installer/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
-echo "userdel -r $USER && useradd -m -c $USERNAME -s /bin/zsh -g sudo -G rfkill,wheel $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
+echo "useradd -m -c $USERNAME -s /bin/zsh -g wheel -G rfkill $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 if [[ $GPU = vmware ]]
 then echo "usermod -aG vboxsf $USER" | ARCH
 fi
