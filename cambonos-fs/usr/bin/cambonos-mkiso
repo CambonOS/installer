@@ -34,6 +34,7 @@ mkdir -p /iso/perfil
 cp -rv /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
 rm /iso/perfil/efiboot/loader/entries/02*
 rm /iso/perfil/efiboot/loader/entries/03*
+rm /iso/perfil/efiboot/loader/entries/04*
 cd /iso/perfil/airootfs/root
 if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
 then
