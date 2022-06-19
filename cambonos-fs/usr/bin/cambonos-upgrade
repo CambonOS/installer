@@ -17,7 +17,7 @@ DONE () {
 
 if [[ $EUID -ne 0 ]]
 then
-	echo -e "${RED}Debese ejecutar como usuario con privilejios${NOCOLOR}"
+	echo -e "${RED}Debese ejecutar como usuario con privilegios.${NOCOLOR}"
 	exit
 fi
 
