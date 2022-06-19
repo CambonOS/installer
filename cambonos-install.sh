@@ -224,14 +224,14 @@ esac
 
 SALIDA='/tmp/network.log'
 echo -e "\n>>Configurando red\c"
-echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service || exit 1' | ARCH && DONE || ERROR
+echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service && timedatectl set-ntp 1 || exit 1' | ARCH && DONE || ERROR
 
 ##Instalacion de yay
 SALIDA='/tmp/yay.log'
 echo -e "\n>>Instalando yay\c"
-echo "groupadd -g 513 sudo && useradd -m -s /bin/bash -g sudo $USER && (echo -e '$PASS\n$PASS1' | passwd $USER) || exit 1" | ARCH
-echo -e "\n%sudo ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
-echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si || exit 1' | su $USER || exit 1" | ARCH && DONE || ERROR
+echo "useradd -m -d /home/.updates updates && passwd --lock updates || exit 1" | ARCH
+echo -e "\n%updates ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
+echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si || exit 1' | su updates || exit 1" | ARCH && DONE || ERROR
 
 ##Instalacion XFCE
 SALIDA='/tmp/xfce.log'
@@ -239,7 +239,7 @@ echo $ESCRITORIO | grep "1" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then	
 	echo -e "\n>>Instalando Cambon18/Xfce\c"
-	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Qtile
@@ -248,7 +248,7 @@ echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando Cambon18/Qtile\c"
-	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/qtile && cd qtile && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/qtile && cd qtile && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion I3
@@ -257,7 +257,7 @@ echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando ManuCr19/I3wm\c"
-	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion KDE
@@ -266,7 +266,7 @@ echo $ESCRITORIO | grep "4" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando MrArdillo/KDE\c"
-	echo 'echo "cd /tmp; git clone https://github.com/MrArdillo/kde && cd kde && bash kdeinstall.sh" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone https://github.com/MrArdillo/kde && cd kde && bash kdeinstall.sh" | su updates' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion Qtile
@@ -275,7 +275,7 @@ echo $ESCRITORIO | grep "5" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando ManuCr19/Qtile\c"
-	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/qtile && cd qtile && bash archie.sh" | su $USER' | ARCH && DONE || ERROR
+	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/qtile && cd qtile && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion ssh
@@ -289,10 +289,10 @@ fi
 ##Instalacion de utilidades adicionales
 SALIDA='/tmp/aditional-packages.log'
 echo -e "\n>>Instalando utilidades adicionales\c"
-echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd || exit 1' | su $USER || exit 1" | ARCH
+echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd || exit 1' | su updates || exit 1" | ARCH
 echo "systemctl enable zramd.service || exit 1" | ARCH && DONE || ERROR
 if [[ $GPU = vmware ]]
-then echo "echo 'yay --noconfirm -Sy virtualbox-guest-utils || exit 1' | su $USER || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
+then echo "echo 'yay --noconfirm -Sy virtualbox-guest-utils || exit 1' | su updates || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
 fi
 
 ##Configuracion CambonOS
@@ -301,7 +301,7 @@ echo -e "\n>>Configurando el sistema\c"
 cp -r installer/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
-echo "userdel -r $USER && useradd -m -c $USERNAME -s /bin/zsh -g sudo -G rfkill,wheel $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
+echo "useradd -m -c $USERNAME -s /bin/zsh -g wheel -G rfkill $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 if [[ $GPU = vmware ]]
 then echo "usermod -aG vboxsf $USER" | ARCH
 fi
