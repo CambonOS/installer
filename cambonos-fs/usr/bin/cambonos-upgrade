@@ -31,5 +31,5 @@ su - updates -c 'yay --noconfirm -Rns $(yay -Qqdt)'
 DONE
 echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 sleep 2
-sudo grub-mkconfig -o /boot/grub/grub.cfg || ERROR
+grub-mkconfig -o /boot/grub/grub.cfg || ERROR
 DONE
