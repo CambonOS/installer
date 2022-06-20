@@ -1,4 +1,4 @@
-GROUP=users
+GROUP=rfkill
 HOME=/home
 INACTIVE=-1
 EXPIRE=
