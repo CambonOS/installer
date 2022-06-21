@@ -229,7 +229,7 @@ echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhos
 ##Instalacion de yay
 SALIDA='/tmp/yay.log'
 echo -e "\n>>Instalando yay\c"
-echo "useradd -m -d /home/.updates updates && passwd --lock updates || exit 1" | ARCH
+echo "useradd -m -d /home/.updates -u 999 updates && passwd --lock updates || exit 1" | ARCH
 echo -e "\n%updates ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si || exit 1' | su updates || exit 1" | ARCH && DONE || ERROR
 
