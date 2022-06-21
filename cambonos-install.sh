@@ -151,7 +151,7 @@ fi
 SUDO
 echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
 echo -e "\n>>Desea instalar servidor SSH? (s/N): \c" && read SSH
-echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/Qtile\n\n       3-ManuCr19/i3wm"
+echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/Qtile"
 echo -e "\n>>Seleccione uno, varios separados por espacios o ninguno: \c" && read ESCRITORIO
 echo -e "\n>>Desea unirse a un dominio LDAP? (s/N): \c" && read ANS
 if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
@@ -251,31 +251,13 @@ then
 	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/qtile && cd qtile && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 fi
 
-##Instalacion I3
-SALIDA='/tmp/i3.log'
-echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
-if [[ $INSTALL = true ]]
-then
-	echo -e "\n>>Instalando ManuCr19/I3wm\c"
-	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/i3wm && cd i3wm && bash archie.sh" | su updates' | ARCH && DONE || ERROR
-fi
-
 ##Instalacion KDE
 SALIDA='/tmp/kde.log'
-echo $ESCRITORIO | grep "4" >/dev/nul && INSTALL=true || INSTALL=false
+echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando MrArdillo/KDE\c"
 	echo 'echo "cd /tmp; git clone https://github.com/MrArdillo/kde && cd kde && bash kdeinstall.sh" | su updates' | ARCH && DONE || ERROR
-fi
-
-##Instalacion Qtile
-SALIDA='/tmp/qtile.log'
-echo $ESCRITORIO | grep "5" >/dev/nul && INSTALL=true || INSTALL=false
-if [[ $INSTALL = true ]]
-then
-	echo -e "\n>>Instalando ManuCr19/Qtile\c"
-	echo 'echo "cd /tmp; git clone https://github.com/ManuCr19/qtile && cd qtile && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 fi
 
 ##Instalacion ssh
