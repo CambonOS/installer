@@ -167,6 +167,7 @@ fi
 SALIDA='/tmp/system-base.log'
 HEAD
 echo -e "\n>>Instalando base del sistema\c"
+pacman --noconfirm -Sy archlinux-keyring
 (pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && \
 genfstab -U /mnt >> /mnt/etc/fstab && \
 echo "usermod -s /bin/zsh root" | ARCH && \
