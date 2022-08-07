@@ -177,7 +177,7 @@ cp installer/cambonos-fs/etc/skel/.* /mnt/root/ 2>/dev/null
 SALIDA='/tmp/packages-base'
 echo -e "\n>>Instalando paquetes basicos\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-echo "pacman --noconfirm -Sy lsb-release tree neovim xclip micro man man-db man-pages man-pages-es bash-completion networkmanager ntp $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
+echo "pacman --noconfirm -Sy lsb-release tree neovim xclip micro man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 
 SALIDA='/tmp/video-drivers.log'
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf
@@ -228,7 +228,7 @@ esac
 
 SALIDA='/tmp/network.log'
 echo -e "\n>>Configurando red\c"
-echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service && systemctl enable ntpd.service || exit 1' | ARCH && DONE || ERROR
+echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service && systemctl enable ntpd.service && systemctl enable systemd-resolved.service || exit 1' | ARCH && DONE || ERROR
 
 ##Instalacion de yay
 SALIDA='/tmp/yay.log'
