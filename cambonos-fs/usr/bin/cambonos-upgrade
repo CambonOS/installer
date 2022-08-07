@@ -23,6 +23,7 @@ fi
 
 echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
 sleep 2
+su - updates -c 'yay --noconfirm -Sy archlinux-keyring' || ERROR
 su - updates -c 'yay --noconfirm -Syyu' || ERROR
 DONE
 echo -e "${BLUE}\n>>Eliminando paquetes huerfanos${NOCOLOR}"
