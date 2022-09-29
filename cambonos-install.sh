@@ -151,8 +151,8 @@ fi
 SUDO
 echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
 echo -e "\n>>Desea instalar servidor SSH? (s/N): \c" && read SSH
-echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/Qtile"
-echo -e "\n>>Seleccione uno, varios separados por espacios o ninguno: \c" && read ESCRITORIO
+echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/Qtile\n\n       3-Cambon18/Dual"
+echo -e "\n>>Seleccione una opcion o pulsa enter para no instalar interfaz grafica: \c" && read ESCRITORIO
 echo -e "\n>>Desea unirse a un dominio LDAP? (s/N): \c" && read ANS
 if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
   then LDAP=true
@@ -255,9 +255,18 @@ then
 	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/qtile && cd qtile && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 fi
 
+##Instalacion Dual
+SALIDA='/tmp/dual.log'
+echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
+if [[ $INSTALL = true ]]
+then
+	echo -e "\n>>Instalando Cambon18/Dual\c"
+	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/dual && cd dual && bash archie.sh" | su updates' | ARCH && DONE || ERROR
+fi
+
 ##Instalacion KDE
 SALIDA='/tmp/kde.log'
-echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
+echo $ESCRITORIO | grep "4" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando MrArdillo/KDE\c"
