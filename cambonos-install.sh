@@ -275,9 +275,3 @@ then echo "usermod -aG vboxsf $USER" | ARCH
 fi
 echo "locale-gen" | ARCH && \
 echo "cambonos-upgrade" | ARCH && DONE || ERROR
-
-## Instalacion finalizada
-echo -e "\n>>Instalacion terminada: Retire el medio de instalacion y pulse enter.\c"
-read fin
-reboot
-
