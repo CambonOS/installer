@@ -1,9 +1,8 @@
 #!/bin/bash
 
-##Definimos variables pantallas encendidas
-
-#Numero de pantallas y opcion de mas resolucion
-npantallas=$(xrandr -d :0 | grep \ connected | wc -l)
+##Definimos variables
+pantallason=$(xrandr -d :0 | grep \ connected | wc -l)
+pantallasoff=$(xrandr -d :0 | grep \ disconnected | wc -l)
 rpantallas=$(xrandr -d :0 | grep -A 1 \ connected | awk '{print $1}')
 
 #Separamos $rpantallas en nombre de la pantalla y resolucion de la pantalla 
@@ -15,16 +14,23 @@ L5=$(echo $rpantallas | cut -d ' ' -f 5) #Resolucion pantalla 2
 #Obtenemos posicion inicial de la segunda pantalla
 pos1=$(echo $L2 | cut -d 'x' -f 1)
 
-##Configuramos las pantallas
-
 #Configuracion pantalla unica
-if [ $npantallas -eq 1 ]
+if [ $pantallason -eq 1 ]
 then
 	xrandr --output $L1 --primary --mode $L2 --pos 0x0 --rotate normal
 fi
 
 #Configuracion dos pantallas, se configura la pantalla 2 como principal a la derecha de la pantalla 1
-if [ $npantallas -eq 2 ]
+if [ $pantallason -eq 2 ]
 then
 	xrandr --output $L1 --mode $L2 --pos 0x0 --rotate normal --output $L4 --primary --mode $L5 --pos ${pos1}x0 --rotate normal
 fi
+
+#Configuramos pantallas desconectadas
+nombrepantallas=$(xrandr -d :0 | grep -A 1 \ disconnected | awk '{print $1}')
+i=1
+while [ $i -le $pantallasoff ]
+do
+	xrandr --output $(echo $nombrepantallas | cut -d ' ' -f $i) --off
+	((i++))
+done
