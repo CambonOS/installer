@@ -152,8 +152,8 @@ pacman --noconfirm -Sy archlinux-keyring >>$SALIDA 2>&1 && \
 (pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && \
 genfstab -U /mnt >> /mnt/etc/fstab && \
 echo "usermod -s /bin/zsh root" | ARCH && \
-cp -r installer/cambonos-fs/etc/skel/.config /mnt/root && \
-cp installer/cambonos-fs/etc/skel/.* /mnt/root/) && DONE || STOP
+cp -r installer/cambonos-fs/etc/skel/.config /mnt/root) && DONE || STOP
+cp installer/cambonos-fs/etc/skel/.* /mnt/root/ >/dev/null 2>&1 
 
 
 SALIDA='/tmp/packages-base'
@@ -275,3 +275,12 @@ then echo "usermod -aG vboxsf $USER" | ARCH
 fi
 echo "locale-gen" | ARCH && \
 echo "cambonos-upgrade" | ARCH && DONE || ERROR
+<<<<<<< HEAD
+=======
+
+## Instalacion finalizada
+echo -e "\n>>Instalacion terminada: Retire el medio de instalacion y pulse enter."
+read fin
+reboot
+
+>>>>>>> f8cdc961368bf6c0cdff5bf36c5480304e1a8a7a
