@@ -39,7 +39,7 @@ Fallo en la conecxion a internet, selecciona opcion:
 	3.Cancelar' && \
 echo -e "\n(1,2,3): \c" && read OPTION
 case $OPTION in
-  1) sleep 5 && NETWORK ;;
+  1) sleep 10 && NETWORK ;;
   2) echo -e '\n>>Introduce el SSID: \c' && read SSID && \
   (iwctl station wlan0 connect-hidden $SSID 2>/dev/null|| iwctl station wlan0 connect $SSID 2>/dev/null)
   echo Connecting...
