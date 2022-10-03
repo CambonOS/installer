@@ -31,6 +31,7 @@ STOP () {
 NETWORK () {
 ping -c 3 google.com >/dev/null 2>&1 || \
 (systemctl start NetworkManager.service
+sleep 2
 nmtui connect
 NETWORK
 )
