@@ -38,9 +38,6 @@ NETWORK
 }
 NETWORK || exit
 
-timedatectl set-ntp true >/dev/null 2>&1
-reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1
-
 ##Particionado
 SALIDA='/tmp/particionado.log'
 HEAD
@@ -149,6 +146,8 @@ echo -e "\n>>Seleccione una opcion o pulsa enter para no instalar interfaz grafi
 SALIDA='/tmp/system-base.log'
 HEAD
 echo -e "\n>>Instalando base del sistema\c"
+timedatectl set-ntp true >/dev/null 2>&1
+reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1
 pacman --noconfirm -Sy archlinux-keyring >>$SALIDA 2>&1 && \
 (pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && \
 genfstab -U /mnt >> /mnt/etc/fstab && \
