@@ -38,6 +38,9 @@ NETWORK
 }
 NETWORK || exit
 
+timedatectl set-ntp true
+reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist
+
 ##Particionado
 SALIDA='/tmp/particionado.log'
 HEAD
@@ -141,15 +144,6 @@ echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
 echo -e "\n>>Desea instalar servidor SSH? (s/N): \c" && read SSH
 echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/Qtile"
 echo -e "\n>>Seleccione una opcion o pulsa enter para no instalar interfaz grafica: \c" && read ESCRITORIO
-echo -e "\n>>Desea unirse a un dominio LDAP? (s/N): \c" && read ANS
-if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
-  then LDAP=true
-  echo -e "\n>>Base DN (dc=example,dc=local): \c" && read BASEDN
-  echo -e "\n>>Bind DN (cn=admin,dc=example,dc=local): \c" && read BINDDN
-  echo -e "\n>>Uri (ldap://192.168.1.5): \c" && read URI
-  echo -e "\n>>Bind PW (secret): \c" && read BINDPW
-  else LDAP=false
-fi
 
 ##Paquetes basicos y drivers
 SALIDA='/tmp/system-base.log'
@@ -282,31 +276,8 @@ fi
 echo "locale-gen" | ARCH && \
 echo "cambonos-upgrade" | ARCH && DONE || ERROR
 
-##Dominio LDAP
-SALIDA='/tmp/ldap.log'
-if [[ $LDAP = true ]]
-then 
-	echo -e "\n>>Uniendose al dominio LDAP\c"
-	echo "pacman --noconfirm -Sy openldap nss-pam-ldapd || exit 1" | ARCH && \
-	sed -i "/#BASE/c BASE $BASEDN" /mnt/etc/openldap/ldap.conf && \
-	sed -i "/#URI/c URI $URI" /mnt/etc/openldap/ldap.conf && \
-	sed -i '/passwd\|group\|shadow/s/$/\ ldap/' /mnt/etc/nsswitch.conf && \
-	sed -i "/^uri/c uri $URI" /mnt/etc/nslcd.conf && \
-	sed -i "/^base/c base $BASEDN" /mnt/etc/nslcd.conf && \
-	sed -i "/^#binddn/c binddn $BINDDN" /mnt/etc/nslcd.conf && \
-	sed -i "/^#bindpw/c bindpw $BINDPW" /mnt/etc/nslcd.conf && \
-	echo 'chown nslcd /etc/nslcd.conf || exit 1' | ARCH && \
-	chmod 0600 /mnt/etc/nslcd.conf && \
-	echo 'systemctl enable nslcd.service || exit 1' | ARCH && \
-	sed -i '/auth.*pam_unix/i auth   sufficient   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
-	sed -i '/account.*pam_unix/i account   sufficient   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
-	sed -i '/password.*pam_unix/i password   sufficient   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
-	sed -i '/session.*pam_unix/a session   optional   pam_ldap.so' /mnt/etc/pam.d/system-auth && \
-	sed -i '/auth.*pam_rootok/a auth   sufficient   pam_ldap.so' /mnt/etc/pam.d/su && \
-	sed -i '/auth.*pam_rootok/a auth   sufficient   pam_ldap.so' /mnt/etc/pam.d/su-l && \
-	sed -i '/pam_cracklib/i password   sufficient   pam_ldap.so' /mnt/etc/pam.d/passwd && \
-	sed -i '/session/i session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/su && \
-	sed -i '/session/i session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/su-l && \
-	sed -i '/pam_env/a session   required   pam_mkhomedir.so   skel=/etc/skel   umask=0077' /mnt/etc/pam.d/system-login && \
-	DONE || ERROR
-fi
+## Instalacion finalizada
+echo -e "\n>>Instalacion terminada: Retire el medio de instalacion y pulse enter.\c"
+read fin
+reboot
+
