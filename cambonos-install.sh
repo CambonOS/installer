@@ -38,8 +38,8 @@ NETWORK
 }
 NETWORK || exit
 
-timedatectl set-ntp true
-reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist
+timedatectl set-ntp true >/dev/null 2>&1
+reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1
 
 ##Particionado
 SALIDA='/tmp/particionado.log'
