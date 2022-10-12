@@ -152,13 +152,14 @@ pacman --noconfirm -Sy archlinux-keyring >>$SALIDA 2>&1 && \
 (pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && \
 genfstab -U /mnt >> /mnt/etc/fstab && \
 echo "usermod -s /bin/zsh root" | ARCH && \
-cp -r installer/cambonos-fs/etc/skel/.config /mnt/root) && DONE || STOP
-cp installer/cambonos-fs/etc/skel/.* /mnt/root/ 2>/dev/null
+cp -r installer/cambonos-fs/etc/skel/.config /mnt/root && \
+cp installer/cambonos-fs/etc/skel/.* /mnt/root/) && DONE || STOP
+
 
 SALIDA='/tmp/packages-base'
 echo -e "\n>>Instalando paquetes basicos\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-echo "pacman --noconfirm -Sy lsb-release tree neovim xclip micro man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
+echo "pacman --noconfirm -Sy lsb-release tree htop neovim xclip micro man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 
 SALIDA='/tmp/video-drivers.log'
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf
