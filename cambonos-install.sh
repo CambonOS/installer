@@ -210,7 +210,10 @@ esac
 
 SALIDA='/tmp/network.log'
 echo -e "\n>>Configurando red\c"
-echo "$NOMBRE" >/mnt/etc/hostname && echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && echo 'systemctl enable NetworkManager.service && systemctl enable ntpd.service && systemctl enable systemd-resolved.service || exit 1' | ARCH && DONE || ERROR
+cp /etc/NetworkManager/system-connections/* /mnt/etc/NetworkManager/system-connections
+echo "$NOMBRE" >/mnt/etc/hostname && \
+echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && \
+echo 'systemctl enable NetworkManager.service && systemctl enable ntpd.service && systemctl enable systemd-resolved.service || exit 1' | ARCH && DONE || ERROR
 
 ##Instalacion de yay
 SALIDA='/tmp/yay.log'
