@@ -10,10 +10,10 @@ L1=$(echo $rpantallas | cut -d ' ' -f 1) #Nombre pantalla 1
 L2=$(echo $rpantallas | cut -d ' ' -f 2) #Resolucion pantalla 1
 L4=$(echo $rpantallas | cut -d ' ' -f 4) #Nombre pantalla 2
 L5=$(echo $rpantallas | cut -d ' ' -f 5) #Resolucion pantalla 2
-L7=$(echo $rpantallas | cut -d ' ' -f 7) #Nombre pantalla 2
-L8=$(echo $rpantallas | cut -d ' ' -f 8) #Resolucion pantalla 2
+L7=$(echo $rpantallas | cut -d ' ' -f 7) #Nombre pantalla 3
+L8=$(echo $rpantallas | cut -d ' ' -f 8) #Resolucion pantalla 3
 
-#Obtenemos posicion inicial de la segunda pantalla
+#Obtenemos posicion inicial de la segunda y tercera pantalla
 pos1=$(echo $L2 | cut -d 'x' -f 1)
 pos2=$(( $(echo $L2 | cut -d 'x' -f 1) + $(echo $L5 | cut -d 'x' -f 1) ))
 
