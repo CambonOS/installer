@@ -139,7 +139,7 @@ fi
 SUDO
 echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
 echo -e "\n>>Desea instalar servidor SSH? (s/N): \c" && read SSH
-echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/XFCE(Gaming)\n\n	3-Cambon18/Qtile"
+echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/XFCE(Gaming)\n\n       3-Cambon18/Qtile"
 echo -e "\n>>Seleccione una opcion o pulsa enter para no instalar interfaz grafica: \c" && read ESCRITORIO
 
 ##Paquetes basicos y drivers
@@ -240,7 +240,9 @@ then
 	echo "echo 'yay --noconfirm -Sy gamemode steam  || exit 1' | su updates || exit 1" | ARCH
 	echo "groupadd -r autologin || exit 1" | ARCH
 	echo "autologin-user=$USER" >>/mnt/etc/lightdm/lightdm.conf
-	echo "gamemoderun steam -steamdeck -gamepadui &" >/mnt/etc/skel/.xprofile
+	sudo sed -i 's/#autologin-user=/autologin-user=$USER/' /mnt/etc/lightdm/lightdm.conf
+	sudo sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /mnt/etc/default/grub
+	echo "nm-online && gamemoderun steam -gamepadui &" >/mnt/etc/skel/.xprofile
 fi
 
 ##Instalacion Qtile
