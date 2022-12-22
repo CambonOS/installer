@@ -232,14 +232,15 @@ then
 	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 fi
 
-echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
-if [[ $INSTALL = true ]]
+echo $ESCRITORIO | grep "2" >/dev/nul && GAMING=true || GAMING=false
+if [[ $GAMING = true ]]
 then	
 	echo -e "\n>>Instalando Cambon18/Xfce\c"
 	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 	echo "echo 'yay --noconfirm -Sy gamemode steam  || exit 1' | su updates || exit 1" | ARCH
+	echo "groupadd -r autologin || exit 1" | ARCH
 	echo "autologin-user=$USER" >>/mnt/etc/lightdm/lightdm.conf
-	echo "gamemoderun steam -bigpicture &" >/mnt/etc/skel/.xprofile
+	echo "gamemoderun steam -steamdeck -gamepadui &" >/mnt/etc/skel/.xprofile
 fi
 
 ##Instalacion Qtile
@@ -287,8 +288,7 @@ echo "useradd -m -c $USERNAME -s /bin/zsh -G wheel,rfkill $USER && (echo -e '$PA
 if [[ $GPU = vmware ]]
 then echo "usermod -aG vboxsf $USER" | ARCH
 fi
-echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
-if [[ $INSTALL = true ]]
+if [[ $GAMING = true ]]
 then echo "usermod -aG autologin $USER" | ARCH
 fi
 echo "locale-gen" | ARCH && \
