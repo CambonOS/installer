@@ -237,11 +237,10 @@ if [[ $GAMING = true ]]
 then	
 	echo -e "\n>>Instalando Cambon18/Xfce\c"
 	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH && DONE || ERROR
-	echo "echo 'yay --noconfirm -Sy gamemode steam  || exit 1' | su updates || exit 1" | ARCH
+	echo "echo 'yay --noconfirm -Sy steam || exit 1' | su updates || exit 1" | ARCH
 	echo "groupadd -r autologin || exit 1" | ARCH
-	echo "autologin-user=$USER" >>/mnt/etc/lightdm/lightdm.conf
 	sudo sed -i "s/#autologin-user=/autologin-user=$USER/" /mnt/etc/lightdm/lightdm.conf
-	echo "nm-online && gamemoderun steam -gamepadui &" >/mnt/etc/skel/.xprofile
+	echo "nm-online && steam -gamepadui &" >/mnt/etc/skel/.xprofile
 fi
 
 ##Instalacion Qtile
