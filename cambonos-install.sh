@@ -147,7 +147,7 @@ SALIDA='/tmp/system-base.log'
 HEAD
 echo -e "\n>>Instalando base del sistema\c"
 timedatectl set-ntp true >/dev/null 2>&1
-reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1
+reflector -l 10 -f 5 --save /etc/pacman.d/mirrorlist >/dev/null 2>&1
 pacman --noconfirm -Sy archlinux-keyring >>$SALIDA 2>&1 && \
 (pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && \
 genfstab -U /mnt >> /mnt/etc/fstab && \
@@ -159,7 +159,7 @@ cp installer/cambonos-fs/etc/skel/.* /mnt/root/ >/dev/null 2>&1
 SALIDA='/tmp/packages-base'
 echo -e "\n>>Instalando paquetes basicos\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-echo "pacman --noconfirm -Sy lsb-release tree htop neovim xclip micro man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
+echo "pacman --noconfirm -Sy lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 
 SALIDA='/tmp/video-drivers.log'
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf
@@ -210,7 +210,7 @@ esac
 
 SALIDA='/tmp/network.log'
 echo -e "\n>>Configurando red\c"
-cp /etc/NetworkManager/system-connections/* /mnt/etc/NetworkManager/system-connections
+cp /etc/NetworkManager/system-connections/* /mnt/etc/NetworkManager/system-connections >/dev/null 2>&1
 sed -i /interface/d /mnt/etc/NetworkManager/system-connections/*
 echo "$NOMBRE" >/mnt/etc/hostname && \
 echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && \
