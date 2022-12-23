@@ -139,7 +139,7 @@ fi
 SUDO
 echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
 echo -e "\n>>Desea instalar servidor SSH? (s/N): \c" && read SSH
-echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/Qtile"
+echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/XFCE(Gaming)\n\n       3-Cambon18/Qtile"
 echo -e "\n>>Seleccione una opcion o pulsa enter para no instalar interfaz grafica: \c" && read ESCRITORIO
 
 ##Paquetes basicos y drivers
@@ -147,7 +147,7 @@ SALIDA='/tmp/system-base.log'
 HEAD
 echo -e "\n>>Instalando base del sistema\c"
 timedatectl set-ntp true >/dev/null 2>&1
-reflector --country Spain --sort rate --save /etc/pacman.d/mirrorlist >/dev/null 2>&1
+reflector -l 10 -f 5 --save /etc/pacman.d/mirrorlist >/dev/null 2>&1
 pacman --noconfirm -Sy archlinux-keyring >>$SALIDA 2>&1 && \
 (pacstrap /mnt linux-zen linux-zen-headers linux-firmware base >>$SALIDA 2>&1 && \
 genfstab -U /mnt >> /mnt/etc/fstab && \
@@ -159,7 +159,7 @@ cp installer/cambonos-fs/etc/skel/.* /mnt/root/ >/dev/null 2>&1
 SALIDA='/tmp/packages-base'
 echo -e "\n>>Instalando paquetes basicos\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-echo "pacman --noconfirm -Sy lsb-release tree htop neovim xclip micro man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
+echo "pacman --noconfirm -Sy lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g || exit 1" | ARCH && DONE || STOP
 
 SALIDA='/tmp/video-drivers.log'
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf
@@ -210,7 +210,7 @@ esac
 
 SALIDA='/tmp/network.log'
 echo -e "\n>>Configurando red\c"
-cp /etc/NetworkManager/system-connections/* /mnt/etc/NetworkManager/system-connections
+cp /etc/NetworkManager/system-connections/* /mnt/etc/NetworkManager/system-connections >/dev/null 2>&1
 sed -i /interface/d /mnt/etc/NetworkManager/system-connections/*
 echo "$NOMBRE" >/mnt/etc/hostname && \
 echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts && \
@@ -232,9 +232,20 @@ then
 	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 fi
 
+echo $ESCRITORIO | grep "2" >/dev/nul && GAMING=true || GAMING=false
+if [[ $GAMING = true ]]
+then	
+	echo -e "\n>>Instalando Cambon18/Xfce\c"
+	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH && DONE || ERROR
+	echo "echo 'yay --noconfirm -Sy steam || exit 1' | su updates || exit 1" | ARCH
+	echo "groupadd -r autologin || exit 1" | ARCH
+	sudo sed -i "s/#autologin-user=/autologin-user=$USER/" /mnt/etc/lightdm/lightdm.conf
+	echo "nm-online && steam -gamepadui &" >/mnt/etc/skel/.xprofile
+fi
+
 ##Instalacion Qtile
 SALIDA='/tmp/qtile.log'
-echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
+echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando Cambon18/Qtile\c"
@@ -243,7 +254,7 @@ fi
 
 ##Instalacion KDE
 SALIDA='/tmp/kde.log'
-echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
+echo $ESCRITORIO | grep "4" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo -e "\n>>Instalando MrArdillo/KDE\c"
@@ -276,6 +287,9 @@ echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systo
 echo "useradd -m -c $USERNAME -s /bin/zsh -G wheel,rfkill $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 if [[ $GPU = vmware ]]
 then echo "usermod -aG vboxsf $USER" | ARCH
+fi
+if [[ $GAMING = true ]]
+then echo "usermod -aG autologin $USER" | ARCH
 fi
 echo "locale-gen" | ARCH && \
 echo "cambonos-upgrade" | ARCH && DONE || ERROR
