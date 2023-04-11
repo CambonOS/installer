@@ -270,14 +270,6 @@ then
 	echo "pacman --noconfirm -Sy openssh && sed -i s/#X11Forwarding\ no/X11Forwarding\ yes/ /etc/ssh/sshd_config; systemctl enable sshd.service || exit 1" | ARCH && DONE || ERROR
 fi
 
-##Actualizacion automatica
-SALIDA='/tmp/upgrade.log'
-if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
-then
-	echo -e "\n>>Activando servicio de actualización automática\c"
-	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH && DONE || ERROR
-fi
-
 ##Instalacion de utilidades adicionales
 SALIDA='/tmp/aditional-packages.log'
 echo -e "\n>>Instalando utilidades adicionales\c"
@@ -299,6 +291,10 @@ then echo "usermod -aG vboxsf $USER" | ARCH
 fi
 if [[ $GAMING = true ]]
 then echo "usermod -aG autologin $USER" | ARCH
+fi
+if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
+then
+	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH && DONE || ERROR
 fi
 echo "locale-gen" | ARCH && \
 echo "cambonos-upgrade" | ARCH && DONE || ERROR
