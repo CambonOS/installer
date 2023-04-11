@@ -294,7 +294,7 @@ then echo "usermod -aG autologin $USER" | ARCH
 fi
 if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
 then
-	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH && DONE || ERROR
+	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH
 fi
 echo "locale-gen" | ARCH && \
 echo "cambonos-upgrade" | ARCH && DONE || ERROR
