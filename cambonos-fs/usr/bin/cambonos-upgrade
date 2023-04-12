@@ -7,7 +7,7 @@ BLUE='\033[1;34m'
 
 ERROR () {
   echo -e "${RED}ERROR${NOCOLOR}"
-  exit
+  exit 1
 }
 
 DONE () {
