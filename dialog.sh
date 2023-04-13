@@ -37,4 +37,4 @@ ESCRITORIO=$(dialog --stdout --title "CambonOS Installer" --menu "Qué entorno d
 dialog --title "CambonOS Installer" --yesno "Por favor, confirme que las opciones seleccionadas son correctas:\n\nNombre del equipo: $NOMBRE\nNombre para el nuevo usuario: $USERNAME\nContraseña del usuario: ********\nInstalar los drivers gráficos: $DG\nInstalar servidor SSH: $SSH\nEntorno de escritorio seleccionado: $ESCRITORIO" 0 0
 
 # Salida de resultados
-./cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $ESCRITORIO
+installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $ESCRITORIO

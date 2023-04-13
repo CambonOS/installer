@@ -145,7 +145,6 @@ echo "usermod -s /bin/zsh root" | ARCH && \
 cp -r installer/cambonos-fs/etc/skel/.config /mnt/root) && DONE || STOP
 cp installer/cambonos-fs/etc/skel/.* /mnt/root/ >/dev/null 2>&1 
 
-
 SALIDA='/tmp/packages-base'
 echo -e "\n>>Instalando paquetes basicos\c"
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
