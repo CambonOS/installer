@@ -44,7 +44,7 @@ do
 done
 
 # Ejecucion del script de instalación
-sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>/tmp/install_error
+sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>/tmp/install_error &
 while true
 do
 	porcentaje=$(tail -n1 /tmp/install | cut -f2 -d'[' | cut -f1 -d'%')
