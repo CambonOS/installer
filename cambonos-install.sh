@@ -284,7 +284,7 @@ echo -e "\n>>Configurando el sistema\c"
 cp -r installer/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
-echo "useradd -m -c $USERNAME -s /bin/zsh -G wheel,rfkill $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
+echo "useradd -m -c $USERNAME -s /bin/zsh -g wheel -G users,rfkill,sys $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
 if [[ $GPU = vmware ]]
 then echo "usermod -aG vboxsf $USER" | ARCH
 fi
