@@ -18,8 +18,6 @@ do
 	        SUDO
 	    fi
 	}
-	
-	# Llamada a la función SUDO para solicitar la contraseña del usuario
 	SUDO
 	
 	# Ventana de selección de instalación de controladores gráficos
@@ -40,12 +38,13 @@ do
 	
 	# Disco de instalación
 	DISCO=$1
-	        
+	
+	# Ventana de confirmación opciones	
 	dialog --title "CambonOS Installer" --yesno "Por favor, confirme que las opciones seleccionadas son correctas:\n\nNombre del equipo: $NOMBRE\nNombre para el nuevo usuario: $USERNAME\nContraseña del usuario: ********\nInstalar los drivers gráficos: $DG\nInstalar servidor SSH: $SSH\nActualización automatica: $UPGRADE\nEntorno de escritorio seleccionado: $ESCRITORIO" 20 80 && break
 done
 
-# Salida de resultados
-sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO | pv -n -s 200 2>&1 | dialog --title "CambonOS Installer" --gauge "Instalando sistema:" 20 80
+# Ejecucion del script de instalación
+sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO | pv -n -i 1 -t -B 1 | dialog --title "CambonOS Installer" --gauge "Instalando sistema:" 20 80
 
-# Mensaje final
+# Mensaje final instalación
 dialog --title "CambonOS Installer" --msgbox "La instalación se ha completado. Retire el USB y pulse enter." 20 80 && reboot
