@@ -1,19 +1,19 @@
 #!/bin/bash
 
 # Ventana de entrada de nombre del equipo
-NOMBRE=$(dialog --stdout --title "CambonOS Installer" --inputbox "Nombre del equipo:" 0 0)
+NOMBRE=$(dialog --stdout --title "CambonOS Installer" --inputbox "Nombre del equipo:" 20 80)
 
 # Ventana de entrada de nombre para el nuevo usuario
-USERNAME=$(dialog --stdout --title "CambonOS Installer" --inputbox "Nombre para el nuevo usuario:" 0 0)
+USERNAME=$(dialog --stdout --title "CambonOS Installer" --inputbox "Nombre para el nuevo usuario:" 20 80)
 USER=$(echo $USERNAME | awk '{print tolower($0)}')
 
 # Función para solicitar contraseña del usuario
 function SUDO {
-    PASS=$(dialog --stdout --title "CambonOS Installer" --passwordbox "Contraseña del usuario:" 0 0)
-    PASS1=$(dialog --stdout --title "CambonOS Installer" --passwordbox "Repetir contraseña:" 0 0)
+    PASS=$(dialog --stdout --title "CambonOS Installer" --passwordbox "Contraseña del usuario:" 20 80)
+    PASS1=$(dialog --stdout --title "CambonOS Installer" --passwordbox "Repetir contraseña:" 20 80)
     if [[ $PASS != $PASS1 ]]
     then
-        dialog --title "CambonOS Installer" --msgbox "Las contraseñas no coinciden. Inténtelo de nuevo." 0 0
+        dialog --title "CambonOS Installer" --msgbox "Las contraseñas no coinciden. Inténtelo de nuevo." 20 80
         SUDO
     fi
 }
@@ -22,13 +22,13 @@ function SUDO {
 SUDO
 
 # Ventana de selección de instalación de controladores gráficos
-DG=$(dialog --stdout --title "CambonOS Installer" --yesno "Desea instalar los drivers gráficos?" 0 0 && echo "Si" || echo "No")
+DG=$(dialog --stdout --title "CambonOS Installer" --yesno "Desea instalar los drivers gráficos?" 20 80 && echo "Si" || echo "No")
 
 # Ventana de selección de instalación de servidor SSH
-SSH=$(dialog --stdout --title "CambonOS Installer" --yesno "Desea instalar servidor SSH?" 0 0 && echo "Si" || echo "No")
+SSH=$(dialog --stdout --title "CambonOS Installer" --yesno "Desea instalar servidor SSH?" 20 80 && echo "Si" || echo "No")
 
 # Ventana de selección de entorno de escritorio
-ESCRITORIO=$(dialog --stdout --title "CambonOS Installer" --menu "Qué entorno de escritorio desea instalar?" 0 0 0 \
+ESCRITORIO=$(dialog --stdout --title "CambonOS Installer" --menu "Qué entorno de escritorio desea instalar?" 20 80 15 \
         1 "Cambon18/XFCE (Recomendado)" \
         2 "Cambon18/XFCE (Gaming)" \
         3 "Cambon18/Qtile" \
@@ -37,4 +37,4 @@ ESCRITORIO=$(dialog --stdout --title "CambonOS Installer" --menu "Qué entorno d
 dialog --title "CambonOS Installer" --yesno "Por favor, confirme que las opciones seleccionadas son correctas:\n\nNombre del equipo: $NOMBRE\nNombre para el nuevo usuario: $USERNAME\nContraseña del usuario: ********\nInstalar los drivers gráficos: $DG\nInstalar servidor SSH: $SSH\nEntorno de escritorio seleccionado: $ESCRITORIO" 0 0
 
 # Salida de resultados
-installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $ESCRITORIO
+installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $ESCRITORIO | pv -n -s 100M | dialog --title "CambonOS Installer" --gauge "Instalando sistema:" 20 80
