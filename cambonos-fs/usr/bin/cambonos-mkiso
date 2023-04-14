@@ -49,7 +49,7 @@ then
 	echo -e "\nrm -rf installer\ngit clone -b $2 https://github.com/cambonos/installer" > .zshrc
 	rm -rf linux
 fi
-echo -e "bash installer/cambonos-install.sh" >> .zshrc
+echo -e "bash installer/dialog.sh" >> .zshrc
 DONE
 
 echo -e "${BLUE}\n>>Creando la ISO${NOCOLOR}"

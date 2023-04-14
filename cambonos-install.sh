@@ -27,6 +27,16 @@ STOP () {
 	umount /mnt/boot >>$SALIDA 2>&1; umount /mnt/home >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt; exit
 }
 
+##Definicion variables
+NOMBRE=$1
+USERNAME=$2
+USER=$(echo $USERNAME | awk '{print tolower($0)}')
+PASS=$3
+DG=$4
+SSH=$5
+UPGRADE=$6
+ESCRITORIO=$7
+
 ##Comprobacion de red
 NETWORK () {
 ping -c 3 google.com >/dev/null 2>&1 || \
@@ -123,26 +133,6 @@ Para continuar su intalacion escoga entre:
 		;;
 esac
 
-##Preguntas para la instalacion
-HEAD
-echo -e "\n>>Nombre del equipo: \c" && read NOMBRE
-echo -e "\n>>Nombre para el nuevo usuario: \c" && read USERNAME
-USER=$(echo $USERNAME | awk '{print tolower($0)}')
-SUDO () {
-echo -e "\n>>Contraseña del usuario: \c" && read -s PASS
-echo -e "\n\n>>Repetir contraseña: \c" && read -s PASS1
-if [[ $PASS = $PASS1 ]]
-  then sleep 0
-  else echo && SUDO
-fi
-}
-SUDO
-echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
-echo -e "\n>>Desea instalar servidor SSH? (s/N): \c" && read SSH
-echo -e "\n>>Desea que los paquetes del sistema se actualizen automaticamente? (s/N): \c" && read UPGRADE
-echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/XFCE(Gaming)\n\n       3-Cambon18/Qtile"
-echo -e "\n>>Seleccione una opcion o pulsa enter para no instalar interfaz grafica: \c" && read ESCRITORIO
-
 ##Paquetes basicos y drivers
 SALIDA='/tmp/system-base.log'
 HEAD
@@ -155,7 +145,6 @@ genfstab -U /mnt >> /mnt/etc/fstab && \
 echo "usermod -s /bin/zsh root" | ARCH && \
 cp -r installer/cambonos-fs/etc/skel/.config /mnt/root) && DONE || STOP
 cp installer/cambonos-fs/etc/skel/.* /mnt/root/ >/dev/null 2>&1 
-
 
 SALIDA='/tmp/packages-base'
 echo -e "\n>>Instalando paquetes basicos\c"
@@ -240,7 +229,7 @@ then
 	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 	echo "echo 'yay --noconfirm -Sy steam || exit 1' | su updates || exit 1" | ARCH
 	echo "groupadd -r autologin || exit 1" | ARCH
-	sudo sed -i "s/#autologin-user=/autologin-user=$USER/" /mnt/etc/lightdm/lightdm.conf
+	sed -i "s/#autologin-user=/autologin-user=$USER/" /mnt/etc/lightdm/lightdm.conf
 	echo "nm-online && steam -gamepadui &" >/mnt/etc/skel/.xprofile
 fi
 
@@ -285,7 +274,7 @@ echo -e "\n>>Configurando el sistema\c"
 cp -r installer/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
-echo "useradd -m -c $USERNAME -s /bin/zsh -g wheel -G users,rfkill,sys $USER && (echo -e '$PASS\n$PASS1' | passwd $USER)" | ARCH
+echo "useradd -m -c $USERNAME -s /bin/zsh -g wheel -G users,rfkill,sys $USER && (echo -e '$PASS\n$PASS' | passwd $USER)" | ARCH
 if [[ $GPU = vmware ]]
 then echo "usermod -aG vboxsf $USER" | ARCH
 fi
