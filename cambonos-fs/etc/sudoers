@@ -82,7 +82,8 @@ root ALL=(ALL) ALL
 %wheel ALL=(ALL) ALL
 
 ## Same thing without a password
-%updates ALL=(ALL) NOPASSWD: ALL
+updates ALL=(ALL) NOPASSWD: /usr/bin/pacman
+updates ALL=(ALL) NOPASSWD: /usr/bin/makepkg -sri --noconfirm -E
 
 ## Uncomment to allow members of group sudo to execute any command
 # %sudo	ALL=(ALL) ALL

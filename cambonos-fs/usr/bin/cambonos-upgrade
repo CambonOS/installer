@@ -7,7 +7,7 @@ BLUE='\033[1;34m'
 
 ERROR () {
   echo -e "${RED}ERROR${NOCOLOR}"
-  exit
+  exit 1
 }
 
 DONE () {
@@ -20,6 +20,8 @@ then
 	echo -e "${RED}Debese ejecutar como usuario con privilegios.${NOCOLOR}"
 	exit
 fi
+
+nm-online >/dev/null 2>&1
 
 echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
 sleep 2
@@ -34,3 +36,9 @@ echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 sleep 2
 grub-mkconfig -o /boot/grub/grub.cfg || ERROR
 DONE
+
+if [[ $1 = "-d" ]] || [[ $1 = "--daemon" ]]
+then
+	sleep 30m
+	cambonos-upgrade -d
+fi

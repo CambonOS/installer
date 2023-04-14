@@ -139,6 +139,7 @@ fi
 SUDO
 echo -e "\n\n>>Desea instalar los drivers graficos? (s/N): \c" && read DG
 echo -e "\n>>Desea instalar servidor SSH? (s/N): \c" && read SSH
+echo -e "\n>>Desea que los paquetes del sistema se actualizen automaticamente? (s/N): \c" && read UPGRADE
 echo -e "\n>>Que entorno de encritorio desea instalar:\n\n       1-Cambon18/XFCE(Recomendado)\n\n       2-Cambon18/XFCE(Gaming)\n\n       3-Cambon18/Qtile"
 echo -e "\n>>Seleccione una opcion o pulsa enter para no instalar interfaz grafica: \c" && read ESCRITORIO
 
@@ -290,6 +291,10 @@ then echo "usermod -aG vboxsf $USER" | ARCH
 fi
 if [[ $GAMING = true ]]
 then echo "usermod -aG autologin $USER" | ARCH
+fi
+if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
+then
+	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH
 fi
 echo "locale-gen" | ARCH && \
 echo "cambonos-upgrade" | ARCH && DONE || ERROR
