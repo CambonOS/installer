@@ -1,10 +1,20 @@
 ##Completado de ZSH
 setopt autocd
 setopt correct
-autoload -U compinit
+zstyle ':completion:*' ignore-parents pwd
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
+zstyle ':completion:*' matcher-list 'r:|[._-]=** r:|=**' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'm:{[:lower:]}={[:upper:]}' ''
+zstyle ':completion:*' menu select=1
+zstyle ':completion:*' original true
+zstyle ':completion:*' preserve-prefix '//[^/]##/'
+zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
+zstyle ':completion:*' special-dirs true
+zstyle ':completion:*' squeeze-slashes true
+zstyle ':completion:*' use-compctl true
+zstyle :compinstall filename '/home/archie/.zshrc'
+autoload -Uz compinit
 compinit
-zstyle ':completion:*' menu select
-zstyle ':completion::complete:*' gain-privileges 1
 
 ##Flechas para recorrer historial
 [[ -n "${key[PageUp]}"   ]]  && bindkey  "${key[PageUp]}"    history-beginning-search-backward
@@ -17,10 +27,13 @@ SAVEHIST=100000
 
 ##Alias
 alias ls="ls --color=auto"
+alias tar="tar -cvf"
 alias untar="tar -xvf"
+alias targz="tar -czvf"
+alias untargz="tar -xzvf"
 
 ##Variables
-export EDITOR="nvim"
+export EDITOR="vim"
 
 ##Tema y plugins
 source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme

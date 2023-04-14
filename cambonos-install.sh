@@ -6,10 +6,6 @@ RED='\033[1;31m'
 GREEN='\033[1;32m'
 
 ##Definicion de grupos
-HEAD () {
-	clear && cat /etc/motd
-}
-
 DONE () {
 	echo -e "${GREEN} [DONE] ${NOCOLOR}"
 }
@@ -34,12 +30,12 @@ USER=$(echo $USERNAME | awk '{print tolower($0)}')
 PASS=$3
 DG=$4
 SSH=$5
-ESCRITORIO=$6
-DISCO=$7
+UPGRADE=$6
+ESCRITORIO=$7
+DISCO=$8
 
 ##Paquetes basicos y drivers
 SALIDA='/tmp/system-base.log'
-HEAD
 echo -e "\n>>Instalando base del sistema\c"
 timedatectl set-ntp true >/dev/null 2>&1
 reflector -l 10 -f 5 --save /etc/pacman.d/mirrorlist >/dev/null 2>&1
@@ -133,7 +129,7 @@ then
 	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH && DONE || ERROR
 	echo "echo 'yay --noconfirm -Sy steam || exit 1' | su updates || exit 1" | ARCH
 	echo "groupadd -r autologin || exit 1" | ARCH
-	sudo sed -i "s/#autologin-user=/autologin-user=$USER/" /mnt/etc/lightdm/lightdm.conf
+	sed -i "s/#autologin-user=/autologin-user=$USER/" /mnt/etc/lightdm/lightdm.conf
 	echo "nm-online && steam -gamepadui &" >/mnt/etc/skel/.xprofile
 fi
 
@@ -178,12 +174,16 @@ echo -e "\n>>Configurando el sistema\c"
 cp -r installer/cambonos-fs/* /mnt && \
 chmod 775 /mnt/usr/bin/cambonos* && \
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
-echo "useradd -m -c $USERNAME -s /bin/zsh -G wheel,rfkill $USER && (echo -e '$PASS\n$PASS' | passwd $USER)" | ARCH
+echo "useradd -m -c $USERNAME -s /bin/zsh -g wheel -G users,rfkill,sys $USER && (echo -e '$PASS\n$PASS' | passwd $USER)" | ARCH
 if [[ $GPU = vmware ]]
 then echo "usermod -aG vboxsf $USER" | ARCH
 fi
 if [[ $GAMING = true ]]
 then echo "usermod -aG autologin $USER" | ARCH
+fi
+if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
+then
+	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH
 fi
 echo "locale-gen" | ARCH && \
 echo "cambonos-upgrade" | ARCH && DONE || ERROR

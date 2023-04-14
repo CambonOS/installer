@@ -27,17 +27,20 @@ DG=$(dialog --stdout --title "CambonOS Installer" --yesno "Desea instalar los dr
 # Ventana de selección de instalación de servidor SSH
 SSH=$(dialog --stdout --title "CambonOS Installer" --yesno "Desea instalar servidor SSH?" 20 80 && echo "Si" || echo "No")
 
+# Ventana de selección de actualizacion automatica
+UPGRADE=$(dialog --stdout --title "CambonOS Installer" --yesno "Desea que los paquetes del sistema se actualicen automáticamente??" 20 80 && echo "Si" || echo "No")
+
 # Ventana de selección de entorno de escritorio
 ESCRITORIO=$(dialog --stdout --title "CambonOS Installer" --menu "Qué entorno de escritorio desea instalar?" 20 80 15 \
         1 "Cambon18/XFCE (Recomendado)" \
         2 "Cambon18/XFCE (Gaming)" \
         3 "Cambon18/Qtile" \
         4 "No instalar interfaz gráfica")
-        
+
 # Disco de instalación
 DISCO=$1
         
-dialog --title "CambonOS Installer" --yesno "Por favor, confirme que las opciones seleccionadas son correctas:\n\nNombre del equipo: $NOMBRE\nNombre para el nuevo usuario: $USERNAME\nContraseña del usuario: ********\nInstalar los drivers gráficos: $DG\nInstalar servidor SSH: $SSH\nEntorno de escritorio seleccionado: $ESCRITORIO" 0 0
+dialog --title "CambonOS Installer" --yesno "Por favor, confirme que las opciones seleccionadas son correctas:\n\nNombre del equipo: $NOMBRE\nNombre para el nuevo usuario: $USERNAME\nContraseña del usuario: ********\nInstalar los drivers gráficos: $DG\nInstalar servidor SSH: $SSH\nActualización automatica: $UPGRADE\nEntorno de escritorio seleccionado: $ESCRITORIO" 20 80
 
 # Salida de resultados
-installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $ESCRITORIO $DISCO | pv -n -s 100M | dialog --title "CambonOS Installer" --gauge "Instalando sistema:" 20 80
+installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO | pv -n -s 100M | dialog --title "CambonOS Installer" --gauge "Instalando sistema:" 20 80
