@@ -43,5 +43,7 @@ DISCO=$1
 dialog --title "CambonOS Installer" --yesno "Por favor, confirme que las opciones seleccionadas son correctas:\n\nNombre del equipo: $NOMBRE\nNombre para el nuevo usuario: $USERNAME\nContraseña del usuario: ********\nInstalar los drivers gráficos: $DG\nInstalar servidor SSH: $SSH\nActualización automatica: $UPGRADE\nEntorno de escritorio seleccionado: $ESCRITORIO" 20 80
 
 # Salida de resultados
-sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO 
-#| pv -n -s 1M 2>&1 | dialog --title "CambonOS Installer" --gauge "Instalando sistema:" 20 80
+sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO | pv -n -s 1M 2>&1 | dialog --title "CambonOS Installer" --gauge "Instalando sistema:" 20 80
+
+# Mensaje final
+dialog --title "CambonOS Installer" --msgbox "La instalación se ha completado. Retire el USB y pulse enter." 20 80 && reboot
