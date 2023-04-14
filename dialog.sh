@@ -45,13 +45,7 @@ done
 
 # Ejecucion del script de instalación
 sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>/tmp/install_error &
-while true
-do
-	porcentaje=$(tail -n1 /tmp/install | cut -f2 -d'[' | cut -f1 -d'%')
-	dialog --title "CambonOS Installer" --gauge "Instalacion en progreso puedo tomar unos minutos:" 20 80 $porcentaje
-	sleep 1
-done
-
+dialog --title "CambonOS Installer" --tailbox /tmp/install 20 80
 
 # Mensaje final instalación
 dialog --title "CambonOS Installer" --msgbox "La instalación se ha completado. Retire el USB y pulse enter." 20 80 && reboot
