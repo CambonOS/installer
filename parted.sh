@@ -123,4 +123,4 @@ Para continuar su intalacion escoga entre:
 		;;
 esac
 
-sh installer/dialog.sh $DISCO &
+sh installer/dialog.sh $DISCO
