@@ -1,4 +1,3 @@
-GROUP=users,rfkill,sys
 HOME=/home
 INACTIVE=-1
 EXPIRE=
