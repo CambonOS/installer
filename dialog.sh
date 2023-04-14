@@ -45,7 +45,7 @@ do
 done
 
 # Salida de resultados
-sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO | pv -n -s 1M 2>&1 | dialog --title "CambonOS Installer" --gauge "Instalando sistema:" 20 80
+sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO | pv -n -s 200 2>&1 | dialog --title "CambonOS Installer" --gauge "Instalando sistema:" 20 80
 
 # Mensaje final
 dialog --title "CambonOS Installer" --msgbox "La instalación se ha completado. Retire el USB y pulse enter." 20 80 && reboot
