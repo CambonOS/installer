@@ -50,8 +50,11 @@ do
 	dialog --no-cancel --title " CambonOS Installer " --yesno "\nPor favor, confirme que las opciones seleccionadas son correctas:\n\nNombre del equipo: $NOMBRE\nNombre para el nuevo usuario: $USERNAME\nContraseña del usuario: ********\nInstalar los drivers gráficos: $DG\nInstalar servidor SSH: $SSH\nActualización automatica: $UPGRADE\nEntorno de escritorio seleccionado: $ESCRITORIO" 15 80 && break
 done
 
-# Ejecucion del script de instalación
-sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>&1 &
-dialog --no-cancel --title " CambonOS Installer " --tailbox /tmp/install 25 80 || \
-	dialog --no-cancel --title " CambonOS Installer " --msgbox "\n\nSe ha completado la instalacion de CambonOS.\nRetira el USB y pulsa enter." 7 80 && \
-	reboot
+while true
+do
+	# Ejecucion del script de instalación
+	sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>&1 &
+	dialog --no-cancel --title " CambonOS Installer " --tailbox /tmp/install 25 80 || \
+		dialog --no-cancel --title " CambonOS Installer " --msgbox "\n\nSe ha completado la instalacion de CambonOS.\nRetira el USB y pulsa enter." 7 80 && \
+		reboot
+done
