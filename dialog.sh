@@ -21,20 +21,20 @@ do
 	    PASS1=$(dialog --no-cancel --stdout --title " CambonOS Installer " --passwordbox "\nRepetir contraseña:" 10 80)
 	    if [[ $PASS != $PASS1 ]]
 	    then
-	        dialog --no-cancel --title " CambonOS Installer " --msgbox "\n\nLas contraseñas no coinciden. Inténtelo de nuevo." 10 80
+	        dialog --no-cancel --title " CambonOS Installer " --msgbox "\nLas contraseñas no coinciden. Inténtelo de nuevo." 7 80
 	        SUDO
 	    fi
 	}
 	SUDO
 	
 	# Ventana de selección de instalación de controladores gráficos
-	DG=$(dialog --no-cancel --stdout --title " CambonOS Installer " --yesno "\nDesea instalar los drivers gráficos?" 5 80 && echo "Si" || echo "No")
+	DG=$(dialog --no-cancel --stdout --title " CambonOS Installer " --yesno "\nDesea instalar los drivers gráficos?" 7 80 && echo "Si" || echo "No")
 	
 	# Ventana de selección de instalación de servidor SSH
-	SSH=$(dialog --no-cancel --stdout --title " CambonOS Installer " --yesno "\nDesea instalar servidor SSH?" 5 80 && echo "Si" || echo "No")
+	SSH=$(dialog --no-cancel --stdout --title " CambonOS Installer " --yesno "\nDesea instalar servidor SSH?" 7 80 && echo "Si" || echo "No")
 	
 	# Ventana de selección de actualizacion automatica
-	UPGRADE=$(dialog --no-cancel --stdout --title " CambonOS Installer " --yesno "\nDesea que los paquetes del sistema se actualicen automáticamente??" 5 80 && echo "Si" || echo "No")
+	UPGRADE=$(dialog --no-cancel --stdout --title " CambonOS Installer " --yesno "\nDesea que los paquetes del sistema se actualicen automáticamente?" 7 80 && echo "Si" || echo "No")
 	
 	# Ventana de selección de entorno de escritorio
 	ESCRITORIO=$(dialog --no-cancel --stdout --title " CambonOS Installer " --menu "\nQué entorno de escritorio desea instalar?\n" 15 80 10 \
@@ -52,6 +52,6 @@ done
 
 # Ejecucion del script de instalación
 sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>&1 &
-dialog --no-cancel --title " CambonOS Installer " --tailbox /tmp/install 15 80 || \
-	dialog --no-cancel --title " CambonOS Installer " --msgbox "\n\nSe ha completado la instalacion de CambonOS.\nRetira el USB y pulsa enter." 10 80 && \
+dialog --no-cancel --title " CambonOS Installer " --tailbox /tmp/install 25 80 || \
+	dialog --no-cancel --title " CambonOS Installer " --msgbox "\n\nSe ha completado la instalacion de CambonOS.\nRetira el USB y pulsa enter." 7 80 && \
 	reboot
