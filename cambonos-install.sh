@@ -169,5 +169,8 @@ echo "locale-gen" | ARCH
 echo "cambonos-upgrade" | ARCH
 
 # Mensaje final instalacion
-cat /etc/motd
-echo "¡¡INSTALACION COMPLETA!!"
+echo ""
+echo "################################"
+echo "### ¡¡INSTALACION COMPLETA!! ###"
+echo "################################"
+echo ""

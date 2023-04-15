@@ -47,4 +47,3 @@ done
 # Ejecucion del script de instalación
 sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>/tmp/install_error &
 dialog --no-cancel --title "CambonOS Installer" --tailbox /tmp/install 20 80
-clean
