@@ -5,16 +5,16 @@ sh installer/parted.sh
 while true
 do
 	# Ventana de entrada de nombre del equipo
-	NOMBRE=$(dialog --stdout --title " CambonOS Installer " --inputbox "\n\nNombre del equipo:" 10 80)
+	NOMBRE=$(dialog --stdout --title " CambonOS Installer " --inputbox "\n\nNombre del equipo:\n" 10 80)
 	
 	# Ventana de entrada de nombre para el nuevo usuario
-	USERNAME=$(dialog --stdout --title " CambonOS Installer " --inputbox "\n\nNombre para el nuevo usuario:" 10 80)
+	USERNAME=$(dialog --stdout --title " CambonOS Installer " --inputbox "\n\nNombre para el nuevo usuario:\n" 10 80)
 	USER=$(echo $USERNAME | awk '{print tolower($0)}')
 	
 	# Función para solicitar contraseña del usuario
 	function SUDO {
-	    PASS=$(dialog --stdout --title " CambonOS Installer " --passwordbox "\n\nContraseña del usuario:" 10 80)
-	    PASS1=$(dialog --stdout --title " CambonOS Installer " --passwordbox "\n\nRepetir contraseña:" 10 80)
+	    PASS=$(dialog --stdout --title " CambonOS Installer " --passwordbox "\n\nContraseña del usuario:\n" 10 80)
+	    PASS1=$(dialog --stdout --title " CambonOS Installer " --passwordbox "\n\nRepetir contraseña:\n" 10 80)
 	    if [[ $PASS != $PASS1 ]]
 	    then
 	        dialog --title " CambonOS Installer " --msgbox "\n\nLas contraseñas no coinciden. Inténtelo de nuevo." 10 80
