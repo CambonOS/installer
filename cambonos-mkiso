@@ -33,23 +33,16 @@ rm -rf /iso
 mkdir -p /iso/perfil
 cp -rv /usr/share/archiso/configs/releng/* /iso/perfil || ERROR
 rm /iso/perfil/efiboot/loader/entries/02*
-rm /iso/perfil/efiboot/loader/entries/03*
-rm /iso/perfil/efiboot/loader/entries/04*
+cp -rv iso/* /iso/perfil || ERROR
+cd ..
+cp -rv installer /iso/perfil/airootfs/root/
 cd /iso/perfil/airootfs/root
-if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
-then
-	git clone -b $2 https://github.com/CambonOS/installer
-else
-	git clone https://github.com/CambonOS/installer
-fi
-cp -rv installer/iso/* /iso/perfil || ERROR
-if [[ $1 = "-b" ]] || [[ $1 = "--branch" ]]
+if [[ $1 = "--online" ]]
 then
 	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" installer/iso/profiledef.sh > /iso/perfil/profiledef.sh
 	echo -e "\nrm -rf installer\ngit clone -b $2 https://github.com/cambonos/installer" > .zshrc
-	rm -rf linux
 fi
-echo -e "bash installer/dialog.sh" >> .zshrc
+echo -e "sh installer/dialog.sh; clear; cat /etc/motd; echo -e "Se ha cerrado el programa de instalacion.\n\nEl sistema se va a reiniciar"; sleep 10; reboot" >> .zshrc
 DONE
 
 echo -e "${BLUE}\n>>Creando la ISO${NOCOLOR}"
