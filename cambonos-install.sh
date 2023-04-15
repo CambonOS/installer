@@ -22,6 +22,13 @@ UPGRADE=$6
 ESCRITORIO=$7
 DISCO=$8
 
+# Mensaje final instalacion
+echo ""
+echo "#################################"
+echo "### ¡¡INICIANDO INSTALACION!! ###"
+echo "#################################"
+echo ""
+
 # Habilitar NTP
 timedatectl set-ntp true
 
