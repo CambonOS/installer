@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Definicion variables
+export DIALOG_COLOR="green"
+
 while true
 do
 	# Ventana de entrada de nombre del equipo
