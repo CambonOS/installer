@@ -45,7 +45,5 @@ done
 
 # Ejecucion del script de instalación
 sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>/tmp/install_error &
-dialog --title "CambonOS Installer" --tailbox /tmp/install 20 80
-
-# Mensaje final instalación
-dialog --title "CambonOS Installer" --msgbox "La instalación se ha completado. Retire el USB y pulse enter." 20 80 && reboot
+dialog --no-cancel --title "CambonOS Installer" --tailbox /tmp/install 20 80
+clean

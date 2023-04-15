@@ -167,3 +167,7 @@ echo "locale-gen" | ARCH
 
 # Actualizacion del equipo, eliminacion de paquetes huerfanos y actualizacion configuracion GRUB
 echo "cambonos-upgrade" | ARCH
+
+# Mensaje final instalacion
+cat /etc/motd
+echo "¡¡INSTALACION COMPLETA!!"
