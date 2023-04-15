@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Ignorar señal suspension TTY
+set -o ignoreeof
+
+# Ejecucion del script de particionado
 sh installer/parted.sh
 
 while true
