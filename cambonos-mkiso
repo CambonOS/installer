@@ -37,10 +37,11 @@ cp -rv iso/* /iso/perfil || ERROR
 cd ..
 cp -rv installer /iso/perfil/airootfs/root/
 cd /iso/perfil/airootfs/root
+echo -e "while true\ndo\n\tping -c 2 archlinux.org && break\n\tsystemctl start NetworkManager.service\n\tsleep 5\n\tnmtui connect\ndone" > .zshrc
 if [[ $1 = "--online" ]]
 then
 	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" installer/iso/profiledef.sh > /iso/perfil/profiledef.sh
-	echo -e "\nrm -rf installer\ngit clone -b $2 https://github.com/cambonos/installer" > .zshrc
+	echo -e "\nrm -rf installer\ngit clone -b $2 https://github.com/cambonos/installer" >> .zshrc
 fi
 echo -e "sh installer/dialog.sh; clear; cat /etc/motd; echo -e "Se ha cerrado el programa de instalacion.\n\nEl sistema se va a reiniciar"; sleep 10; reboot" >> .zshrc
 DONE

@@ -1,46 +1,13 @@
 #!/bin/bash
 
-##Definicion de variables
-NOCOLOR='\033[0m'
-RED='\033[1;31m'
-GREEN='\033[1;32m'
-
 ##Definicion de grupos
-HEAD () {
-	clear && cat /etc/motd
-}
-
-DONE () {
-	echo -e "${GREEN} [DONE] ${NOCOLOR}"
-}
-
-ERROR () {
-	echo -e "${RED} [ERROR] ${NOCOLOR}"
-}
-
-ARCH () {
-	arch-chroot /mnt >>$SALIDA 2>&1
-}
-
 STOP () {
-	echo -e "${RED} [ERROR FATAL] ${NOCOLOR}"
-	umount /mnt/boot >>$SALIDA 2>&1; umount /mnt/home >>$SALIDA 2>&1; umount /mnt >>$SALIDA 2>&1; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt; exit
+	umount -R /mnt; rm -rf /mnt >>$SALIDA 2>&1; mkdir /mnt; exit
 }
-
-##Comprobacion de red
-NETWORK () {
-ping -c 3 google.com >/dev/null 2>&1 || \
-(systemctl start NetworkManager.service
-sleep 5
-nmtui connect
-NETWORK
-)
-}
-NETWORK || exit
 
 ##Particionado
 SALIDA='/tmp/particionado.log'
-HEAD
+clear && cat /etc/motd
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 case $GRUB in
 	uefi)
@@ -119,7 +86,7 @@ Para continuar su intalacion escoga entre:
 		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N+1))
 		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
 		mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP
+		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1
 		;;
 esac
 
