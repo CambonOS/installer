@@ -55,5 +55,3 @@ sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCR
 
 # Monitorizacion del script de instalación
 dialog --no-cancel --no-mouse --title " CambonOS Installer " --tailbox /tmp/install 25 80
-echo $?
-#dialog --no-cancel --title " CambonOS Installer " --msgbox "\n\nSe ha completado la instalacion de CambonOS.\nRetira el USB y pulsa enter." 7 80 && reboot

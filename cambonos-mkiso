@@ -42,7 +42,7 @@ then
 	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" installer/iso/profiledef.sh > /iso/perfil/profiledef.sh
 	echo -e "\nrm -rf installer\ngit clone -b $2 https://github.com/cambonos/installer" > .zshrc
 fi
-echo -e "sh installer/dialog.sh" >> .zshrc
+echo -e "sh installer/dialog.sh; clean; cat /etc/motd; echo -e "Se ha cerrado el programa de instalacion.\n\nEl sistema se va a reiniciar"; sleep 10; reboot" >> .zshrc
 DONE
 
 echo -e "${BLUE}\n>>Creando la ISO${NOCOLOR}"
