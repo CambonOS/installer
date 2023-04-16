@@ -6,6 +6,11 @@ ARCH () {
 }
 
 STOP () {
+	echo ""
+	echo "###################################"
+	echo "### ¡¡ERROR EN LA INSTALACION!! ###"
+	echo "###################################"
+	echo ""
 	umount -R /mnt
 	rm -rf /mnt/*
 	exit 1
