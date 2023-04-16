@@ -61,7 +61,7 @@ Para continuar su intalacion escoga entre:
 		mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
 		mount /dev/$DISCOP$N /mnt/boot >>$SALIDA 2>&1 || STOP && N=$(($N+2))
 		mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 && DONE || STOP
+		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
 		;;
 	bios)
 		echo -e "\nBienvenido al instalador oficial de CambonOS!!!\n\n>>Con el istalador arrancado en BIOS solo se puede instalar borrando todo el disco.\n\n>>Quiere continuar? (s/N): \c"
