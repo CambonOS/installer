@@ -7,9 +7,13 @@ ARCH () {
 
 STOP () {
 	echo ""
-	echo "###################################"
-	echo "### ¡¡ERROR EN LA INSTALACION!! ###"
-	echo "###################################"
+	echo "##################################"
+	echo "### ERROR EN LA INSTALACION!!! ###"
+	echo "##################################"
+	echo ""
+	echo "##################################"
+	echo "### Pulse ENTER para continuar ###"
+	echo "##################################"
 	echo ""
 	umount -R /mnt
 	rm -rf /mnt/*
@@ -31,6 +35,11 @@ DISCO=$8
 echo ""
 echo "#################################"
 echo "### ¡¡INICIANDO INSTALACION!! ###"
+echo "#################################"
+echo ""
+echo "#################################"
+echo "### No pulse ninguna tecla    ###"
+echo "### hasta que se termine.     ###"
 echo "#################################"
 echo ""
 
@@ -182,7 +191,11 @@ echo "cambonos-upgrade" | ARCH
 
 # Mensaje final instalacion
 echo ""
-echo "################################"
-echo "### ¡¡INSTALACION COMPLETA!! ###"
-echo "################################"
+echo "##################################"
+echo "### ¡¡¡INSTALACION COMPLETA!!! ###"
+echo "##################################"
+echo ""
+echo "##################################"
+echo "### Pulse ENTER para continuar ###"
+echo "##################################"
 echo ""
