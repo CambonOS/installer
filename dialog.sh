@@ -51,4 +51,13 @@ done
 sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>&1 &
 
 # Monitorizacion del script de instalación
-dialog --title " CambonOS Installer " --tailbox /tmp/install 25 80
+(while true; do echo $PRG; sleep 1; done) | dialog --title " CambonOS Installer " --gauge "Instalando..." 7 80 0
+
+# Mensaje final instalación
+if [[ $FINALIZADA_ERR -eq 1 ]]
+then
+	dialog --title " CambonOS Installer " --msgbox "ERROR en la instalación" 7 80
+else
+	dialog --title " CambonOS Installer " --msgbox "¡Instalación completada!" 7 80
+fi
+
