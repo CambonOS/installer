@@ -7,6 +7,7 @@ while true
 do
 	# Ventana de entrada de nombre del equipo
 	NOMBRE=$(dialog --stdout --title " CambonOS Installer " --inputbox "\nNombre del equipo:" 10 80)
+	NOMBRE=$(echo $NOMBRE | awk '{print tolower($0)}')
 	
 	# Ventana de entrada de nombre para el nuevo usuario
 	USERNAME=$(dialog --stdout --title " CambonOS Installer " --inputbox "\nNombre para el nuevo usuario:" 10 80)
