@@ -179,6 +179,7 @@ fi
 # Configuracion cambonos-upgrade
 chmod 4750 /mnt/usr/bin/cambonos-upgrade
 echo "chown updates:wheel /mnt/usr/bin/cambonos-upgrade" | ARCH
+sed -i 's/^updates.*$/updates:x:999:1000::\/home\/.updates:\/usr\/bin\/nologin/' /mnt/etc/passwd
 if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
 then
 	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH
