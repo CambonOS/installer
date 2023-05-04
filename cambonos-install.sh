@@ -177,7 +177,8 @@ then echo "usermod -aG autologin $USER" | ARCH
 fi
 
 # Configuracion cambonos-upgrade
-chmod 775 /mnt/usr/bin/cambonos-upgrade
+chmod 4750 /mnt/usr/bin/cambonos-upgrade
+echo "chown updates:wheel /mnt/usr/bin/cambonos-upgrade" | ARCH
 if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
 then
 	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH
