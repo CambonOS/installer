@@ -15,30 +15,26 @@ DONE () {
   sleep 1
 }
 
-if [[ $EUID -ne 0 ]]
-then
-	echo -e "${RED}Debese ejecutar como usuario con privilegios.${NOCOLOR}"
-	exit
-fi
-
 nm-online >/dev/null 2>&1
 
 echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
 sleep 2
-su - updates -c 'yay --noconfirm -Sy archlinux-keyring' || ERROR
-su - updates -c 'yay --noconfirm -Syyu' || ERROR
+yay --noconfirm -Sy archlinux-keyring || ERROR
+yay --noconfirm -Syyu || ERROR
 DONE
+
 echo -e "${BLUE}\n>>Eliminando paquetes huerfanos${NOCOLOR}"
 sleep 2
-su - updates -c 'yay --noconfirm -Rns $(yay -Qqdt)'
+yay --noconfirm -Rns $(yay -Qqdt)
 DONE
+
 echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
 sleep 2
-grub-mkconfig -o /boot/grub/grub.cfg || ERROR
+sudo grub-mkconfig -o /boot/grub/grub.cfg || ERROR
 DONE
 
 if [[ $1 = "-d" ]] || [[ $1 = "--daemon" ]]
 then
 	sleep 30m
-	cambonos-upgrade -d
+	cambonos-upgrade --daemon
 fi
