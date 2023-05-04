@@ -4,6 +4,7 @@ After=network.target multi-user.target
 
 [Service]
 Type=simple
+User=updates
 RemainAfterExit=yes
 ExecStart=/usr/bin/cambonos-upgrade -d
 Restart=always

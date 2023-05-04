@@ -175,7 +175,9 @@ fi
 echo "95" >/tmp/PRG
 
 # Configuracion cambonos-upgrade
-chmod 775 /mnt/usr/bin/cambonos-upgrade
+chmod 4750 /mnt/usr/bin/cambonos-upgrade
+echo "chown updates:wheel /mnt/usr/bin/cambonos-upgrade" | ARCH
+echo "chsh -s /usr/bin/nologin updates" | ARCH
 if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
 then
 	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH
