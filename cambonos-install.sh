@@ -14,6 +14,7 @@ STOP () {
 }
 
 ##Definicion variables
+echo "0" >/tmp/FIN_ERR
 NOMBRE=$1
 USERNAME=$2
 USER=$(echo $USERNAME | awk '{print tolower($0)}')
