@@ -43,7 +43,7 @@ then
 	sed "s/iso_version=\"\$(date +%Y.%m.%d)\"/iso_version=\"$2\"/" installer/iso/profiledef.sh > /iso/perfil/profiledef.sh
 	echo -e "\nrm -rf installer\ngit clone -b $2 https://github.com/cambonos/installer" >> .zshrc
 fi
-echo -e 'sh installer/dialog.sh; dialog --title " CambonOS Installer " --msgbox "\nHa finalizado el programa de instalación.\nRetire el USB y pulse ENTER" 7 80; reboot' >> .zshrc
+echo -e 'sh installer/dialog.sh; if [[ $(cat /tmp/FIN_ERR) -eq 1 ]]; then dialog --title " CambonOS Installer " --msgbox "\nHa ocurrido un error en la instalación, se va a reiniciar el equipo.\nRetire el USB y pulse ENTER" 7 80; else dialog --title " CambonOS Installer " --msgbox "\nLa instalacion se ha completado!!\nRetire el USB y pulse ENTER" 7 80; fi; reboot' >> .zshrc
 DONE
 
 echo -e "${BLUE}\n>>Creando la ISO${NOCOLOR}"
