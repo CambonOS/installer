@@ -177,8 +177,7 @@ fi
 echo "94" >/tmp/PRG
 
 # Configuracion cambonos-upgrade
-echo "chmod 750 /mnt/usr/bin/cambonos-upgrade" | ARCH
-echo "chown updates:wheel /usr/bin/cambonos-upgrade" | ARCH
+echo "chown updates:wheel /usr/bin/cambonos-upgrade; chmod 750 /usr/bin/cambonos-upgrade" | ARCH
 echo "chsh -s /usr/bin/nologin updates" | ARCH
 if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
 then
