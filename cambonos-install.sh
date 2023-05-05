@@ -112,8 +112,8 @@ echo 'systemctl enable NetworkManager.service && systemctl enable ntpd.service &
 echo "60" >/tmp/PRG
 
 # Instalacion de yay
-echo "groupadd -g 999 updates" | ARCH
-echo "useradd -m -d /home/.updates -g updates -u 999 updates && passwd --lock updates || exit 1" | ARCH
+echo "groupadd -g 777 updates" | ARCH
+echo "useradd -m -d /home/.updates -g updates -u 777 updates && passwd --lock updates || exit 1" | ARCH
 echo -e "\n%updates ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si || exit 1' | su updates || exit 1" | ARCH
 echo "65" >/tmp/PRG
