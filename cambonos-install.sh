@@ -174,19 +174,22 @@ fi
 if [[ $GAMING = true ]]
 then echo "usermod -aG autologin $USER" | ARCH
 fi
-echo "95" >/tmp/PRG
+echo "94" >/tmp/PRG
 
 # Configuracion cambonos-upgrade
 echo "chmod 750 /mnt/usr/bin/cambonos-upgrade" | ARCH
 echo "chown updates:wheel /usr/bin/cambonos-upgrade" | ARCH
-echo 'echo "cambonos-upgrade" | su updates' | ARCH
 echo "chsh -s /usr/bin/nologin updates" | ARCH
 if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
 then
 	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH
 fi
-echo "98" >/tmp/PRG
+echo "96" >/tmp/PRG
 
 # Generacion locales
 echo "locale-gen" | ARCH
+echo "98" >/tmp/PRG
+
+# Generacion configuracion grub
+echo "grub-mkconfig -o /boot/grub/grub.cfg" | ARCH
 echo "100" >/tmp/PRG
