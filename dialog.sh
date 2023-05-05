@@ -7,6 +7,7 @@ while true
 do
 	# Ventana de entrada de nombre del equipo
 	NOMBRE=$(dialog --stdout --title " CambonOS Installer " --inputbox "\nNombre del equipo:" 10 80)
+	NOMBRE=$(echo $NOMBRE | awk '{print tolower($0)}')
 	
 	# Ventana de entrada de nombre para el nuevo usuario
 	USERNAME=$(dialog --stdout --title " CambonOS Installer " --inputbox "\nNombre para el nuevo usuario:" 10 80)
@@ -51,4 +52,6 @@ done
 sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>&1 &
 
 # Monitorizacion del script de instalación
-dialog --title " CambonOS Installer " --tailbox /tmp/install 25 80
+echo "0" >/tmp/PRG
+(while [[ $(cat /tmp/PRG) -ne 100 ]]; do sleep 1; cat /tmp/PRG; done) | dialog --title " CambonOS Installer " --gauge "Instalando..." 7 80 0
+
