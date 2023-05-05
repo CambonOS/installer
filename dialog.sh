@@ -55,11 +55,3 @@ sh installer/cambonos-install.sh $NOMBRE $USERNAME $PASS $DG $SSH $UPGRADE $ESCR
 echo "0" >/tmp/PRG
 (while [[ $(cat /tmp/PRG) -ne 100 ]]; do sleep 1; cat /tmp/PRG; done) | dialog --title " CambonOS Installer " --gauge "Instalando..." 7 80 0
 
-# Mensaje final instalación
-if [[ $(cat /tmp/FIN_ERR) -eq 1 ]]
-then
-	dialog --title " CambonOS Installer " --msgbox "ERROR en la instalación" 7 80
-else
-	dialog --title " CambonOS Installer " --msgbox "¡Instalación completada!" 7 80
-fi
-
