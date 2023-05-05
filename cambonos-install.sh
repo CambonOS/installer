@@ -112,7 +112,8 @@ echo 'systemctl enable NetworkManager.service && systemctl enable ntpd.service &
 echo "60" >/tmp/PRG
 
 # Instalacion de yay
-echo "useradd -m -d /home/.updates -u 999 updates && passwd --lock updates || exit 1" | ARCH
+echo "groupadd -g 999 updates" | ARCH
+echo "useradd -m -d /home/.updates -g updates -u 999 updates && passwd --lock updates || exit 1" | ARCH
 echo -e "\n%updates ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si || exit 1' | su updates || exit 1" | ARCH
 echo "65" >/tmp/PRG
@@ -178,17 +179,14 @@ echo "95" >/tmp/PRG
 # Configuracion cambonos-upgrade
 echo "chmod 750 /mnt/usr/bin/cambonos-upgrade" | ARCH
 echo "chown updates:wheel /usr/bin/cambonos-upgrade" | ARCH
+echo 'echo "cambonos-upgrade" | su updates' | ARCH
 echo "chsh -s /usr/bin/nologin updates" | ARCH
 if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
 then
 	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH
 fi
+echo "98" >/tmp/PRG
 
 # Generacion locales
 echo "locale-gen" | ARCH
-echo "97" >/tmp/PRG
-
-# Actualizacion del equipo, eliminacion de paquetes huerfanos y actualizacion configuracion GRUB
-echo "cambonos-upgrade" | ARCH
 echo "100" >/tmp/PRG
-
