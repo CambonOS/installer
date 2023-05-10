@@ -38,8 +38,10 @@ pacman --noconfirm -Sy archlinux-keyring
 echo "15" >/tmp/PRG
 
 # Creacion de la raiz del sistema
+umask 027
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base || STOP
 echo "30" >/tmp/PRG
+sed -i s/umask\ 022/umask\ 027/ /mnt/etc/profile
 
 # Generar fichero fstab del sistema
 genfstab -U /mnt >> /mnt/etc/fstab || STOP
@@ -119,7 +121,7 @@ echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && 
 echo "65" >/tmp/PRG
 
 # Instalacion de utilidades adicionales
-echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd || exit 1' | su updates || exit 1" | ARCH
+echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd libpwquality || exit 1' | su updates || exit 1" | ARCH
 echo "systemctl enable zramd.service || exit 1" | ARCH
 if [[ $GPU = vmware ]]
 then echo "echo 'yay --noconfirm -Sy virtualbox-guest-utils || exit 1' | su updates || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
