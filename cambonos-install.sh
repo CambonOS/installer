@@ -38,10 +38,10 @@ pacman --noconfirm -Sy archlinux-keyring
 echo "15" >/tmp/PRG
 
 # Creacion de la raiz del sistema
-# umask 027
+umask 027
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base || STOP
 echo "30" >/tmp/PRG
-# sed -i s/umask\ 022/umask\ 027/ /mnt/etc/profile
+sed -i s/umask\ 022/umask\ 027/ /mnt/etc/profile
 
 # Generar fichero fstab del sistema
 genfstab -U /mnt >> /mnt/etc/fstab || STOP
@@ -60,6 +60,7 @@ echo "37" >/tmp/PRG
 
 # Instalacion paquetes basicos
 echo "pacman --noconfirm -Sy lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g || exit 1" | ARCH || STOP
+chmod 755 /mnt/usr/bin/sudo 
 echo "45" >/tmp/PRG
 
 # Habilitar repositorios multilib
