@@ -38,7 +38,6 @@ pacman --noconfirm -Sy archlinux-keyring
 echo "15" >/tmp/PRG
 
 # Creacion de la raiz del sistema
-umask 027
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base || STOP
 echo "30" >/tmp/PRG
 sed -i s/umask\ 022/umask\ 027/ /mnt/etc/profile
