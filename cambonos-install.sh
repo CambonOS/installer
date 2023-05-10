@@ -38,10 +38,10 @@ pacman --noconfirm -Sy archlinux-keyring
 echo "15" >/tmp/PRG
 
 # Creacion de la raiz del sistema
-umask 027
+# umask 027
 pacstrap /mnt linux-zen linux-zen-headers linux-firmware base || STOP
 echo "30" >/tmp/PRG
-sed -i s/umask\ 022/umask\ 027/ /mnt/etc/profile
+# sed -i s/umask\ 022/umask\ 027/ /mnt/etc/profile
 
 # Generar fichero fstab del sistema
 genfstab -U /mnt >> /mnt/etc/fstab || STOP
@@ -51,6 +51,7 @@ echo "33" >/tmp/PRG
 echo "usermod -s /bin/zsh root" | ARCH # Cambio shell
 cp -rv installer/cambonos-fs/etc/skel/.config /mnt/root # Carpeta .config del skel
 cp -v installer/cambonos-fs/etc/skel/.* /mnt/root/ # Ficheros del skel
+echo "passwd --lock root" | ARCH
 echo "35" >/tmp/PRG
 
 # Definicion de los paquetes microcode CPU
