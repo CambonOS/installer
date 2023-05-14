@@ -15,18 +15,18 @@ STOP () {
 
 ##Definicion variables
 echo "0" >/tmp/FIN_ERR
-NOMBRE="$1"
-ADMINNAME="$2"
-ADMINUSER="$(echo $ADMINNAME | awk '{print tolower($0)}')"
-ADMINPASS="$3"
-USERNAME="$4"
-USERUSER="$(echo $USERNAME | awk '{print tolower($0)}')"
-USERPASS="$5"
-DG="$6"
-SSH="$7"
-UPGRADE="$8"
-ESCRITORIO="$9"
-DISCO="$10"
+NOMBRE=$1
+ADMINNAME=$2
+ADMINUSER=$(echo $ADMINNAME | awk '{print tolower($0)}')
+ADMINPASS=$3
+USERNAME=$4
+USERUSER=$(echo $USERNAME | awk '{print tolower($0)}')
+USERPASS=$5
+DG=$6
+SSH=$7
+UPGRADE=$8
+ESCRITORIO=$9
+DISCO=${10}
 
 # Habilitar NTP
 timedatectl set-ntp true
