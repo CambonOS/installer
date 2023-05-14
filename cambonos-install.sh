@@ -16,14 +16,17 @@ STOP () {
 ##Definicion variables
 echo "0" >/tmp/FIN_ERR
 NOMBRE=$1
-USERNAME=$2
-USER=$(echo $USERNAME | awk '{print tolower($0)}')
-PASS=$3
-DG=$4
-SSH=$5
-UPGRADE=$6
-ESCRITORIO=$7
-DISCO=$8
+ADMINNAME=$2
+ADMINUSER=$(echo $USERNAME | awk '{print tolower($0)}')
+ADMINPASS=$3
+USERNAME=$4
+USERUSER=$(echo $USERNAME | awk '{print tolower($0)}')
+USERPASS=$5
+DG=$6
+SSH=$7
+UPGRADE=$8
+ESCRITORIO=$9
+DISCO=$10
 
 # Habilitar NTP
 timedatectl set-ntp true
@@ -110,7 +113,12 @@ sed -i /interface/d /mnt/etc/NetworkManager/system-connections/*
 echo "$NOMBRE" >/mnt/etc/hostname
 echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts
 echo 'systemctl enable NetworkManager.service && systemctl enable ntpd.service && systemctl enable systemd-resolved.service || exit 1' | ARCH
+echo "1" >/mnt/proc/sys/net/ipv6/conf/*/disable_ipv6
 echo "60" >/tmp/PRG
+
+# Configuracion del firewall
+echo -e "*filter\n:INPUT DROP [0:0]\n:FORWARD DROP [0:0]\n:OUTPUT ACCEPT [0:0]\n-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT\nCOMMIT" >/mnt/etc/iptables/rules.v4
+echo -e "*filter\n:INPUT DROP [0:0]\n:FORWARD DROP [0:0]\n:OUTPUT DROP [0:0]\nCOMMIT" >/mnt/etc/iptables/rules.v6
 
 # Instalacion de yay
 echo "groupadd -g 777 updates" | ARCH
@@ -134,19 +142,8 @@ then
 	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH
 fi
 
-# Instalacion XFCE(gaming)
-echo $ESCRITORIO | grep "2" >/dev/nul && GAMING=true || GAMING=false
-if [[ $GAMING = true ]]
-then	
-	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH
-	echo "echo 'yay --noconfirm -Sy steam || exit 1' | su updates || exit 1" | ARCH
-	echo "groupadd -r autologin || exit 1" | ARCH
-	sed -i "s/#autologin-user=/autologin-user=$USER/" /mnt/etc/lightdm/lightdm.conf
-	echo "nm-online && steam -gamepadui &" >/mnt/etc/skel/.xprofile
-fi
-
 # Instalacion Qtile
-echo $ESCRITORIO | grep "3" >/dev/nul && INSTALL=true || INSTALL=false
+echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then
 	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/qtile && cd qtile && bash archie.sh" | su updates' | ARCH
@@ -168,12 +165,12 @@ echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systo
 echo "92" >/tmp/PRG
 
 # Creacion usuario
-echo "useradd -m -c $USERNAME -s /bin/zsh -g users -G wheel,rfkill,sys $USER && (echo -e '$PASS\n$PASS' | passwd $USER)" | ARCH
+echo "useradd -m -c $ADMINNAME -s /bin/zsh -g users -G wheel,rfkill,sys $ADMINUSER && (echo -e '$ADMINPASS\n$ADMINPASS' | passwd $ADMINUSER)" | ARCH
+echo "useradd -m -c $USERNAME -s /bin/zsh -g users -G rfkill,sys $USERUSER && (echo -e '$USERPASS\n$USERPASS' | passwd $USERUSER)" | ARCH
 if [[ $GPU = vmware ]]
-then echo "usermod -aG vboxsf $USER" | ARCH
-fi
-if [[ $GAMING = true ]]
-then echo "usermod -aG autologin $USER" | ARCH
+then 
+	echo "usermod -aG vboxsf $ADMINUSER" | ARCH
+	echo "usermod -aG vboxsf $USERUSER" | ARCH
 fi
 echo "94" >/tmp/PRG
 
