@@ -26,6 +26,7 @@ do
 	}
 	
 	function SUDO {
+            RST=$1
 	    PASS=$(dialog --stdout --title " CambonOS Installer " --passwordbox "\nContraseña del usuario:" 10 80)
 	    PASS1=$(dialog --stdout --title " CambonOS Installer " --passwordbox "\nRepetir contraseña:" 10 80)
 	    if [[ $PASS != $PASS1 ]]
@@ -38,18 +39,18 @@ do
 	        		dialog --title " CambonOS Installer " --msgbox "\nLa contraseña no cumple con los criterios de seguridad. Debe contener al menos 12 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial." 7 80
 	        		SUDO
             		else
-				echo $PASS
+				declare -g ${RST}="$PASS"
 	    		fi
             fi
 	}
 	
 	# Ventana de entrada de nombre para el nuevo usuario administrador
 	ADMINNAME=$(dialog --stdout --title " CambonOS Installer " --inputbox "\nNombre para el usuario administrador:" 10 80 "Administrador")
-	ADMINPASS=$(SUDO)
+	SUDO ADMINPASS
 	
 	# Ventana de entrada de nombre para el nuevo usuario sin privilegios
        	USERNAME=$(dialog --stdout --title " CambonOS Installer " --inputbox "\nNombre para el nuevo usuario sin privilegios:" 10 80)
-	USERPASS=$(SUDO)
+	SUDO USERPASS
 
 	# Ventana de selección de instalación de controladores gráficos
 	DG=$(dialog --stdout --title " CambonOS Installer " --yesno "\nDesea instalar los drivers gráficos?" 7 80 && echo "Si" || echo "No")
