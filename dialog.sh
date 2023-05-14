@@ -32,13 +32,15 @@ do
 	    then
 	        dialog --title " CambonOS Installer " --msgbox "\nLas contraseñas no coinciden. Inténtelo de nuevo." 7 80
 	        SUDO
-	    elif ! is_secure_password "$PASS"
-	    then
-	        dialog --title " CambonOS Installer " --msgbox "\nLa contraseña no cumple con los criterios de seguridad. Debe contener al menos 12 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial." 7 80
-	        SUDO
             else
-		echo $PASS
-	    fi
+			if ! is_secure_password "$PASS"
+	    		then
+	        		dialog --title " CambonOS Installer " --msgbox "\nLa contraseña no cumple con los criterios de seguridad. Debe contener al menos 12 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial." 7 80
+	        		SUDO
+            		else
+				echo $PASS
+	    		fi
+            fi
 	}
 	
 	# Ventana de entrada de nombre para el nuevo usuario administrador
