@@ -49,7 +49,7 @@ do
 	SUDO ADMINPASS
 	
 	# Ventana de entrada de nombre para el nuevo usuario sin privilegios
-       	USERNAME=$(dialog --stdout --title " CambonOS Installer " --inputbox "\nNombre para el nuevo usuario sin privilegios:" 10 80)
+       	USERNAME=$(dialog --stdout --title " CambonOS Installer " --inputbox "\nNombre para el nuevo usuario sin privilegios:" 10 80 "Usuario")
 	SUDO USERPASS
 
 	# Ventana de selección de instalación de controladores gráficos
