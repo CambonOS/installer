@@ -113,8 +113,6 @@ sed -i /interface/d /mnt/etc/NetworkManager/system-connections/*
 echo "$NOMBRE" >/mnt/etc/hostname
 echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts
 echo 'systemctl enable NetworkManager.service && systemctl enable ntpd.service && systemctl enable systemd-resolved.service || exit 1' | ARCH
-echo "net.ipv6.conf.all.disable_ipv6 = 1" >/mnt/etc/sysctl.d/99-disable-ipv6.conf
-echo "sysctl --system" | ARCH
 echo "60" >/tmp/PRG
 
 # Instalacion de yay
