@@ -114,11 +114,8 @@ echo "$NOMBRE" >/mnt/etc/hostname
 echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts
 echo 'systemctl enable NetworkManager.service && systemctl enable ntpd.service && systemctl enable systemd-resolved.service || exit 1' | ARCH
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >/mnt/etc/sysctl.d/99-disable-ipv6.conf
+echo "sysctl --system" | ARCH
 echo "60" >/tmp/PRG
-
-# Configuracion del firewall
-echo -e "*filter\n:INPUT DROP [0:0]\n:FORWARD DROP [0:0]\n:OUTPUT ACCEPT [0:0]\n-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT\nCOMMIT" >/mnt/etc/iptables/rules.v4
-echo -e "*filter\n:INPUT DROP [0:0]\n:FORWARD DROP [0:0]\n:OUTPUT DROP [0:0]\nCOMMIT" >/mnt/etc/iptables/rules.v6
 
 # Instalacion de yay
 echo "groupadd -g 777 updates" | ARCH
@@ -150,16 +147,21 @@ then
 fi
 echo "85" >/tmp/PRG
 
+# Configuraciones CambonOS
+cp -rv installer/cambonos-fs/* /mnt
+echo "90" >/tmp/PRG
+
+# Configuracion del firewall
+echo -e "*filter\n:INPUT DROP [0:0]\n:FORWARD DROP [0:0]\n:OUTPUT ACCEPT [0:0]\n-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT\nCOMMIT" >/mnt/etc/iptables/iptables.rules
+echo "systemctl enable iptables.service || exit 1" | ARCH
+echo "91" >/tmp/PRG
+
 # Instalacion ssh
 if [[ $SSH = s ]] || [[ $SSH = si ]] || [[ $SSH = S ]] || [[ $SSH = Si ]]
 then
 	echo "pacman --noconfirm -Sy openssh && sed -i s/#X11Forwarding\ no/X11Forwarding\ yes/ /etc/ssh/sshd_config; systemctl enable sshd.service || exit 1" | ARCH
 	echo -e "*filter\n:INPUT DROP [0:0]\n:FORWARD DROP [0:0]\n:OUTPUT ACCEPT [0:0]\n-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT\n-A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT\nCOMMIT" >/mnt/etc/iptables/rules.v4
 fi
-
-# Configuraciones CambonOS
-cp -rv installer/cambonos-fs/* /mnt
-echo "90" >/tmp/PRG
 
 # Configuracion hora
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
