@@ -15,6 +15,11 @@ DONE () {
   sleep 1
 }
 
+if [[ $1 = "-d" ]] || [[ $1 = "--daemon" ]]
+then
+	sudo rm /var/lib/pacman/db.lck
+fi
+
 nm-online >/dev/null 2>&1
 
 echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
