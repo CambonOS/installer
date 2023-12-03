@@ -112,7 +112,7 @@ def main():
     # Lanzar el installer con los parametros
     cmd = [
         "sh",
-        "./cambonos-install.sh",
+        "./installer/cambonos-install.sh",
         hostname,
         admin_user,
         admin_pass,
