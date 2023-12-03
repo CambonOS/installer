@@ -56,13 +56,13 @@ def passwd_dialog():
     """Conjunto de input para introducir contraseña dos veces y validar que coindide"""
     title = "CambonOS Installer"
     input1 = tui.inputbox(title, "Contraseña del usuario:")
-    if input1 == "":
-        tui.infobox(title,"La contraseña introducida no es valida")
-        return passwd_dialog()
     input2 = tui.inputbox(title, "Repetir contraseña:")
     if input1 != input2:
         tui.infobox(title,"Las contraseñas introducidas no coinciden.")
         return passwd_dialog()
+    if is_secure_password(input1) is False:
+        tui.infobox(title, "La contraseña introducida no es segura, prueba de nuevo.")
+        return passwd_dialog
     return input1
 
 def escritorio_dialog():
