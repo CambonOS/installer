@@ -111,7 +111,7 @@ def main():
     escritorio = escritorio_dialog()
     # Lanzar el installer con los parametros
     cmd = [
-        "sh"
+        "sh",
         "./cambonos-install.sh",
         hostname,
         admin_user,
