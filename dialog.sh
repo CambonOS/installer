@@ -2,7 +2,7 @@
 
 # Ejecucion del script de dialog
 pip install git+https://github.com/manucr19/py_lib.git
-sh installer/tui.py
+python3 installer/tui.py
 
 # Monitorizacion del script de instalación
 echo "0" >/tmp/PRG
