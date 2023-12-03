@@ -82,7 +82,7 @@ def escritorio_dialog():
 def user_dialog(add):
     """Dialogo para obtener nombre de usuario y contraseña"""
     title = "CambonOS Installer"
-    text = "Nombre del usuario", add, ":"
+    text = "Nombre del usuario "+str(add)+":"
     user = tui.inputbox(title, text)
     password = passwd_dialog()
     return user, password
@@ -113,7 +113,7 @@ def main():
     run(
         [
             "sh",
-            "./cambonos-installer",
+            "./cambonos-install.sh",
             hostname,
             admin_user,
             admin_pass,
