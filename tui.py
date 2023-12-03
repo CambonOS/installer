@@ -118,9 +118,9 @@ def main():
         admin_pass,
         username,
         user_pass,
-        drivers_gx,
-        ssh,
-        upgrade,
+        str(drivers_gx),
+        str(ssh),
+        str(upgrade),
         escritorio,
         disco,
         "&"
