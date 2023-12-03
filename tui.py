@@ -110,8 +110,9 @@ def main():
     # Seleccionar escritorios
     escritorio = escritorio_dialog()
     # Lanzar el installer con los parametros
-    cmd = str(
-        "sh ./cambonos-install.sh",
+    cmd = [
+        "sh"
+        "./cambonos-install.sh",
         hostname,
         admin_user,
         admin_pass,
@@ -123,8 +124,8 @@ def main():
         escritorio,
         disco,
         "&"
-    )
-    run([cmd], check=False)
+    ]
+    run(cmd, check=False)
 
 # Ejecución del programa
 if __name__ == "__main__":
