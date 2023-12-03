@@ -62,7 +62,7 @@ def passwd_dialog():
         return passwd_dialog()
     if is_secure_password(input1) is False:
         tui.infobox(title, "La contraseña introducida no es segura, prueba de nuevo.")
-        return passwd_dialog
+        return passwd_dialog()
     return input1
 
 def escritorio_dialog():
@@ -110,24 +110,21 @@ def main():
     # Seleccionar escritorios
     escritorio = escritorio_dialog()
     # Lanzar el installer con los parametros
-    run(
-        [
-            "sh",
-            "./cambonos-install.sh",
-            hostname,
-            admin_user,
-            admin_pass,
-            username,
-            user_pass,
-            drivers_gx,
-            ssh,
-            upgrade,
-            escritorio,
-            disco,
-            "&"
-        ],
-        check=False
+    cmd = str(
+        "sh ./cambonos-install.sh",
+        hostname,
+        admin_user,
+        admin_pass,
+        username,
+        user_pass,
+        drivers_gx,
+        ssh,
+        upgrade,
+        escritorio,
+        disco,
+        "&"
     )
+    run([cmd], check=False)
 
 # Ejecución del programa
 if __name__ == "__main__":
