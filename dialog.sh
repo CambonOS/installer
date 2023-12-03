@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Ejecucion del script de dialog
-pacman -Sy --no-confirm
-pacman -S python-pip --no-confirm
+pacman -Sy --noconfirm
+pacman -S python-pip --noconfirm
 pip install git+https://github.com/manucr19/py_lib.git
 python3 installer/tui.py
 
