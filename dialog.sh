@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Ejecucion del script de dialog
+pip install git+https://github.com/manucr19/py_lib.git
 sh installer/tui.py
 
 # Monitorizacion del script de instalación
