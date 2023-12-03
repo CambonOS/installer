@@ -94,7 +94,7 @@ def main():
     tui.msgbox(title, "Bienvenido al intalador de CambonOS\n\nGracias por elegirnos :)")
     # Particionado disco
     parted_type, disco = parted_dialog()
-    run(["sh", "./parted.sh", disco, parted_type], check=False)
+    run(["sh", "./installer/parted.sh", disco, parted_type], check=False)
     # Nombre del equipo
     hostname = tui.inputbox(title, "Nombre del equipo:")
     hostname = hostname.lower()
