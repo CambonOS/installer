@@ -3,6 +3,8 @@
 # Ejecucion del script de dialog
 pacman -Sy --noconfirm
 pacman -S python-pip --noconfirm
+python -m venv venv
+source ./venv/bin/activate
 pip install git+https://github.com/manucr19/py_lib.git
 python3 installer/tui.py
 
