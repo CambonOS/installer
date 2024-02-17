@@ -45,6 +45,10 @@ pacstrap /mnt linux-zen linux-zen-headers linux-firmware base || STOP
 echo "30" >/tmp/PRG
 
 # Generar fichero fstab del sistema
+dd if=/dev/zero of=/mnt/swapfile bs=1M count=4k status=progress
+chmod 0600 /mnt/swapfile
+mkswap -U clear /mnt/swapfile
+swapon /mnt/swapfile
 genfstab -U /mnt >> /mnt/etc/fstab || STOP
 echo "33" >/tmp/PRG
 
@@ -123,8 +127,7 @@ echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && 
 echo "65" >/tmp/PRG
 
 # Instalacion de utilidades adicionales
-echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs zramd libpwquality || exit 1' | su updates || exit 1" | ARCH
-echo "systemctl enable zramd.service || exit 1" | ARCH
+echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs libpwquality || exit 1' | su updates || exit 1" | ARCH
 if [[ $GPU = vmware ]]
 then echo "echo 'yay --noconfirm -Sy virtualbox-guest-utils || exit 1' | su updates || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
 fi
