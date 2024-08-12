@@ -148,6 +148,7 @@ echo "85" >/tmp/PRG
 
 # Configuraciones CambonOS
 cp -rv installer/cambonos-fs/* /mnt
+cp /mnt/etc/cambonos-release/* /mnt/etc/
 echo "90" >/tmp/PRG
 
 # Configuracion del firewall
