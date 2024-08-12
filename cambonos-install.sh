@@ -19,14 +19,11 @@ NOMBRE=$1
 ADMINNAME=$2
 ADMINUSER=$(echo $ADMINNAME | awk '{print tolower($0)}')
 ADMINPASS=$3
-USERNAME=$4
-USERUSER=$(echo $USERNAME | awk '{print tolower($0)}')
-USERPASS=$5
-DG=$6
-SSH=$7
-UPGRADE=$8
-ESCRITORIO=$9
-DISCO=${10}
+DG=$4
+SSH=$5
+UPGRADE=$6
+ESCRITORIO=$7
+DISCO=$8
 
 # Habilitar NTP
 timedatectl set-ntp true
@@ -171,11 +168,9 @@ echo "92" >/tmp/PRG
 
 # Creacion usuario
 echo "useradd -m -c $ADMINNAME -s /bin/zsh -g users -G wheel,rfkill,sys $ADMINUSER && (echo -e '$ADMINPASS\n$ADMINPASS' | passwd $ADMINUSER)" | ARCH
-echo "useradd -m -c $USERNAME -s /bin/zsh -g users -G rfkill,sys $USERUSER && (echo -e '$USERPASS\n$USERPASS' | passwd $USERUSER)" | ARCH
 if [[ $GPU = vmware ]]
 then 
 	echo "usermod -aG vboxsf $ADMINUSER" | ARCH
-	echo "usermod -aG vboxsf $USERUSER" | ARCH
 fi
 echo "94" >/tmp/PRG
 
@@ -184,7 +179,7 @@ echo "chown updates:wheel /usr/bin/cambonos-upgrade; chmod 750 /usr/bin/cambonos
 echo "chsh -s /usr/bin/nologin updates" | ARCH
 if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
 then
-	echo "systemctl enable cambonos-upgrade.service || exit 1" | ARCH
+	echo "systemctl enable cambonos-upgrade.timer || exit 1" | ARCH
 fi
 echo "96" >/tmp/PRG
 

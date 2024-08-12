@@ -1,0 +1,14 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = lsb-release
+Target = filesystem
+Target = systemd
+Target = pacman-mirrorlist
+Target = os-release
+
+[Action]
+Description = Restaurando CambonOS release files
+When = PostTransaction
+Exec = /bin/bash -c 'cp /etc/cambonos-release/* /etc/'

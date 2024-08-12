@@ -15,11 +15,6 @@ DONE () {
   sleep 1
 }
 
-if [[ $1 = "-d" ]] || [[ $1 = "--daemon" ]]
-then
-	sudo rm /var/lib/pacman/db.lck
-fi
-
 nm-online >/dev/null 2>&1
 
 echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
@@ -38,8 +33,3 @@ sleep 2
 sudo grub-mkconfig -o /boot/grub/grub.cfg || ERROR
 DONE
 
-if [[ $1 = "-d" ]] || [[ $1 = "--daemon" ]]
-then
-	sleep 30m
-	cambonos-upgrade --daemon
-fi

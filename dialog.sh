@@ -34,23 +34,13 @@ do
 	        dialog --title " CambonOS Installer " --msgbox "\nLas contraseñas no coinciden. Inténtelo de nuevo." 7 80
 	        SUDO
             else
-			if ! is_secure_password "$PASS"
-	    		then
-	        		dialog --title " CambonOS Installer " --msgbox "\nLa contraseña no cumple con los criterios de seguridad. Debe contener al menos 12 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial." 7 80
-	        		SUDO
-            		else
-				declare -g ${RST}="$PASS"
-	    		fi
+		declare -g ${RST}="$PASS"
             fi
 	}
 	
 	# Ventana de entrada de nombre para el nuevo usuario administrador
 	ADMINNAME=$(dialog --stdout --title " CambonOS Installer " --inputbox "\nNombre para el usuario administrador:" 10 80 "Administrador")
 	SUDO ADMINPASS
-	
-	# Ventana de entrada de nombre para el nuevo usuario sin privilegios
-       	USERNAME=$(dialog --stdout --title " CambonOS Installer " --inputbox "\nNombre para el nuevo usuario sin privilegios:" 10 80 "Usuario")
-	SUDO USERPASS
 
 	# Ventana de selección de instalación de controladores gráficos
 	DG=$(dialog --stdout --title " CambonOS Installer " --yesno "\nDesea instalar los drivers gráficos?" 7 80 && echo "Si" || echo "No")
@@ -75,7 +65,7 @@ do
 done
 
 # Ejecucion del script de instalación
-sh installer/cambonos-install.sh $NOMBRE $ADMINNAME $ADMINPASS $USERNAME $USERPASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>&1 &
+sh installer/cambonos-install.sh $NOMBRE $ADMINNAME $ADMINPASS $DG $SSH $UPGRADE $ESCRITORIO $DISCO >/tmp/install 2>&1 &
 
 # Monitorizacion del script de instalación
 echo "0" >/tmp/PRG
