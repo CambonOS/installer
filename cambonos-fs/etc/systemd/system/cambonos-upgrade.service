@@ -1,17 +1,11 @@
 [Unit]
 Description=CambonOS Upgrade Service
-After=network.target multi-user.target
 
 [Service]
 Type=simple
+User=updates
 RemainAfterExit=yes
-ExecStart=/usr/bin/cambonos-upgrade -d
-Restart=always
-RestartSec=30s
-StartLimitBurst=5
+ExecStart=/usr/bin/cambonos-upgrade
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=cambonos-upgrade
-
-[Install]
-WantedBy=multi-user.target
