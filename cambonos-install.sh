@@ -127,7 +127,8 @@ echo "65" >/tmp/PRG
 # Instalacion de utilidades adicionales
 echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k-bin-git ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs libpwquality || exit 1' | su updates || exit 1" | ARCH
 if [[ $GPU = vmware ]]
-then echo "echo 'yay --noconfirm -Sy virtualbox-guest-utils || exit 1' | su updates || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
+then
+	echo "echo 'yay --noconfirm -Sy virtualbox-guest-utils || exit 1' | su updates || exit 1" | ARCH && echo "systemctl enable vboxservice.service" | ARCH
 fi
 echo "70" >/tmp/PRG
 
