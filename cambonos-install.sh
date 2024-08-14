@@ -61,8 +61,9 @@ echo "35" >/tmp/PRG
 echo "37" >/tmp/PRG
 
 # Instalacion paquetes basicos
-echo "pacman --noconfirm -Sy lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g dosfstools exfat-utils cpupower rsync || exit 1" | ARCH || STOP
+echo "pacman --noconfirm -Sy lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g dosfstools exfat-utils cpupower rsync plymouth || exit 1" | ARCH || STOP
 echo 'systemctl enable cpupower.service || exit 1' | ARCH
+echo 'sed -i 's/base udev/base udev plymouth sleep/' /etc/mkinitcpio.conf || exit 1' | ARCH
 echo "45" >/tmp/PRG
 
 # Habilitar repositorios multilib
@@ -149,6 +150,7 @@ echo "85" >/tmp/PRG
 
 # Configuraciones CambonOS
 cp -rv installer/cambonos-fs/* /mnt
+echo 'plymouth-set-default-theme -R cambonos || exit 1' | ARCH
 cp /mnt/etc/cambonos-release/* /mnt/etc/
 echo "90" >/tmp/PRG
 
