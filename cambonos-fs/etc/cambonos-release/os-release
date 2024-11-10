@@ -1,9 +1,9 @@
-NAME="CambonOS Archie"
-PRETTY_NAME="CambonOS Archie"
-ID=archie
+NAME="CambonOS"
+PRETTY_NAME="CambonOS"
+ID=cambonos
 BUILD_ID=rolling
 ANSI_COLOR="38;2;23;147;209"
-HOME_URL="https://github.com/CambonOS/Linux"
+HOME_URL="https://github.com/CambonOS/installer"
 DOCUMENTATION_URL="https://wiki.archlinux.org/"
 SUPPORT_URL="https://bbs.archlinux.org/"
 BUG_REPORT_URL="https://bugs.archlinux.org/"

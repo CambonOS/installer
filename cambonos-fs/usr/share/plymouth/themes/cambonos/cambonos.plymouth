@@ -1,0 +1,32 @@
+[Plymouth Theme]
+Name=CambonOS
+Description=Simple theme that shows CambonOS Logo and progress bar
+ModuleName=two-step
+
+[two-step]
+ImageDir=/usr/share/plymouth/themes/cambonos
+BackgroundStartColor=0x000000
+BackgroundEndColor=0x000000
+HorizontalAlignment=0.5
+VerticalAlignment=0.6
+
+[boot-up]
+UseAnimation=true
+
+[shutdown]
+UseAnimation=false
+
+[reboot]
+UseAnimation=false
+
+[updates]
+UseAnimation=true
+
+[system-upgrade]
+UseAnimation=true
+
+[firmware-upgrade]
+UseAnimation=true
+
+[system-reset]
+UseAnimation=true
