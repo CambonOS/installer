@@ -62,7 +62,7 @@ echo "37" >/tmp/PRG
 
 # Instalacion paquetes basicos
 echo "pacman --noconfirm -Sy lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g dosfstools exfat-utils cpupower rsync plymouth accountsservice || exit 1" | ARCH || STOP
-echo 'systemctl enable cpupower.service && systemctl enable accounts-daemon.service || exit 1' | ARCH
+echo 'systemctl enable cpupower.service ; systemctl enable accounts-daemon.service || exit 1' | ARCH
 echo "45" >/tmp/PRG
 
 # Habilitar repositorios multilib
