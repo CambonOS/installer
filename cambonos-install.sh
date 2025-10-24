@@ -116,7 +116,7 @@ echo "$NOMBRE" >/mnt/etc/hostname
 echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts
 sed -i 's/^#MulticastDNS=yes/MulticastDNS=no/' /mnt/etc/systemd/resolved.conf
 sed -i 's/^use-ipv6=yes/use-ipv6=no/' /mnt/etc/avahi/avahi-daemon.conf
-echo 'systemctl enable NetworkManager.service && systemctl enable ntpd.service && systemctl enable systemd-resolved.service && systemctl enable avahi-daemon.service && systemctl enable systemd-homed.service || exit 1' | ARCH
+echo 'systemctl enable NetworkManager.service ; systemctl enable ntpd.service ; systemctl enable systemd-resolved.service ; systemctl enable avahi-daemon.service ; systemctl enable systemd-homed.service || exit 1' | ARCH
 echo "60" >/tmp/PRG
 
 # Instalacion de yay
