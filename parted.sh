@@ -41,7 +41,7 @@ Para continuar su intalacion escoga entre:
 					lsblk | grep $DISCOP$N >>$SALIDA 2>&1 && N=$(($N+1)) || LIBRE=1
 				done
 				echo -e "\n>>Particionando disco...\c"
-				(echo -e "n\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+				(echo -e "n\n\n\n+2G\nn\n\n\n+40G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
 				;;
 			esac
 		else 
@@ -52,7 +52,7 @@ Para continuar su intalacion escoga entre:
 			else exit
 			fi
 			echo -e "\n>>Particionando disco...\c"
-			(echo -e "g\nn\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
+			(echo -e "g\nn\n\n\n+2G\nn\n\n\n+40G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
 		fi
 		yes | mkfs.vfat -F 32 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
 		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
