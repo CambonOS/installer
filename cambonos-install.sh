@@ -38,7 +38,7 @@ pacman --noconfirm -Sy archlinux-keyring
 echo "15" >/tmp/PRG
 
 # Creacion de la raiz del sistema
-pacstrap /mnt linux-zen linux-zen-headers linux-firmware base || STOP
+pacstrap /mnt linux linux-headers linux-firmware base || STOP
 echo "30" >/tmp/PRG
 
 # Generar fichero fstab del sistema
