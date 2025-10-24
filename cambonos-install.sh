@@ -173,7 +173,7 @@ echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systo
 echo "92" >/tmp/PRG
 
 # Creacion usuario
-echo "useradd -m -c $ADMINNAME -s /bin/zsh -g users -G wheel,rfkill,sys $ADMINUSER && (echo -e '$ADMINPASS\n$ADMINPASS' | passwd $ADMINUSER)" | ARCH
+echo "useradd -m -c $ADMINNAME -s /bin/zsh -g users -G wheel,rfkill,sys,lp $ADMINUSER && (echo -e '$ADMINPASS\n$ADMINPASS' | passwd $ADMINUSER)" | ARCH
 if [[ $GPU = vmware ]]
 then 
 	echo "usermod -aG vboxsf $ADMINUSER" | ARCH
