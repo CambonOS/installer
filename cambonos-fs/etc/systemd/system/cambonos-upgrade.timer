@@ -2,7 +2,7 @@
 Description=CambonOS Upgrade Timer
 
 [Timer]
-OnCalendar=*-*-* 03:00:00
+OnCalendar=daily
 Persistent=true
 
 [Install]
