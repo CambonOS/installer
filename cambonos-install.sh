@@ -81,45 +81,52 @@ if [[ $DG =~ ^([sS]|si|Si)$ ]]; then
     [[ $GPU == "innotek" ]] && GPU="virtualbox"
     case $GPU in
         amd)
-            pacman --noconfirm -Sy \
+            echo "pacman --noconfirm -Sy \
                 mesa lib32-mesa \
                 vulkan-radeon lib32-vulkan-radeon \
-                vulkan-icd-loader lib32-vulkan-icd-loader
+                vulkan-icd-loader lib32-vulkan-icd-loader \
+				|| exit 1" | ARCH
             ;;
         nvidia)
-            pacman --noconfirm -Sy \
+            echo "pacman --noconfirm -Sy \
                 nvidia nvidia-utils lib32-nvidia-utils \
                 nvidia-settings \
-                vulkan-icd-loader lib32-vulkan-icd-loader
+                vulkan-icd-loader lib32-vulkan-icd-loader \
+				|| exit 1" | ARCH
             ;;
         nvidia-hybrid)
-            pacman --noconfirm -Sy \
+            echo "pacman --noconfirm -Sy \
                 nvidia nvidia-utils lib32-nvidia-utils \
                 nvidia-settings \
                 optimus-manager optimus-manager-qt \
-                vulkan-icd-loader lib32-vulkan-icd-loader
+                vulkan-icd-loader lib32-vulkan-icd-loader \
+				|| exit 1" | ARCH
             ;;
         intel)
-            pacman --noconfirm -Sy \
+            echo "pacman --noconfirm -Sy \
                 mesa lib32-mesa \
                 vulkan-intel lib32-vulkan-intel \
-                vulkan-icd-loader lib32-vulkan-icd-loader
+                vulkan-icd-loader lib32-vulkan-icd-loader \
+				|| exit 1" | ARCH
             ;;
         vmware)
-            pacman --noconfirm -Sy \
+            echo "pacman --noconfirm -Sy \
                 open-vm-tools xf86-video-vmware \
-                mesa lib32-mesa
-            systemctl enable --now vmtoolsd.service || true
+                mesa lib32-mesa && \
+				systemctl enable --now vmtoolsd.service \
+				|| exit 1" | ARCH
             ;;
         virtualbox)
-            pacman --noconfirm -Sy \
-                virtualbox-guest-utils mesa lib32-mesa
-            systemctl enable --now vboxservice.service || true
+            echo "pacman --noconfirm -Sy \
+                virtualbox-guest-utils mesa lib32-mesa && \
+				systemctl enable --now vboxservice.service \
+				|| exit 1" | ARCH
             ;;
         *)
-            pacman --noconfirm -Sy \
+            echo "pacman --noconfirm -Sy \
                 mesa lib32-mesa \
-                vulkan-icd-loader lib32-vulkan-icd-loader
+                vulkan-icd-loader lib32-vulkan-icd-loader \
+				|| exit 1" | ARCH
             ;;
     esac
 fi
