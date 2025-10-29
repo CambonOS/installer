@@ -72,12 +72,18 @@ echo "52" >/tmp/PRG
 
 # Instalacion drivers graficos
 if [[ $DG =~ ^([sS]|si|Si)$ ]]; then
-    # Detectar GPU / entorno gráfico
-    GPU=$(lspci | grep -E "VGA|3D controller" | grep -oE "NVIDIA|AMD|Intel|VMware|VirtualBox" | head -n1 | tr '[:upper:]' '[:lower:]')
-    # Detectar GPU híbrida (Intel + Nvidia → Optimus)
-    if lspci | grep -E "VGA|3D controller" | grep -q "NVIDIA" && lspci | grep -q "Intel"; then
-        GPU="nvidia-hybrid"
-    fi
+	# Detectar entornovirtual
+	virt_type=$(systemd-detect-virt)
+	if [[ "$virt_type" != "none" ]]; then
+    	GPU="$virt_type"
+	else
+	    # Detectar GPU
+    	GPU=$(lspci | grep -E "VGA|3D controller" | grep -oE "NVIDIA|AMD|Intel" | head -n1 | tr '[:upper:]' '[:lower:]')
+    	# Detectar GPU híbrida (Intel + Nvidia → Optimus)
+    	if lspci | grep -E "VGA|3D controller" | grep -q "NVIDIA" && lspci | grep -q "Intel"; then
+        	GPU="nvidia-hybrid"
+    	fi
+	fi
     case $GPU in
         amd)
             echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
@@ -91,7 +97,7 @@ if [[ $DG =~ ^([sS]|si|Si)$ ]]; then
         vmware)
             echo "pacman --noconfirm -Sy open-vm-tools mesa lib32-mesa && systemctl enable vmtoolsd.service vmware-vmblock-fuse.service || exit 1" | ARCH
             ;;
-        virtualbox)
+        oracle)
             echo "pacman --noconfirm -Sy virtualbox-guest-utils mesa lib32-mesa && systemctl enable vboxservice.service || exit 1" | ARCH
             ;;
         *)
@@ -179,7 +185,7 @@ echo "92" >/tmp/PRG
 
 # Creacion usuario
 echo "useradd -m -c $ADMINNAME -s /bin/zsh -g users -G wheel,rfkill,sys,lp $ADMINUSER && (echo -e '$ADMINPASS\n$ADMINPASS' | passwd $ADMINUSER)" | ARCH
-if [[ $GPU = virtualbox ]]
+if [[ $GPU = oracle ]]
 then 
 	echo "usermod -aG vboxsf $ADMINUSER" | ARCH
 fi
