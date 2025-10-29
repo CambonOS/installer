@@ -95,7 +95,7 @@ if [[ $DG =~ ^([sS]|si|Si)$ ]]; then
             echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
             ;;
         vmware)
-            echo "pacman --noconfirm -Sy open-vm-tools mesa lib32-mesa && systemctl enable vmtoolsd.service vmware-vmblock-fuse.service || exit 1" | ARCH
+            echo "pacman --noconfirm -Sy open-vm-tools mesa lib32-mesa xf86-input-vmmouse && systemctl enable vmtoolsd.service vmware-vmblock-fuse.service || exit 1" | ARCH
             ;;
         oracle)
             echo "pacman --noconfirm -Sy virtualbox-guest-utils mesa lib32-mesa && systemctl enable vboxservice.service || exit 1" | ARCH
