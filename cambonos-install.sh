@@ -82,11 +82,8 @@ if [[ $DG =~ ^([sS]|si|Si)$ ]]; then
         amd)
             echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
             ;;
-        nvidia)
+        nvidia|nvidia-hybrid)
             echo "pacman --noconfirm -Sy nvidia nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
-            ;;
-        nvidia-hybrid)
-            echo "pacman --noconfirm -Sy nvidia nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader optimus-manager optimus-manager-qt || exit 1" | ARCH
             ;;
         intel)
             echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
@@ -135,6 +132,10 @@ echo "68" >/tmp/PRG
 
 # Instalacion de utilidades adicionales
 echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k-bin-git ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs libpwquality || exit 1' | su updates || exit 1" | ARCH
+if [[ $GPU = nvidia-hybrid ]]
+then 
+	echo "echo 'yay --noconfirm -Sy optimus-manager optimus-manager-qt || exit 1' | su updates || exit 1" | ARCH
+fi
 echo "70" >/tmp/PRG
 
 # Instalacion XFCE
