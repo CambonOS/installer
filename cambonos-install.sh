@@ -70,31 +70,58 @@ echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.con
 echo "47" >/tmp/PRG
 
 # Instalacion drivers graficos
-if [[ $DG = s ]] || [[ $DG = S ]] || [[ $DG = si ]] || [[ $DG = Si ]]
-then
-	GPU='DESCONOCIDA'
-	(lspci | grep VGA) | grep -o 'VMware' >/dev/null && GPU='vmware'
-	(lspci | grep VGA) | grep -o 'Intel' >/dev/null && GPU='intel'
-	(lspci | grep VGA) | grep -o 'AMD' >/dev/null && GPU='amd'
-	(lspci | grep VGA) | grep -o 'NVIDIA' >/dev/null && GPU='nvidia'
-	(lspci | grep "3D controller") | grep -o 'VMware' >/dev/null && GPU='vmware'
-	(lspci | grep "3D controller") | grep -o 'Intel' >/dev/null && GPU='intel'
-	(lspci | grep "3D controller") | grep -o 'AMD' >/dev/null && GPU='amd'
-	(lspci | grep "3D controller") | grep -o 'NVIDIA' >/dev/null && GPU='onvidia'
-	case $GPU in
-		amd)
-			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-amdgpu lib32-mesa mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH ;;
-		nvidia)
-			echo "pacman --noconfirm -Sy xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH ;;
-  		onvidia)
-			echo "pacman --noconfirm -Sy xf86-video-vesa nvidia lib32-nvidia-utils nvidia-utils nvidia-settings nvidia-dkms vulkan-icd-loader lib32-vulkan-icd-loader optimus-manager optimus-manager-qt || exit 1" | ARCH ;;
-  		intel)
-			echo "pacman --noconfirm -Sy xf86-video-vesa xf86-video-intel lib32-mesa mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH ;;
-		vmware)
-			echo "pacman --noconfirm -Sy virtualbox-guest-utils xf86-video-vesa xf86-video-vmware lib32-mesa mesa || exit 1" | ARCH ;;
-		*)
-			echo "pacman --noconfirm -Sy xf86-video-vesa lib32-mesa mesa vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH ;;
-	esac
+if [[ $DG =~ ^([sS]|si|Si)$ ]]; then
+    # Detectar GPU / entorno gráfico
+    GPU=$(lspci | grep -E "VGA|3D controller" | grep -oE "NVIDIA|AMD|Intel|VMware|VirtualBox|InnoTek" | head -n1 | tr '[:upper:]' '[:lower:]')
+    # Detectar GPU híbrida (Intel + Nvidia → Optimus)
+    if lspci | grep -E "VGA|3D controller" | grep -q "NVIDIA" && lspci | grep -q "Intel"; then
+        GPU="nvidia-hybrid"
+    fi
+    # Normalizar nombres
+    [[ $GPU == "innotek" ]] && GPU="virtualbox"
+    case $GPU in
+        amd)
+            pacman --noconfirm -Sy \
+                mesa lib32-mesa \
+                vulkan-radeon lib32-vulkan-radeon \
+                vulkan-icd-loader lib32-vulkan-icd-loader
+            ;;
+        nvidia)
+            pacman --noconfirm -Sy \
+                nvidia nvidia-utils lib32-nvidia-utils \
+                nvidia-settings \
+                vulkan-icd-loader lib32-vulkan-icd-loader
+            ;;
+        nvidia-hybrid)
+            pacman --noconfirm -Sy \
+                nvidia nvidia-utils lib32-nvidia-utils \
+                nvidia-settings \
+                optimus-manager optimus-manager-qt \
+                vulkan-icd-loader lib32-vulkan-icd-loader
+            ;;
+        intel)
+            pacman --noconfirm -Sy \
+                mesa lib32-mesa \
+                vulkan-intel lib32-vulkan-intel \
+                vulkan-icd-loader lib32-vulkan-icd-loader
+            ;;
+        vmware)
+            pacman --noconfirm -Sy \
+                open-vm-tools xf86-video-vmware \
+                mesa lib32-mesa
+            systemctl enable --now vmtoolsd.service || true
+            ;;
+        virtualbox)
+            pacman --noconfirm -Sy \
+                virtualbox-guest-utils mesa lib32-mesa
+            systemctl enable --now vboxservice.service || true
+            ;;
+        *)
+            pacman --noconfirm -Sy \
+                mesa lib32-mesa \
+                vulkan-icd-loader lib32-vulkan-icd-loader
+            ;;
+    esac
 fi
 
 # Instalacion GRUB
