@@ -72,33 +72,25 @@ echo "52" >/tmp/PRG
 
 # Instalacion drivers graficos
 if [[ $DG =~ ^([sS]|si|Si)$ ]]; then
-	# Detectar entornovirtual
-	virt_type=$(systemd-detect-virt)
-	if [[ "$virt_type" != "none" ]]; then
-    	GPU="$virt_type"
-	else
-	    # Detectar GPU
-    	GPU=$(lspci | grep -E "VGA|3D controller" | grep -oE "NVIDIA|AMD|Intel" | head -n1 | tr '[:upper:]' '[:lower:]')
-    	# Detectar GPU híbrida (Intel + Nvidia → Optimus)
-    	if lspci | grep -E "VGA|3D controller" | grep -q "NVIDIA" && lspci | grep -q "Intel"; then
-        	GPU="nvidia-hybrid"
-    	fi
-	fi
+	# Detectar GPU NVIDIA
+	GPU=$(lspci | grep -E "VGA|3D controller" | grep -oE "NVIDIA|AMD|Intel" | tr '[:upper:]' '[:lower:]' | grep -m1 'nvidia')
+	# Si no se encuentra NVIDIA, toma la primera disponible
+	GPU=${GPU:-$(lspci | grep -E "VGA|3D controller" | grep -oE "AMD|Intel" | head -n1 | tr '[:upper:]' '[:lower:]')}
+	# Detectar GPU
+	#GPU=$(lspci | grep -E "VGA|3D controller" | grep -oE "NVIDIA|AMD|Intel" | head -n1 | tr '[:upper:]' '[:lower:]')
+	# Detectar GPU híbrida (Intel + Nvidia → Optimus)
+	#if lspci | grep -E "VGA|3D controller" | grep -q "NVIDIA" && lspci | grep -q "Intel"; then
+	#	GPU="nvidia-hybrid"
+	#fi
     case $GPU in
         amd)
             echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
             ;;
         nvidia|nvidia-hybrid)
-            echo "pacman --noconfirm -Sy nvidia nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
+            echo "pacman --noconfirm -Sy nvidia nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader && busid=$(lspci | grep NVIDIA | grep -E "VGA|3D Controller" | cut -d " " -f 1) && echo -e "Section \"Device\"\n\tIdentifier \"NVIDIA GPU\"\n\tDriver \"nvidia\"\n\tBusID \"PCI:$busid\"\n\tOption \"PrimaryGPU\" \"yes\"\nEndSection" >/etc/X11/xorg.conf.d/10-nvidia.conf || exit 1" | ARCH
             ;;
         intel)
             echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
-            ;;
-        vmware)
-            echo "pacman --noconfirm -Sy open-vm-tools mesa lib32-mesa xf86-input-vmmouse && systemctl enable vmtoolsd.service vmware-vmblock-fuse.service || exit 1" | ARCH
-            ;;
-        oracle)
-            echo "pacman --noconfirm -Sy virtualbox-guest-utils mesa lib32-mesa && systemctl enable vboxservice.service || exit 1" | ARCH
             ;;
         *)
             echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
