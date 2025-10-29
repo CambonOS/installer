@@ -19,11 +19,9 @@ NOMBRE=$1
 ADMINNAME=$2
 ADMINUSER=$(echo $ADMINNAME | awk '{print tolower($0)}')
 ADMINPASS=$3
-DG=$4
+ESCRITORIO=$4
 SSH=$5
-UPGRADE=$6
-ESCRITORIO=$7
-DISCO=$8
+DISCO=$6
 echo "1" >/tmp/PRG
 
 # Habilitar NTP
@@ -71,28 +69,26 @@ echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.con
 echo "52" >/tmp/PRG
 
 # Instalacion drivers graficos
-if [[ $DG =~ ^([sS]|si|Si)$ ]]; then
-	# Detectar GPU
-	GPU=$(lspci | grep -E "VGA|3D" | grep -oE "NVIDIA|AMD|Intel" | head -n1 | tr '[:upper:]' '[:lower:]')
-	# Detectar GPU híbrida (Intel + Nvidia → Optimus)
-	if lspci | grep -E "VGA|3D" | grep -q "NVIDIA" && lspci | grep -q "Intel"; then
-		GPU="nvidia-hybrid"
-	fi
-    case $GPU in
-        amd)
-            echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
-            ;;
-        nvidia|nvidia-hybrid)
-            echo "pacman --noconfirm -Sy nvidia nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
-            ;;
-        intel)
-            echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
-            ;;
-        *)
-            echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
-            ;;
-    esac
+# Detectar GPU
+GPU=$(lspci | grep -E "VGA|3D" | grep -oE "NVIDIA|AMD|Intel" | head -n1 | tr '[:upper:]' '[:lower:]')
+# Detectar GPU híbrida (Intel + Nvidia → Optimus)
+if lspci | grep -E "VGA|3D" | grep -q "NVIDIA" && lspci | grep -q "Intel"; then
+	GPU="nvidia-hybrid"
 fi
+case $GPU in
+	amd)
+		echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
+		;;
+	nvidia|nvidia-hybrid)
+		echo "pacman --noconfirm -Sy nvidia nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
+		;;
+	intel)
+		echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
+		;;
+	*)
+		echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
+		;;
+esac
 echo "60" >/tmp/PRG
 
 # Instalacion GRUB
@@ -134,18 +130,16 @@ echo "70" >/tmp/PRG
 
 # Instalacion XFCE
 (sleep 2; while [[ $(cat /mnt/tmp/PRG) -ne 85 ]]; do cp /mnt/tmp/PRG /tmp/PRG; sleep 1; done) &
-echo $ESCRITORIO | grep "1" >/dev/nul && INSTALL=true || INSTALL=false
-if [[ $INSTALL = true ]]
-then	
-	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH
-fi
-
-# Instalacion Qtile
-echo $ESCRITORIO | grep "2" >/dev/nul && INSTALL=true || INSTALL=false
-if [[ $INSTALL = true ]]
-then
-	echo 'echo "cd /tmp; git clone https://github.com/Cambon18/qtile && cd qtile && bash archie.sh" | su updates' | ARCH
-fi
+case "$ESCRITORIO" in
+    1)
+        # Instalación XFCE
+        echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH
+        ;;
+    2)
+        # Instalación Qtile
+        echo 'echo "cd /tmp; git clone https://github.com/Cambon18/qtile && cd qtile && bash archie.sh" | su updates' | ARCH
+        ;;
+esac
 echo "85" >/tmp/PRG
 
 # Configuraciones CambonOS
@@ -173,19 +167,12 @@ echo "92" >/tmp/PRG
 
 # Creacion usuario
 echo "useradd -m -c $ADMINNAME -s /bin/zsh -g users -G wheel,rfkill,sys,lp $ADMINUSER && (echo -e '$ADMINPASS\n$ADMINPASS' | passwd $ADMINUSER)" | ARCH
-if [[ $GPU = oracle ]]
-then 
-	echo "usermod -aG vboxsf $ADMINUSER" | ARCH
-fi
 echo "94" >/tmp/PRG
 
 # Configuracion cambonos-upgrade
 echo "chown updates:wheel /usr/bin/cambonos-upgrade; chmod 750 /usr/bin/cambonos-upgrade" | ARCH
 echo "chsh -s /usr/bin/nologin updates" | ARCH
-if [[ $UPGRADE = s ]] || [[ $UPGRADE = si ]] || [[ $UPGRADE = S ]] || [[ $UPGRADE = Si ]]
-then
-	echo "systemctl enable cambonos-upgrade.timer || exit 1" | ARCH
-fi
+echo "systemctl enable cambonos-upgrade.timer || exit 1" | ARCH
 echo "96" >/tmp/PRG
 
 # Generacion locales
