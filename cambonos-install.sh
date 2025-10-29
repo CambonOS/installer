@@ -166,6 +166,7 @@ echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions
 echo "70" >/tmp/PRG
 
 # Instalacion XFCE
+(sleep 2; while [[ $(cat /mnt/tmp/PRG) -ne 85 ]]; do cp /mnt/tmp/PRG /tmp/PRG; sleep 1; done) &
 echo $ESCRITORIO | grep "1" >/dev/nul && INSTALL=true || INSTALL=false
 if [[ $INSTALL = true ]]
 then	
@@ -205,7 +206,7 @@ echo "92" >/tmp/PRG
 
 # Creacion usuario
 echo "useradd -m -c $ADMINNAME -s /bin/zsh -g users -G wheel,rfkill,sys,lp $ADMINUSER && (echo -e '$ADMINPASS\n$ADMINPASS' | passwd $ADMINUSER)" | ARCH
-if [[ $GPU = vmware ]]
+if [[ $GPU = virtualbox ]]
 then 
 	echo "usermod -aG vboxsf $ADMINUSER" | ARCH
 fi
