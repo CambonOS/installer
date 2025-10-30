@@ -34,7 +34,7 @@ do
 	DISCO=$(cat /tmp/disco)
 	
 	# Ventana de confirmación opciones	
-	dialog --title " CambonOS Installer " --yesno "\nPor favor, confirme que las opciones seleccionadas son correctas:\n\nNombre del equipo: $NOMBRE\nNombre para el administrador: $ADMINNAME\nInstalar los drivers gráficos: $DG\nInstalar servidor SSH: $SSH\nActualización automatica: $UPGRADE\nEntorno de escritorio seleccionado: $ESCRITORIO" 15 80 && break
+	dialog --title " CambonOS Installer " --yesno "\nPor favor, confirme que las opciones seleccionadas son correctas:\n\nNombre del equipo: $NOMBRE\nNombre del usuario: $ADMINNAME\nEntorno de escritorio seleccionado: $ESCRITORIO\nInstalar servidor SSH: $SSH" 15 80 && break
 done
 
 # Ejecucion del script de instalación
@@ -43,4 +43,3 @@ sh installer/cambonos-install.sh $NOMBRE $ADMINNAME $PASS $ESCRITORIO $SSH $DISC
 # Monitorizacion del script de instalación
 echo "0" >/tmp/PRG
 (while [[ $(cat /tmp/PRG) -ne 100 ]]; do sleep 1; cat /tmp/PRG; done) | dialog --title " CambonOS Installer " --gauge "Instalando..." 7 80 0
-
