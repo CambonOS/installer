@@ -134,12 +134,14 @@ case "$ESCRITORIO" in
     1)
         # Instalación XFCE
 		cp -r /root/xfce /mnt/xfce
-        echo 'echo "cd /xfce && bash archie.sh; sudo rm -rf /xfce" | su updates' | ARCH
+        echo 'chown -R updates:updates /xfce; echo "cd /xfce && bash archie.sh" | su updates' | ARCH
+		rm -rf /mnt/xfce
         ;;
     2)
         # Instalación Qtile
 		cp -r /root/qtile /mnt/qtile
-        echo 'echo "cd /qtile && bash archie.sh; sudo rm -rf /qtile" | su updates' | ARCH
+        echo 'chown -R updates:updates /qtile; echo "cd /qtile && bash archie.sh" | su updates' | ARCH
+		rm -rf /mnt/qtile
         ;;
 esac
 echo "85" >/tmp/PRG
