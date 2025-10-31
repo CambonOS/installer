@@ -133,11 +133,15 @@ echo "70" >/tmp/PRG
 case "$ESCRITORIO" in
     1)
         # Instalación XFCE
-        echo 'echo "cd /tmp; git clone https://github.com/Cambon18/xfce && cd xfce && bash archie.sh" | su updates' | ARCH
+		cp -r /root/xfce /mnt/xfce
+        echo 'chown -R updates:updates /xfce; echo "cd /xfce && bash archie.sh" | su updates' | ARCH
+		rm -rf /mnt/xfce
         ;;
     2)
         # Instalación Qtile
-        echo 'echo "cd /tmp; git clone https://github.com/Cambon18/qtile && cd qtile && bash archie.sh" | su updates' | ARCH
+		cp -r /root/qtile /mnt/qtile
+        echo 'chown -R updates:updates /qtile; echo "cd /qtile && bash archie.sh" | su updates' | ARCH
+		rm -rf /mnt/qtile
         ;;
 esac
 echo "85" >/tmp/PRG
