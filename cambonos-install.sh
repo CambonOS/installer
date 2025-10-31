@@ -144,7 +144,7 @@ n=${#pkg_array[@]}
 i=0
 for pkg in "${pkg_array[@]}"; do
     i=$((i + 1))
-    echo "yay --noconfirm -Sy $pkg" | ARCH
+    echo -e "echo \"yay --noconfirm -Sy $pkg\" | su updates" | ARCH || STOP
     progress=$((33 + ($i * 8 / $n)))
     echo "$progress" > /tmp/PRG
 done
