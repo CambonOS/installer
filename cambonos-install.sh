@@ -34,11 +34,11 @@ echo "5" >/tmp/PRG
 
 # Actualizacion de las claves de Arch Linux
 pacman --noconfirm -Sy archlinux-keyring
-echo "10" >/tmp/PRG
+echo "7" >/tmp/PRG
 
 # Creacion de la raiz del sistema
 pacstrap /mnt linux linux-headers linux-firmware base || STOP
-echo "25" >/tmp/PRG
+echo "15" >/tmp/PRG
 
 # Generar fichero fstab del sistema
 dd if=/dev/zero of=/mnt/swapfile bs=1M count=4k status=progress
@@ -46,27 +46,35 @@ chmod 0600 /mnt/swapfile
 mkswap -U clear /mnt/swapfile
 swapon /mnt/swapfile
 genfstab -U /mnt >> /mnt/etc/fstab || STOP
-echo "30" >/tmp/PRG
+echo "20" >/tmp/PRG
 
 # Modificar configuraciones de root
 echo "usermod -s /bin/zsh root" | ARCH # Cambio shell
 cp -rv installer/cambonos-fs/etc/skel/.config /mnt/root # Carpeta .config del skel
 cp -v installer/cambonos-fs/etc/skel/.* /mnt/root/ # Ficheros del skel
 echo "passwd --lock root" | ARCH
-echo "35" >/tmp/PRG
+echo "24" >/tmp/PRG
 
 # Definicion de los paquetes microcode CPU
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-echo "40" >/tmp/PRG
+echo "25" >/tmp/PRG
 
 # Instalacion paquetes basicos
-echo "pacman --noconfirm -Sy lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g dosfstools exfat-utils cpupower rsync plymouth accountsservice || exit 1" | ARCH || STOP
+packages="lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g dosfstools exfat-utils cpupower rsync plymouth accountsservice"
+read -r -a pkg_array <<< "$packages"
+n=${#pkg_array[@]}
+i=0
+for pkg in "${pkg_array[@]}"; do
+    i=$((i + 1))
+    echo "pacman --noconfirm -Sy $pkg" | ARCH || STOP
+    progress=$((25 + (i * 20 / n)))
+    echo "$progress" > /tmp/PRG
+done
 echo 'systemctl enable cpupower.service ; systemctl enable accounts-daemon.service || exit 1' | ARCH
-echo "50" >/tmp/PRG
 
 # Habilitar repositorios multilib
 echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >>/mnt/etc/pacman.conf
-echo "52" >/tmp/PRG
+echo "47" >/tmp/PRG
 
 # Instalacion drivers graficos
 # Detectar GPU
@@ -77,19 +85,27 @@ if lspci | grep -E "VGA|3D" | grep -q "NVIDIA" && lspci | grep -q "Intel"; then
 fi
 case $GPU in
 	amd)
-		echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
+		packages="mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader"
 		;;
 	nvidia|nvidia-hybrid)
-		echo "pacman --noconfirm -Sy nvidia nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
+		packages="nvidia nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader"
 		;;
 	intel)
-		echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
+		packages="mesa lib32-mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader"
 		;;
 	*)
-		echo "pacman --noconfirm -Sy mesa lib32-mesa vulkan-icd-loader lib32-vulkan-icd-loader || exit 1" | ARCH
+		packages="mesa lib32-mesa vulkan-icd-loader lib32-vulkan-icd-loader"
 		;;
 esac
-echo "60" >/tmp/PRG
+read -r -a pkg_array <<< "$packages"
+n=${#pkg_array[@]}
+i=0
+for pkg in "${pkg_array[@]}"; do
+    i=$((i + 1))
+    echo "pacman --noconfirm -Sy $pkg" | ARCH || STOP
+    progress=$((47 + (i * 10 / n)))
+    echo "$progress" > /tmp/PRG
+done
 
 # Instalacion GRUB
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
@@ -101,7 +117,7 @@ case $GRUB in
 		echo "pacman --noconfirm -Sy grub os-prober grub-theme-vimix && grub-install --target=i386-pc /dev/$DISCO || exit 1" | ARCH || STOP
 		;;
 esac
-echo "65" >/tmp/PRG
+echo "62" >/tmp/PRG
 
 # Configuraciones de Red
 cp /etc/NetworkManager/system-connections/* /mnt/etc/NetworkManager/system-connections
@@ -111,22 +127,31 @@ echo -e "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	$NOMBRE" >/mnt/etc/hosts
 sed -i 's/^#MulticastDNS=yes/MulticastDNS=no/' /mnt/etc/systemd/resolved.conf
 sed -i 's/^use-ipv6=yes/use-ipv6=no/' /mnt/etc/avahi/avahi-daemon.conf
 echo 'systemctl enable NetworkManager.service ; systemctl enable ntpd.service ; systemctl enable systemd-resolved.service ; systemctl enable avahi-daemon.service ; systemctl enable systemd-homed.service || exit 1' | ARCH
-echo "66" >/tmp/PRG
+echo "63" >/tmp/PRG
 
 # Instalacion de yay
 echo "groupadd -g 777 updates" | ARCH
 echo "useradd -m -d /home/.updates -g updates -u 777 updates && passwd --lock updates || exit 1" | ARCH
 echo -e "\n%updates ALL=(ALL) NOPASSWD: ALL" >> /mnt/etc/sudoers
 echo "echo 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si || exit 1' | su updates || exit 1" | ARCH
-echo "68" >/tmp/PRG
+echo "65" >/tmp/PRG
 
 # Instalacion de utilidades adicionales
-echo "echo 'yay --noconfirm -Sy neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k-bin-git ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs libpwquality || exit 1' | su updates || exit 1" | ARCH
 if [[ $GPU = nvidia-hybrid ]]
 then 
-	echo "echo 'yay --noconfirm -Sy optimus-manager optimus-manager-qt || exit 1' | su updates || exit 1" | ARCH
+	packages="neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k-bin-git ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs libpwquality optimus-manager optimus-manager-qt"
+else
+	packages="neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k-bin-git ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs libpwquality"
 fi
-echo "70" >/tmp/PRG
+read -r -a pkg_array <<< "$packages"
+n=${#pkg_array[@]}
+i=0
+for pkg in "${pkg_array[@]}"; do
+    i=$((i + 1))
+    echo "yay --noconfirm -Sy $pkg" | ARCH || STOP
+    progress=$((65 + (i * 5 / n)))
+    echo "$progress" > /tmp/PRG
+done
 
 # Instalacion XFCE
 (sleep 2; while [[ $(cat /mnt/tmp/PRG) -ne 85 ]]; do cp /mnt/tmp/PRG /tmp/PRG; sleep 1; done) &
@@ -151,12 +176,12 @@ cp -rv installer/cambonos-fs/* /mnt
 sed -i 's/base udev/base udev plymouth sleep/' /mnt/etc/mkinitcpio.conf
 echo 'plymouth-set-default-theme -R cambonos || exit 1' | ARCH
 cp /mnt/etc/cambonos-release/* /mnt/etc/
-echo "90" >/tmp/PRG
+echo "89" >/tmp/PRG
 
 # Configuracion del firewall
 echo -e "*filter\n:INPUT DROP [0:0]\n:FORWARD DROP [0:0]\n:OUTPUT ACCEPT [0:0]\n-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT\n-A INPUT -s 127.0.0.1 -j ACCEPT\n-A INPUT -p udp --dport 5353 -j ACCEPT\nCOMMIT" >/mnt/etc/iptables/iptables.rules
 echo "systemctl enable iptables.service || exit 1" | ARCH
-echo "91" >/tmp/PRG
+echo "90" >/tmp/PRG
 
 # Instalacion ssh
 if [[ $SSH = s ]] || [[ $SSH = si ]] || [[ $SSH = S ]] || [[ $SSH = Si ]]
@@ -167,7 +192,7 @@ fi
 
 # Configuracion hora
 echo "ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime && hwclock --systohc" | ARCH
-echo "92" >/tmp/PRG
+echo "93" >/tmp/PRG
 
 # Creacion usuario
 echo "useradd -m -c $ADMINNAME -s /bin/zsh -g users -G wheel,rfkill,sys,lp $ADMINUSER && (echo -e '$ADMINPASS\n$ADMINPASS' | passwd $ADMINUSER)" | ARCH
