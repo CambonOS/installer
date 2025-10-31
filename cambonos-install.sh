@@ -98,7 +98,7 @@ n=${#pkg_array[@]}
 i=0
 for pkg in "${pkg_array[@]}"; do
     i=$((i + 1))
-    echo "pacman --noconfirm -Sy $pkg" | ARCH || STOP
+    echo "pacman --noconfirm -Sy $pkg" | ARCH
     progress=$((19 + ($i * 5 / $n)))
     echo "$progress" > /tmp/PRG
 done
@@ -144,7 +144,7 @@ n=${#pkg_array[@]}
 i=0
 for pkg in "${pkg_array[@]}"; do
     i=$((i + 1))
-    echo -e "echo \"yay --noconfirm -Sy $pkg\" | su updates" | ARCH || STOP
+    echo -e "echo \"yay --noconfirm -Sy $pkg\" | su updates" | ARCH
     progress=$((33 + ($i * 8 / $n)))
     echo "$progress" > /tmp/PRG
 done
