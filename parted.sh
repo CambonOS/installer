@@ -29,7 +29,6 @@ read -p "Disco destino (ej: sda, nvme0n1): " DISCO
 
 echo ""
 echo "Disco seleccionado: /dev/$DISCO"
-echo "ATENCIÓN: operación destructiva posible"
 echo ""
 
 read -p "Confirmar (s/N): " CONF
@@ -44,7 +43,7 @@ echo "$DISCO" | grep nvme >/dev/null 2>&1 && DISCOP="${DISCO}p" || DISCOP="$DISC
 
 if [[ "$MODE" == "1" ]]; then
 
-    echo ">> WIPE TOTAL DEL DISCO"
+    echo ">> BORRADO TOTAL DEL DISCO"
 
     fdisk /dev/$DISCO >>$SALIDA 2>&1 <<EOF
 g
@@ -92,8 +91,8 @@ sleep 2
 
 PARTS=($(lsblk -ln -o NAME /dev/$DISCO | grep -E "${DISCO}p|${DISCO}[0-9]"))
 
-EFI="/dev/${PARTS[0]}"
-ROOT="/dev/${PARTS[1]}"
+EFI="/dev/${PARTS[-1]}"
+ROOT="/dev/${PARTS[-2]}"
 
 echo "EFI:  $EFI"
 echo "ROOT: $ROOT"
