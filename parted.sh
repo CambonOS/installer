@@ -91,8 +91,8 @@ sleep 2
 
 PARTS=($(lsblk -ln -o NAME /dev/$DISCO | grep -E "${DISCO}p|${DISCO}[0-9]"))
 
-EFI="/dev/${PARTS[-1]}"
-ROOT="/dev/${PARTS[-2]}"
+EFI="/dev/${PARTS[-2]}"
+ROOT="/dev/${PARTS[-1]}"
 
 echo "EFI:  $EFI"
 echo "ROOT: $ROOT"
