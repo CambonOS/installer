@@ -1,11 +1,18 @@
 [Unit]
 Description=CambonOS Upgrade Service
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
 User=updates
-RemainAfterExit=yes
+Group=updates
 ExecStart=/usr/bin/cambonos-upgrade
+RemainAfterExit=no
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=cambonos-upgrade
+
+# Durante apagado espera antes de forzar kill
+TimeoutStopSec=60
+KillMode=control-group

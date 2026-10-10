@@ -56,3 +56,4 @@ GRUB_THEME="/usr/share/grub/themes/Vimix/theme.txt"
 # Uncomment to disable submenus in boot menu
 #GRUB_DISABLE_SUBMENU=y
 GRUB_DISABLE_OS_PROBER=false
+GRUB_DISABLE_BOOTNEXT=true

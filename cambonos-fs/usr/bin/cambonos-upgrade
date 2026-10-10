@@ -1,35 +1,70 @@
 #!/bin/bash
 
+# -------------------------------
+# Configuración de colores
+# -------------------------------
 NOCOLOR='\033[0m'
 RED='\033[1;31m'
 GREEN='\033[1;32m'
 BLUE='\033[1;34m'
 
-ERROR () {
-  echo -e "${RED}ERROR${NOCOLOR}"
-  exit 1
+# -------------------------------
+# Funciones de manejo de errores y éxito
+# -------------------------------
+ERROR() {
+    echo -e "${RED}ERROR${NOCOLOR}"
+    cleanup
+    exit 1
 }
 
-DONE () {
-  echo -e "${GREEN}DONE${NOCOLOR}"
-  sleep 1
+DONE() {
+    echo -e "${GREEN}DONE${NOCOLOR}\n"
+    sleep 1
 }
 
+# -------------------------------
+# Función de cleanup de locks
+# -------------------------------
+cleanup() {
+    echo -e "${BLUE}>> Limpiando locks si existen${NOCOLOR}"
+    sudo rm -f /var/lib/pacman/db.lck
+}
+
+# Captura SIGTERM y SIGINT para cleanup
+trap cleanup SIGTERM SIGINT
+
+# -------------------------------
+# Comprobación de red
+# -------------------------------
 nm-online >/dev/null 2>&1
 
-echo -e "${BLUE}>>Actualizando paquetes${NOCOLOR}"
-sleep 2
-yay --noconfirm -Sy archlinux-keyring || ERROR
+# -------------------------------
+# Bloque de actualización de paquetes críticos
+# -------------------------------
+echo -e "${BLUE}>> Actualizando paquetes críticos${NOCOLOR}"
+sudo pacman --noconfirm -Sy --needed archlinux-keyring
+sudo systemd-inhibit --what=shutdown --who="CambonOS Upgrade" --why="Actualizando kernel" \
+	sudo pacman --noconfirm -S --needed linux linux-headers linux-firmware || ERROR
+DONE
+
+# -------------------------------
+# Actualización de GRUB
+# -------------------------------
+echo -e "${BLUE}>> Actualizando configuracion de GRUB${NOCOLOR}"
+sudo systemd-inhibit --what=shutdown --who="CambonOS Upgrade" --why="Actualizando configuracion de grub" \
+	sudo grub-mkconfig -o /boot/grub/grub.cfg || ERROR
+DONE
+
+# -------------------------------
+# Actualización del resto de paquetes
+# -------------------------------
+echo -e "${BLUE}>> Actualizando resto de paquetes${NOCOLOR}"
 yay --noconfirm -Syyu || ERROR
 DONE
 
-echo -e "${BLUE}\n>>Eliminando paquetes huerfanos${NOCOLOR}"
-sleep 2
-yay --noconfirm -Rns $(yay -Qqdt)
+# -------------------------------
+# Eliminación de paquetes huérfanos
+# -------------------------------
+echo -e "${BLUE}>> Eliminando paquetes huérfanos${NOCOLOR}"
+yay -Qqdt | xargs -r yay --noconfirm -Rns || true
 DONE
-
-echo -e "${BLUE}\n>>Actualizando GRUB${NOCOLOR}"
-sleep 2
-sudo grub-mkconfig -o /boot/grub/grub.cfg || ERROR
-DONE
-

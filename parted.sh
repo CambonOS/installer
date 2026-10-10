@@ -6,88 +6,117 @@ STOP () {
 }
 
 ##Particionado
+#!/bin/bash
+
 SALIDA='/tmp/particionado.log'
-clear && cat /etc/motd
-ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
-case $GRUB in
-	uefi)
-		echo '
-Bienvenido al instalador oficial de CambonOS!!!
 
-Para continuar su intalacion escoga entre:
+clear
+cat /etc/motd
 
-  1-Instalacion borrando todo el disco
-  2-Instalar sistema en el espacio libre al final del disco
-  3-Cancelar'
-		echo -e "\n(1,2,3): \c" && read PART
-		if [[ $PART != 1 ]] && [[ $PART != 2 ]]
-		then exit
-		fi
-		echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
-		echo -e "\n>>En que disco desea instalar el sistema (sda,nvme0n1,...): \c" && read DISCO
-		(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
-		N=1 && LIBRE=0
-		if [[ $PART = 2 ]]
-		then
-			fdisk -l /dev/$DISCO | grep gpt >>$SALIDA 2>&1 && TD=gpt || TD=mbr
-			case $TD in
-			mbr)
-				echo -e "\n>>El disco NO esta en GPT\c"
-				STOP
-				;;
-			gpt)
-				while [[ $LIBRE = 0 ]]
-				do 
-					lsblk | grep $DISCOP$N >>$SALIDA 2>&1 && N=$(($N+1)) || LIBRE=1
-				done
-				echo -e "\n>>Particionando disco...\c"
-				(echo -e "n\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
-				;;
-			esac
-		else 
-			echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? (s/N): \c"
-			read ANS
-			if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
-			then sleep 0
-			else exit
-			fi
-			echo -e "\n>>Particionando disco...\c"
-			(echo -e "g\nn\n\n\n+512M\nn\n\n\n+30G\nn\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP
-		fi
-		yes | mkfs.vfat -F 32 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP && N=$(($N-1))
-		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N-1))
-		mkdir /mnt/boot >>$SALIDA 2>&1 || STOP
-		mount /dev/$DISCOP$N /mnt/boot >>$SALIDA 2>&1 || STOP && N=$(($N+2))
-		mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1 || STOP
-		;;
-	bios)
-		echo -e "\nBienvenido al instalador oficial de CambonOS!!!\n\n>>Con el istalador arrancado en BIOS solo se puede instalar borrando todo el disco.\n\n>>Quiere continuar? (s/N): \c"
-		read ANS
-		if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
-		then
-			echo -e "\n>>Listando discos\n" && lsblk -o NAME,SIZE,VENDOR,MODEL -d
-			echo -e "\n>>En que disco desea instalar el sistema (sda,nvme0n1,...): \c" && read DISCO
-			echo -e "\n>>Se eliminaran ${RED}todos los datos del disco${NOCOLOR}. Desea continuar? (s/N): \c"
-			read ANS
-			if [[ $ANS = s ]] || [[ $ANS = si ]] || [[ $ANS = Si ]] || [[ $ANS = S ]]
-			then sleep 0
-			else exit
-			fi
-		else 
-			exit
-		fi
-		echo -e "\n>>Particionando disco...\c"
-		(echo $DISCO | grep nvme >>$SALIDA 2>&1) && DISCOP=$DISCO$(echo p) || DISCOP=$DISCO
-		(echo -e "o\nn\n\n\n\n+30G\nn\n\n\n\n\nw\n" | fdisk -w always /dev/$DISCO >>$SALIDA 2>&1) || STOP && N=1
-		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
-		mount /dev/$DISCOP$N /mnt >>$SALIDA 2>&1 || STOP && N=$(($N+1))
-		yes | mkfs.ext4 /dev/$DISCOP$N >>$SALIDA 2>&1 || STOP
-		mkdir /mnt/home >>$SALIDA 2>&1 || STOP
-		mount /dev/$DISCOP$N /mnt/home >>$SALIDA 2>&1
-		;;
-esac
+echo "=== CambonOS Installer ==="
+echo ""
+
+echo ""
+echo "1 - Instalación limpia (BORRA TODO EL DISCO)"
+echo "2 - Instalación en espacio libre (DUAL BOOT)"
+echo ""
+read -p "Modo: " MODE
+
+echo ""
+lsblk -o NAME,SIZE,MODEL -d
+echo ""
+read -p "Disco destino (ej: sda, nvme0n1): " DISCO
+
+echo ""
+echo "Disco seleccionado: /dev/$DISCO"
+echo ""
+
+read -p "Confirmar (s/N): " CONF
+[[ "$CONF" != "s" && "$CONF" != "S" && "$CONF" != "si" ]] && exit 0
+
+# Detectar formato NVMe
+echo "$DISCO" | grep nvme >/dev/null 2>&1 && DISCOP="${DISCO}p" || DISCOP="$DISCO"
+
+# =========================
+# PARTICIONADO
+# =========================
+
+if [[ "$MODE" == "1" ]]; then
+
+    echo ">> BORRADO TOTAL DEL DISCO"
+
+    fdisk /dev/$DISCO >>$SALIDA 2>&1 <<EOF
+g
+n
+
+
++1G
+n
+
+
+
+w
+EOF
+
+else
+	ls /sys/firmware/efi/efivars >/dev/null 2>&1 || {
+    	echo "Sistema no UEFI detectado. Abortando (solo UEFI soportado)."
+    	exit 1
+	}
+    echo ">> INSTALACION EN ESPACIO LIBRE"
+
+    fdisk /dev/$DISCO >>$SALIDA 2>&1 <<EOF
+n
+
+
++1G
+n
+
+
+
+w
+EOF
+
+fi
+
+# =========================
+# DETECTAR PARTICIONES
+# =========================
+
+sleep 2
+
+PARTS=($(lsblk -ln -o NAME /dev/$DISCO | grep -E "${DISCO}p|${DISCO}[0-9]"))
+
+EFI="/dev/${PARTS[-2]}"
+ROOT="/dev/${PARTS[-1]}"
+
+echo "EFI:  $EFI"
+echo "ROOT: $ROOT"
+
+# =========================
+# FORMATEO
+# =========================
+
+echo ">> Formateando..."
+
+yes | mkfs.vfat -F32 $EFI >>$SALIDA 2>&1
+yes | mkfs.ext4 $ROOT >>$SALIDA 2>&1
+
+# =========================
+# MONTAJE
+# =========================
+
+echo ">> Montando sistema..."
+
+mount $ROOT /mnt || exit 1
+mkdir -p /mnt/boot
+mount $EFI /mnt/boot || exit 1
+
+# =========================
+# FINAL
+# =========================
 
 echo "$DISCO" >/tmp/disco
+
+echo ""
+echo "Particionado completado."
