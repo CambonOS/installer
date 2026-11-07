@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
+pacman -Syu cambonos-installer cambonos-keyring --noconfirm
 cd /usr/share/cambonos-installer || exit 1
 exec bash installer/dialog.sh "$@"
