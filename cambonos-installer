@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cd /usr/share/cambonos-installer || exit 1
+exec bash installer/dialog.sh "$@"

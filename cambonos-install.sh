@@ -36,7 +36,7 @@ pacman --noconfirm -Sy archlinux-keyring
 echo "4" >/tmp/PRG
 
 # Creacion de la raiz del sistema
-pacstrap /mnt linux linux-headers linux-firmware base || STOP
+pacstrap /mnt linux linux-headers linux-firmware base cambonos-keyring cambonos-pacman || STOP
 echo "7" >/tmp/PRG
 
 # Generar fichero fstab del sistema
@@ -49,14 +49,12 @@ echo "8" >/tmp/PRG
 
 # Modificar configuraciones de root
 echo "usermod -s /bin/zsh root" | ARCH # Cambio shell
-cp -rv installer/cambonos-fs/etc/skel/.config /mnt/root # Carpeta .config del skel
-cp -v installer/cambonos-fs/etc/skel/.* /mnt/root/ # Ficheros del skel
 echo "passwd --lock root" | ARCH
 echo "9" >/tmp/PRG
 
 # Instalacion paquetes basicos
 (grep 'Intel' /proc/cpuinfo >/dev/null && CPU='intel-ucode') || (grep 'AMD' /proc/cpuinfo >/dev/null && CPU='amd-ucode') || CPU='amd-ucode intel-ucode'
-packages="lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g dosfstools exfat-utils cpupower rsync plymouth accountsservice"
+packages="lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf $CPU git wget base-devel sudo ntfs-3g dosfstools exfat-utils cpupower rsync accountsservice cambonos-release cambonos-branding cambonos-fastfetch cambonos-plymouth cambonos-shell-prompt cambonos-zsh cambonos-keyring cambonos-pacman"
 read -r -a pkg_array <<< "$packages"
 n=${#pkg_array[@]}
 i=0
@@ -107,10 +105,10 @@ done
 ls /sys/firmware/efi/efivars >/dev/null 2>&1 && GRUB='uefi' || GRUB='bios'
 case $GRUB in
 	uefi)
-		echo "pacman --noconfirm -Sy grub efibootmgr os-prober grub-theme-vimix && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=CambonOS || exit 1" | ARCH || STOP
+		echo "pacman --noconfirm -Sy grub efibootmgr os-prober cambonos-grub && grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=CambonOS || exit 1" | ARCH || STOP
 		;;
 	bios)
-		echo "pacman --noconfirm -Sy grub os-prober grub-theme-vimix && grub-install --target=i386-pc /dev/$DISCO || exit 1" | ARCH || STOP
+		echo "pacman --noconfirm -Sy grub os-prober cambonos-grub && grub-install --target=i386-pc /dev/$DISCO || exit 1" | ARCH || STOP
 		;;
 esac
 echo "27" >/tmp/PRG
@@ -135,9 +133,9 @@ echo "33" >/tmp/PRG
 # Instalacion de utilidades adicionales
 if [[ $GPU = nvidia-hybrid ]]
 then 
-	packages="neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k-bin-git ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs libpwquality optimus-manager optimus-manager-qt"
+	packages="xdg-user-dirs libpwquality optimus-manager optimus-manager-qt"
 else
-	packages="neofetch zsh zsh-completions zsh-autosuggestions zsh-syntax-highlighting zsh-theme-powerlevel10k-bin-git ttf-meslo-nerd-font-powerlevel10k xdg-user-dirs libpwquality"
+	packages="xdg-user-dirs libpwquality"
 fi
 read -r -a pkg_array <<< "$packages"
 n=${#pkg_array[@]}
@@ -168,9 +166,6 @@ esac
 
 # Configuraciones CambonOS
 cp -rv installer/cambonos-fs/* /mnt
-sed -i 's/base udev/base udev plymouth sleep/' /mnt/etc/mkinitcpio.conf
-echo 'plymouth-set-default-theme -R cambonos || exit 1' | ARCH
-cp /mnt/etc/cambonos-release/* /mnt/etc/
 echo "89" >/tmp/PRG
 
 # Configuracion del firewall
