@@ -1,4 +1,476 @@
 #!/usr/bin/env bash
 
-cd /usr/share/cambonos-installer || exit 1
-exec bash installer/dialog.sh "$@"
+set -Eeuo pipefail
+
+readonly TITLE='CambonOS Installer'
+readonly MOUNT_POINT='/mnt'
+readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -d "$SCRIPT_DIR/cambonos-fs" ]]; then
+	readonly DATA_DIR="$SCRIPT_DIR"
+else
+	readonly DATA_DIR='/usr/share/cambonos-installer/installer'
+fi
+
+WORK_DIR=''
+KEEP_WORK_DIR=0
+DISK=''
+MODE=''
+BOOT_MODE=''
+EFI_PARTITION=''
+ROOT_PARTITION=''
+EFI_LABEL=''
+ROOT_LABEL=''
+HOSTNAME=''
+ADMIN_USER=''
+ADMIN_NAME=''
+ADMIN_PASSWORD=''
+DESKTOP=''
+INSTALL_SSH='no'
+GPU=''
+
+usage() {
+	cat <<'EOF'
+Uso: cambonos-installer [--help]
+
+Inicia el instalador interactivo de CambonOS. Debe ejecutarse como root desde
+el sistema live de CambonOS.
+EOF
+}
+
+show_error() {
+	local message=$1
+	if command -v dialog >/dev/null 2>&1 && [[ -t 0 && -t 1 ]]; then
+		dialog --title "$TITLE" --msgbox "$message" 8 76 || true
+	else
+		printf '%s\n' "$message" >&2
+	fi
+}
+
+cleanup() {
+	local exit_code=$?
+	if mountpoint -q "$MOUNT_POINT"; then
+		umount -R "$MOUNT_POINT" || true
+	fi
+	if [[ "$KEEP_WORK_DIR" -eq 0 && -n "$WORK_DIR" && -d "$WORK_DIR" ]]; then
+		rm -rf -- "$WORK_DIR"
+	fi
+	exit "$exit_code"
+}
+
+fail() {
+	show_error "$1"
+	exit 1
+}
+
+require_commands() {
+	local missing=()
+	local command_name
+	for command_name in "$@"; do
+		command -v "$command_name" >/dev/null 2>&1 || missing+=("$command_name")
+	done
+	if ((${#missing[@]})); then
+		fail "Faltan comandos necesarios: ${missing[*]}"
+	fi
+}
+
+dialog_input() {
+	dialog --stdout --title "$TITLE" "$@"
+}
+
+choose_disk() {
+	local device size model
+	local -a disks=() options=()
+	mapfile -t disks < <(lsblk -dnpo NAME,TYPE | awk '$2 == "disk" { print $1 }')
+	((${#disks[@]})) || fail 'No se detectaron discos de destino.'
+
+	for device in "${disks[@]}"; do
+		size=$(lsblk -dno SIZE "$device")
+		model=$(lsblk -dno MODEL "$device" | sed 's/[[:space:]]*$//')
+		[[ -n "$model" ]] || model='Sin modelo'
+		options+=("$device" "$size | $model")
+	done
+
+	DISK=$(dialog_input --menu '\nSeleccione el disco de destino:' 16 84 8 "${options[@]}") || return 1
+}
+
+collect_options() {
+	local value password_confirmation
+	local -a desktops
+
+	while true; do
+		HOSTNAME=$(dialog_input --inputbox '\nNombre del equipo:' 9 72) || return 1
+		HOSTNAME=${HOSTNAME,,}
+		if [[ "$HOSTNAME" =~ ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$ ]]; then
+			break
+		fi
+		dialog --title "$TITLE" --msgbox 'El nombre debe tener hasta 63 caracteres, usar letras minúsculas, números o guiones y no empezar ni terminar con guion.' 8 76
+	done
+
+	while true; do
+		ADMIN_USER=$(dialog_input --inputbox '\nUsuario administrador (login):' 9 72 'administrador') || return 1
+		ADMIN_USER=${ADMIN_USER,,}
+		if [[ "$ADMIN_USER" =~ ^[a-z_][a-z0-9_-]*[$]?$ ]]; then
+			break
+		fi
+		dialog --title "$TITLE" --msgbox 'El usuario debe comenzar por una letra minúscula o guion bajo y solo contener letras, números, guiones o guiones bajos.' 8 76
+	done
+
+	ADMIN_NAME=$(dialog_input --inputbox '\nNombre completo del usuario:' 9 72 'Administrador') || return 1
+	[[ -n "$ADMIN_NAME" ]] || return 1
+
+	while true; do
+		ADMIN_PASSWORD=$(dialog_input --passwordbox '\nContraseña del usuario:' 9 72) || return 1
+		password_confirmation=$(dialog_input --passwordbox '\nRepetir contraseña:' 9 72) || return 1
+		if [[ -n "$ADMIN_PASSWORD" && "$ADMIN_PASSWORD" == "$password_confirmation" ]]; then
+			unset password_confirmation
+			break
+		fi
+		unset password_confirmation
+		dialog --title "$TITLE" --msgbox 'La contraseña está vacía o no coincide. Inténtelo de nuevo.' 7 72
+	done
+
+	desktops=(1 'Cambon18/XFCE (Recomendado)' 2 'Cambon18/Qtile')
+	value=$(dialog_input --menu '\nSeleccione el entorno de escritorio:' 12 76 4 "${desktops[@]}") || return 1
+	case "$value" in
+		1) DESKTOP='xfce' ;;
+		2) DESKTOP='qtile' ;;
+		*) return 1 ;;
+	esac
+
+	if dialog --title "$TITLE" --yesno '\n¿Desea instalar el servidor SSH?' 7 72; then
+		INSTALL_SSH='yes'
+	else
+		INSTALL_SSH='no'
+	fi
+
+	value=$(dialog_input --menu '\nModo de instalación:' 12 76 4 \
+		clean 'Instalación limpia: borra el disco seleccionado' \
+		free 'Instalar en espacio libre de un disco GPT (UEFI)') || return 1
+	case "$value" in
+		clean) MODE='clean' ;;
+		free) MODE='free' ;;
+		*) return 1 ;;
+	esac
+
+	choose_disk || return 1
+	if [[ "$MODE" == 'free' ]]; then
+		[[ -d /sys/firmware/efi/efivars ]] || fail 'La instalación en espacio libre requiere iniciar el sistema live en modo UEFI.'
+		BOOT_MODE='uefi'
+	else
+		if [[ -d /sys/firmware/efi/efivars ]]; then
+			BOOT_MODE='uefi'
+		else
+			BOOT_MODE='bios'
+		fi
+	fi
+
+	local confirmation
+	confirmation="\nEquipo: $HOSTNAME\nUsuario: $ADMIN_USER\nEscritorio: $DESKTOP\nServidor SSH: $INSTALL_SSH\nModo: $MODE\nArranque: $BOOT_MODE\nDisco: $DISK\n\n"
+	if [[ "$MODE" == 'clean' ]]; then
+		confirmation+="ATENCIÓN: se borrarán todas las particiones y los datos del disco.\n\n"
+	fi
+	confirmation+='¿Desea comenzar la instalación?'
+	dialog --title "$TITLE" --yesno "$confirmation" 18 84 || return 1
+}
+
+find_free_region() {
+	local output
+	output=$(parted -sm "$DISK" unit MiB print free) || fail 'No se pudo leer la tabla de particiones.'
+	[[ "$(awk -F: 'NR == 2 { print $6 }' <<< "$output")" == 'gpt' ]] || fail 'El modo de espacio libre solo admite discos con tabla GPT.'
+
+	local region
+	region=$(awk -F: '
+		$NF ~ /free/ {
+			start = $2
+			end = $3
+			sub(/MiB.*/, "", start)
+			sub(/MiB.*/, "", end)
+			size = end - start
+			if (size >= largest) {
+				largest = size
+				free_start = start
+				free_end = end
+			}
+		}
+		END {
+			if (largest >= 25600) {
+				printf "%.3f %.3f", free_start, free_end
+			}
+		}
+	' <<< "$output")
+	[[ -n "$region" ]] || fail 'No se encontró un espacio libre contiguo suficiente para una raíz de 24 GiB y una partición EFI de 1 GiB.'
+	read -r FREE_START FREE_END <<< "$region"
+}
+
+create_partitions() {
+	local efi_end part label type attempt
+	EFI_PARTITION=''
+	ROOT_PARTITION=''
+	EFI_LABEL="CambonOS-EFI-${BASHPID}"
+	ROOT_LABEL="CambonOS-root-${BASHPID}"
+
+	if [[ "$MODE" == 'clean' ]]; then
+		parted -s -a optimal "$DISK" mklabel gpt
+		if [[ "$BOOT_MODE" == 'uefi' ]]; then
+			parted -s -a optimal "$DISK" mkpart "$EFI_LABEL" fat32 1MiB 1025MiB
+			parted -s "$DISK" set 1 esp on
+			parted -s -a optimal "$DISK" mkpart "$ROOT_LABEL" ext4 1025MiB 100%
+		else
+			parted -s -a optimal "$DISK" mkpart "CambonOS-BIOS-${BASHPID}" 1MiB 3MiB
+			parted -s "$DISK" set 1 bios_grub on
+			parted -s -a optimal "$DISK" mkpart "$ROOT_LABEL" ext4 3MiB 100%
+		fi
+	else
+		find_free_region
+		efi_end=$(awk -v start="$FREE_START" 'BEGIN { printf "%.3f", start + 1024 }')
+		parted -s -a optimal "$DISK" mkpart "$EFI_LABEL" fat32 "${FREE_START}MiB" "${efi_end}MiB"
+		parted -s -a optimal "$DISK" mkpart "$ROOT_LABEL" ext4 "${efi_end}MiB" "${FREE_END}MiB"
+		part=$(lsblk -lnpo NAME,PARTN,PARTLABEL,TYPE "$DISK" | awk -v label="$EFI_LABEL" '$3 == label && $4 == "part" { print $2; exit}')
+		[[ -n "$part" ]] || fail 'No se pudo identificar la nueva partición EFI.'
+		parted -s "$DISK" set "$part" esp on
+	fi
+
+	partprobe "$DISK"
+	udevadm settle
+	for attempt in {1..10}; do
+		while read -r part label type; do
+			[[ "$type" == 'part' ]] || continue
+			[[ "$label" == "$EFI_LABEL" ]] && EFI_PARTITION=$part
+			[[ "$label" == "$ROOT_LABEL" ]] && ROOT_PARTITION=$part
+		done < <(lsblk -lnpo NAME,PARTLABEL,TYPE "$DISK")
+		[[ -n "$ROOT_PARTITION" ]] && break
+		udevadm settle
+		sleep 1
+	done
+	[[ -n "$ROOT_PARTITION" ]] || fail 'No se pudo identificar la partición raíz recién creada.'
+	if [[ "$BOOT_MODE" == 'uefi' ]]; then
+		[[ -n "$EFI_PARTITION" ]] || fail 'No se pudo identificar la partición EFI recién creada.'
+	fi
+	if [[ "$MODE" == 'free' ]]; then
+		local root_size
+		root_size=$(lsblk -bno SIZE "$ROOT_PARTITION")
+		((root_size >= 24 * 1024 * 1024 * 1024)) || fail 'La partición raíz del espacio libre debe tener al menos 24 GiB.'
+	fi
+}
+
+progress() {
+	printf '%s\n' "$1" >&3
+}
+
+run_chroot() {
+	arch-chroot "$MOUNT_POINT" "$@"
+}
+
+install_base_system() {
+	local -a base_packages extra_packages gpu_packages
+	local cpu_packages
+
+	timedatectl set-ntp true
+	progress 2
+	reflector -l 10 -f 5 --save /etc/pacman.d/mirrorlist
+	pacman --noconfirm -Sy archlinux-keyring
+
+	base_packages=(linux linux-headers linux-firmware base lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf git wget base-devel sudo ntfs-3g dosfstools exfatprogs cpupower rsync accountsservice cambonos-release cambonos-branding cambonos-fastfetch cambonos-plymouth cambonos-shell-prompt cambonos-zsh cambonos-keyring cambonos-pacman grub os-prober zsh iptables avahi)
+	if grep -q 'Intel' /proc/cpuinfo; then
+		cpu_packages='intel-ucode'
+	elif grep -q 'AMD' /proc/cpuinfo; then
+		cpu_packages='amd-ucode'
+	else
+		cpu_packages='amd-ucode intel-ucode'
+	fi
+	read -r -a extra_packages <<< "$cpu_packages"
+	base_packages+=("${extra_packages[@]}")
+	if [[ "$BOOT_MODE" == 'uefi' ]]; then
+		base_packages+=(efibootmgr)
+	fi
+	pacstrap "$MOUNT_POINT" "${base_packages[@]}"
+	progress 22
+
+	if ! grep -q '^\[multilib\]' "$MOUNT_POINT/etc/pacman.conf"; then
+		printf '\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> "$MOUNT_POINT/etc/pacman.conf"
+	fi
+
+	GPU=$(lspci | grep -E 'VGA|3D' | grep -oE 'NVIDIA|AMD|Intel' | head -n1 | tr '[:upper:]' '[:lower:]' || true)
+	if lspci | grep -E 'VGA|3D' | grep -q 'NVIDIA' && lspci | grep -q 'Intel'; then
+		GPU='nvidia-hybrid'
+	fi
+	case "$GPU" in
+		amd) gpu_packages=(mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon vulkan-icd-loader lib32-vulkan-icd-loader) ;;
+		nvidia|nvidia-hybrid) gpu_packages=(nvidia nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader) ;;
+		intel) gpu_packages=(mesa lib32-mesa vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader) ;;
+		*) gpu_packages=(mesa lib32-mesa vulkan-icd-loader lib32-vulkan-icd-loader) ;;
+	esac
+	extra_packages=(xdg-user-dirs libpwquality)
+	if [[ "$INSTALL_SSH" == 'yes' ]]; then
+		extra_packages+=(openssh)
+	fi
+	run_chroot pacman -Syu --noconfirm "${gpu_packages[@]}" "${extra_packages[@]}"
+	progress 36
+}
+
+configure_system() {
+	local desktop_source="/root/$DESKTOP"
+	local -a services aur_packages
+
+	cp -a "$DATA_DIR/cambonos-fs/." "$MOUNT_POINT/"
+	if [[ -d /etc/NetworkManager/system-connections ]]; then
+		install -d -m 700 "$MOUNT_POINT/etc/NetworkManager/system-connections"
+		cp -a /etc/NetworkManager/system-connections/. "$MOUNT_POINT/etc/NetworkManager/system-connections/"
+		find "$MOUNT_POINT/etc/NetworkManager/system-connections" -type f -exec chmod 600 {} +
+		find "$MOUNT_POINT/etc/NetworkManager/system-connections" -type f -exec sed -i '/interface/d' {} +
+	fi
+
+	printf '%s\n' "$HOSTNAME" > "$MOUNT_POINT/etc/hostname"
+	printf '127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.1.1\t%s\n' "$HOSTNAME" > "$MOUNT_POINT/etc/hosts"
+	if [[ -f "$MOUNT_POINT/etc/systemd/resolved.conf" ]]; then
+		sed -i 's/^#MulticastDNS=yes/MulticastDNS=no/' "$MOUNT_POINT/etc/systemd/resolved.conf"
+	fi
+	if [[ -f "$MOUNT_POINT/etc/avahi/avahi-daemon.conf" ]]; then
+		sed -i 's/^use-ipv6=yes/use-ipv6=no/' "$MOUNT_POINT/etc/avahi/avahi-daemon.conf"
+	fi
+
+	run_chroot usermod -s /bin/zsh root
+	run_chroot passwd --lock root
+	run_chroot systemctl enable cpupower.service accounts-daemon.service NetworkManager.service ntpd.service systemd-resolved.service avahi-daemon.service systemd-homed.service
+	progress 43
+
+	run_chroot groupadd --force updates
+	if ! run_chroot id updates >/dev/null 2>&1; then
+		run_chroot useradd -m -d /home/.updates -s /bin/bash -g updates updates
+	fi
+	run_chroot passwd --lock updates
+	install -d -m 750 "$MOUNT_POINT/etc/sudoers.d"
+	printf 'updates ALL=(ALL) NOPASSWD: ALL\n' > "$MOUNT_POINT/etc/sudoers.d/cambonos-updates"
+	chmod 440 "$MOUNT_POINT/etc/sudoers.d/cambonos-updates"
+	run_chroot visudo -c
+	run_chroot su -s /bin/bash updates -c 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si'
+	if [[ "$GPU" == 'nvidia-hybrid' ]]; then
+		aur_packages=(xdg-user-dirs libpwquality optimus-manager optimus-manager-qt)
+	else
+		aur_packages=(xdg-user-dirs libpwquality)
+	fi
+	run_chroot su -s /bin/bash updates -c "yay --noconfirm -S ${aur_packages[*]}"
+	progress 54
+
+	cp -a "$desktop_source" "$MOUNT_POINT/$DESKTOP"
+	run_chroot chown -R updates:updates "/$DESKTOP"
+	run_chroot su -s /bin/bash updates -c "cd /$DESKTOP && bash archie.sh"
+	rm -rf -- "$MOUNT_POINT/$DESKTOP"
+	progress 80
+
+	install -d "$MOUNT_POINT/etc/iptables"
+	cat > "$MOUNT_POINT/etc/iptables/iptables.rules" <<'EOF'
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -s 127.0.0.1 -j ACCEPT
+-A INPUT -p udp --dport 5353 -j ACCEPT
+COMMIT
+EOF
+	services=(iptables.service)
+	if [[ "$INSTALL_SSH" == 'yes' ]]; then
+		sed -i 's/^#X11Forwarding no/X11Forwarding yes/' "$MOUNT_POINT/etc/ssh/sshd_config"
+		cat > "$MOUNT_POINT/etc/iptables/iptables.rules" <<'EOF'
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -s 127.0.0.1 -j ACCEPT
+-A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+-A INPUT -p udp --dport 5353 -j ACCEPT
+COMMIT
+EOF
+		services+=(sshd.service)
+	fi
+	run_chroot systemctl enable "${services[@]}"
+	progress 85
+
+	run_chroot ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+	run_chroot hwclock --systohc
+	run_chroot useradd -m -c "$ADMIN_NAME" -s /bin/zsh -g users -G wheel,rfkill,sys,lp "$ADMIN_USER"
+	printf '%s:%s\n' "$ADMIN_USER" "$ADMIN_PASSWORD" | run_chroot chpasswd
+	run_chroot chown updates:wheel /usr/bin/cambonos-upgrade
+	run_chroot chmod 750 /usr/bin/cambonos-upgrade
+	run_chroot chsh -s /usr/bin/nologin updates
+	run_chroot systemctl enable cambonos-upgrade.timer
+	run_chroot locale-gen
+	progress 94
+
+	if [[ "$BOOT_MODE" == 'uefi' ]]; then
+		run_chroot grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=CambonOS
+	else
+		run_chroot grub-install --target=i386-pc "$DISK"
+	fi
+	run_chroot grub-mkconfig -o /boot/grub/grub.cfg
+	progress 100
+}
+
+perform_installation() {
+	create_partitions
+	progress 3
+	mkfs.ext4 -F "$ROOT_PARTITION"
+	if [[ "$BOOT_MODE" == 'uefi' ]]; then
+		mkfs.vfat -F 32 "$EFI_PARTITION"
+	fi
+	mount "$ROOT_PARTITION" "$MOUNT_POINT"
+	if [[ "$BOOT_MODE" == 'uefi' ]]; then
+		install -d "$MOUNT_POINT/boot"
+		mount "$EFI_PARTITION" "$MOUNT_POINT/boot"
+	fi
+	progress 8
+
+	install_base_system
+	progress 38
+	fallocate -l 4G "$MOUNT_POINT/swapfile"
+	chmod 600 "$MOUNT_POINT/swapfile"
+	mkswap -U clear "$MOUNT_POINT/swapfile"
+	swapon "$MOUNT_POINT/swapfile"
+	genfstab -U "$MOUNT_POINT" >> "$MOUNT_POINT/etc/fstab"
+	progress 41
+
+	configure_system
+}
+
+run_installation() {
+	local result=0
+	WORK_DIR=$(mktemp -d /tmp/cambonos-installer.XXXXXX)
+	mkfifo "$WORK_DIR/progress"
+	(
+		exec 3> "$WORK_DIR/progress"
+		perform_installation
+	) > "$WORK_DIR/install.log" 2>&1 &
+	local worker=$!
+	dialog --title "$TITLE" --gauge 'Instalando CambonOS...' 7 76 0 < "$WORK_DIR/progress" || true
+	wait "$worker" || result=$?
+	if ((result != 0)); then
+		KEEP_WORK_DIR=1
+		show_error "La instalación falló. Registro completo: $WORK_DIR/install.log\n\n$(tail -n 12 "$WORK_DIR/install.log")"
+		return "$result"
+	fi
+	dialog --title "$TITLE" --msgbox 'La instalación de CambonOS ha finalizado correctamente. Puede reiniciar el equipo.' 8 76
+}
+
+main() {
+	if (($#)); then
+		case "$1" in
+			-h|--help) usage; return 0 ;;
+			*) usage >&2; return 2 ;;
+		esac
+	fi
+	[[ $EUID -eq 0 ]] || fail 'Ejecute el instalador como root desde el sistema live.'
+	[[ -d "$DATA_DIR/cambonos-fs" ]] || fail "No se encuentra el árbol de configuración: $DATA_DIR/cambonos-fs"
+	require_commands dialog lsblk awk sed parted partprobe udevadm mkfs.vfat mkfs.ext4 mount mountpoint umount timedatectl reflector pacman pacstrap arch-chroot genfstab mkswap swapon fallocate lspci systemctl install cp find chown chmod useradd groupadd passwd chsh visudo git makepkg grub-mkconfig
+	[[ ! -e "$MOUNT_POINT" ]] || [[ -d "$MOUNT_POINT" ]] || fail "$MOUNT_POINT existe y no es un directorio."
+	mountpoint -q "$MOUNT_POINT" && fail "$MOUNT_POINT ya está montado. Desmóntelo antes de iniciar el instalador."
+	collect_options || return 0
+	[[ -f "/root/$DESKTOP/archie.sh" ]] || fail "No se encuentra /root/$DESKTOP/archie.sh en el sistema live."
+	run_installation
+}
+
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
+	trap cleanup EXIT
+	main "$@"
+fi
