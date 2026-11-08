@@ -16,6 +16,13 @@ espacio libre necesita una partición raíz de al menos 24 GiB y conserva las pa
 la instalación limpia elimina todas las particiones del disco seleccionado.
 Revisa cuidadosamente el disco y el modo antes de confirmar.
 
+Durante la instalación se solicita el nombre del usuario una sola vez. Ese
+texto se conserva como nombre completo y se normaliza para el login: se pasa a
+minúsculas y cada espacio se convierte en `-`. El login resultante debe tener
+hasta 32 caracteres y usar solo letras ASCII, números, guiones o guiones bajos;
+no puede comenzar por guion. La contraseña requiere al menos 8 caracteres,
+una minúscula, una mayúscula, un número y un símbolo distinto de un espacio.
+
 Para construirlo desde este repositorio en Arch Linux:
 
 ```sh

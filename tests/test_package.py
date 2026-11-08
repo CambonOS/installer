@@ -10,7 +10,7 @@ class InstallerPackageTests(unittest.TestCase):
     def test_package_metadata_and_payload(self):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
-        self.assertIn("pkgrel=5", build)
+        self.assertIn("pkgrel=6", build)
         self.assertIn("'parted'", build)
         self.assertIn("/usr/share/cambonos-installer/configs", build)
         self.assertIn("printf '%s-%s\\n' \"$pkgver\" \"$pkgrel\"", build)
@@ -39,6 +39,36 @@ class InstallerPackageTests(unittest.TestCase):
         self.assertNotIn("installer/dialog.sh", installer)
         for path in ("dialog.sh", "parted.sh", "cambonos-install.sh"):
             self.assertFalse((ROOT / path).exists())
+
+    def test_account_name_normalization_and_password_requirements(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash",
+                "-c",
+                'source "$1"; '
+                'printf "%s\\n" "$(normalize_admin_user "Ana Maria Lopez")"; '
+                'valid_admin_user "ana-maria-lopez"; '
+                '! valid_admin_user "ana.lopez"; '
+                '! valid_admin_user "-ana"; '
+                '! valid_admin_user "abcdefghijklmnopqrstuvwxyz1234567"; '
+                'password_meets_requirements "Cambonos9!"; '
+                '! password_meets_requirements "cambonos9!"; '
+                '! password_meets_requirements "Cambonos!"; '
+                '! password_meets_requirements "Cambonos9 "; '
+                '! password_meets_requirements "Cambonos9"',
+                "bash",
+                str(installer),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.stdout.strip(), "ana-maria-lopez")
+
+        source = installer.read_text()
+        self.assertEqual(source.count("Nombre del usuario (se usará también para iniciar sesión):"), 1)
+        self.assertNotIn("Usuario administrador (login):", source)
 
     def test_base_and_grub_packages_replace_individual_dependencies(self):
         installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()
