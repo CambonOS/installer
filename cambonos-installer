@@ -313,6 +313,7 @@ configure_system() {
 	local -a services aur_packages
 
 	cp -a "$DATA_DIR/cambonos-fs/." "$MOUNT_POINT/"
+	chmod 440 "$MOUNT_POINT/etc/sudoers"
 	if [[ -d /etc/NetworkManager/system-connections ]]; then
 		install -d -m 700 "$MOUNT_POINT/etc/NetworkManager/system-connections"
 		cp -a /etc/NetworkManager/system-connections/. "$MOUNT_POINT/etc/NetworkManager/system-connections/"
