@@ -10,9 +10,11 @@ class InstallerPackageTests(unittest.TestCase):
     def test_package_metadata_and_payload(self):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
-        self.assertIn("pkgrel=5", build)
+        self.assertIn("pkgrel=3", build)
         self.assertIn("'parted'", build)
         self.assertIn("/usr/share/cambonos-installer/configs", build)
+        self.assertIn("printf '%s-%s\\n' \"$pkgver\" \"$pkgrel\"", build)
+        self.assertIn('/usr/share/cambonos-installer/version', build)
         self.assertIn('cp -a "$startdir/files/configs/."', build)
         self.assertTrue((ROOT / "files" / "configs" / "etc").is_dir())
         self.assertTrue((ROOT / "files" / "configs" / "usr").is_dir())
@@ -28,6 +30,8 @@ class InstallerPackageTests(unittest.TestCase):
 
     def test_installation_flow_lives_in_the_single_entrypoint(self):
         installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()
+        self.assertIn('readonly TITLE="CambonOS Installer ${PACKAGE_VERSION}"', installer)
+        self.assertIn('PACKAGE_VERSION=$(<"$VERSION_FILE")', installer)
         self.assertIn("collect_options()", installer)
         self.assertIn("create_partitions()", installer)
         self.assertIn("perform_installation()", installer)

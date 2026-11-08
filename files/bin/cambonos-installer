@@ -2,7 +2,12 @@
 
 set -Eeuo pipefail
 
-readonly TITLE='CambonOS Installer'
+readonly VERSION_FILE='/usr/share/cambonos-installer/version'
+PACKAGE_VERSION='development'
+if [[ -r "$VERSION_FILE" ]]; then
+	PACKAGE_VERSION=$(<"$VERSION_FILE")
+fi
+readonly TITLE="CambonOS Installer ${PACKAGE_VERSION}"
 readonly MOUNT_POINT='/mnt'
 readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 if [[ -d "$SCRIPT_DIR/../configs/etc" && -d "$SCRIPT_DIR/../configs/usr" ]]; then

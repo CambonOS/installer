@@ -1,6 +1,6 @@
 pkgname=cambonos-installer
 pkgver=0.1.5
-pkgrel=2
+pkgrel=3
 pkgdesc="CambonOS live system installer"
 arch=('any')
 url="https://github.com/CambonOS/cambonos-installer"
@@ -11,6 +11,7 @@ depends=('arch-install-scripts' 'bash' 'coreutils' 'dialog' 'dosfstools'
 
 package() {
   local data_dir="$pkgdir/usr/share/cambonos-installer/configs"
+  local version_file="$pkgdir/usr/share/cambonos-installer/version"
 
   install -Dm644 "$startdir/LICENSE" \
     "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
@@ -18,4 +19,5 @@ package() {
     "$pkgdir/usr/bin/cambonos-installer"
   install -d "$data_dir"
   cp -a "$startdir/files/configs/." "$data_dir/"
+  printf '%s-%s\n' "$pkgver" "$pkgrel" > "$version_file"
 }
