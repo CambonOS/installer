@@ -10,12 +10,12 @@ depends=('arch-install-scripts' 'bash' 'coreutils' 'dialog' 'dosfstools'
          'systemd' 'util-linux')
 
 package() {
-  local data_dir="$pkgdir/usr/share/cambonos-installer/installer"
+  local data_dir="$pkgdir/usr/share/cambonos-installer/configs"
 
   install -Dm644 "$startdir/LICENSE" \
     "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  install -Dm755 "$startdir/cambonos-installer" \
+  install -Dm755 "$startdir/files/bin/cambonos-installer" \
     "$pkgdir/usr/bin/cambonos-installer"
   install -d "$data_dir"
-  cp -a "$startdir/cambonos-fs" "$data_dir/cambonos-fs"
+  cp -a "$startdir/files/configs/." "$data_dir/"
 }

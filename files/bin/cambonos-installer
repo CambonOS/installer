@@ -5,10 +5,10 @@ set -Eeuo pipefail
 readonly TITLE='CambonOS Installer'
 readonly MOUNT_POINT='/mnt'
 readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-if [[ -d "$SCRIPT_DIR/cambonos-fs" ]]; then
-	readonly DATA_DIR="$SCRIPT_DIR"
+if [[ -d "$SCRIPT_DIR/../configs/etc" && -d "$SCRIPT_DIR/../configs/usr" ]]; then
+	readonly DATA_DIR="$SCRIPT_DIR/../configs"
 else
-	readonly DATA_DIR='/usr/share/cambonos-installer/installer'
+	readonly DATA_DIR='/usr/share/cambonos-installer/configs'
 fi
 
 WORK_DIR=''
@@ -312,7 +312,7 @@ configure_system() {
 	local desktop_source="/root/$DESKTOP"
 	local -a services aur_packages
 
-	cp -a "$DATA_DIR/cambonos-fs/." "$MOUNT_POINT/"
+	cp -a "$DATA_DIR/." "$MOUNT_POINT/"
 	chmod 440 "$MOUNT_POINT/etc/sudoers"
 	if [[ -d /etc/NetworkManager/system-connections ]]; then
 		install -d -m 700 "$MOUNT_POINT/etc/NetworkManager/system-connections"
@@ -462,7 +462,7 @@ main() {
 		esac
 	fi
 	[[ $EUID -eq 0 ]] || fail 'Ejecute el instalador como root desde el sistema live.'
-	[[ -d "$DATA_DIR/cambonos-fs" ]] || fail "No se encuentra el árbol de configuración: $DATA_DIR/cambonos-fs"
+	[[ -d "$DATA_DIR/etc" && -d "$DATA_DIR/usr" ]] || fail "No se encuentra el árbol de configuración: $DATA_DIR"
 	require_commands dialog lsblk awk sed parted partprobe udevadm mkfs.vfat mkfs.ext4 mount mountpoint umount timedatectl reflector pacman pacstrap arch-chroot genfstab mkswap swapon fallocate lspci systemctl install cp find chown chmod useradd groupadd passwd chsh visudo git makepkg grub-mkconfig
 	[[ ! -e "$MOUNT_POINT" ]] || [[ -d "$MOUNT_POINT" ]] || fail "$MOUNT_POINT existe y no es un directorio."
 	mountpoint -q "$MOUNT_POINT" && fail "$MOUNT_POINT ya está montado. Desmóntelo antes de iniciar el instalador."
