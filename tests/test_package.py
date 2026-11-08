@@ -10,7 +10,7 @@ class InstallerPackageTests(unittest.TestCase):
     def test_package_metadata_and_payload(self):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
-        self.assertIn("pkgrel=3", build)
+        self.assertIn("pkgrel=5", build)
         self.assertIn("'parted'", build)
         self.assertIn("/usr/share/cambonos-installer/configs", build)
         self.assertIn("printf '%s-%s\\n' \"$pkgver\" \"$pkgrel\"", build)
@@ -39,6 +39,35 @@ class InstallerPackageTests(unittest.TestCase):
         self.assertNotIn("installer/dialog.sh", installer)
         for path in ("dialog.sh", "parted.sh", "cambonos-install.sh"):
             self.assertFalse((ROOT / path).exists())
+
+    def test_base_and_grub_packages_replace_individual_dependencies(self):
+        installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()
+        bootstrap_packages = installer.split("base_packages=(", 1)[1].split(")", 1)[0].split()
+        system_packages = installer.split("system_packages=(", 1)[1].split(")", 1)[0].split()
+
+        self.assertEqual(
+            bootstrap_packages,
+            ["base", "linux", "linux-firmware", "cambonos-keyring", "cambonos-pacman"],
+        )
+        self.assertIn("cambonos-base", system_packages)
+        self.assertIn("cambonos-grub", system_packages)
+        for package in (
+            "cambonos-release",
+            "cambonos-branding",
+            "cambonos-fastfetch",
+            "cambonos-shell-prompt",
+            "cambonos-zsh",
+            "grub",
+            "os-prober",
+        ):
+            with self.subTest(package=package):
+                self.assertNotIn(package, bootstrap_packages)
+                self.assertNotIn(package, system_packages)
+        for package in system_packages:
+            with self.subTest(installed_after_pacstrap=package):
+                self.assertNotIn(package, bootstrap_packages)
+        self.assertIn('"${system_packages[@]}"', installer)
+        self.assertIn('run_chroot pacman -Syu --noconfirm', installer)
 
     def test_sudoers_mode_is_fixed_before_validation(self):
         installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()

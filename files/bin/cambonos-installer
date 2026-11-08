@@ -267,26 +267,24 @@ run_chroot() {
 }
 
 install_base_system() {
-	local -a base_packages extra_packages gpu_packages
-	local cpu_packages
+	local -a base_packages system_packages cpu_packages extra_packages gpu_packages
 
 	timedatectl set-ntp true
 	progress 2
 	reflector -l 10 -f 5 --save /etc/pacman.d/mirrorlist
 	pacman --noconfirm -Sy archlinux-keyring
 
-	base_packages=(linux linux-headers linux-firmware base lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf git wget base-devel sudo ntfs-3g dosfstools exfatprogs cpupower rsync accountsservice cambonos-release cambonos-branding cambonos-fastfetch cambonos-plymouth cambonos-shell-prompt cambonos-zsh cambonos-keyring cambonos-pacman grub os-prober zsh iptables avahi)
+	base_packages=(base linux linux-firmware cambonos-keyring cambonos-pacman)
+	system_packages=(linux-headers lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf git wget base-devel sudo ntfs-3g dosfstools exfatprogs cpupower rsync accountsservice cambonos-base cambonos-plymouth cambonos-grub zsh iptables avahi)
 	if grep -q 'Intel' /proc/cpuinfo; then
-		cpu_packages='intel-ucode'
+		cpu_packages=(intel-ucode)
 	elif grep -q 'AMD' /proc/cpuinfo; then
-		cpu_packages='amd-ucode'
+		cpu_packages=(amd-ucode)
 	else
-		cpu_packages='amd-ucode intel-ucode'
+		cpu_packages=(amd-ucode intel-ucode)
 	fi
-	read -r -a extra_packages <<< "$cpu_packages"
-	base_packages+=("${extra_packages[@]}")
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
-		base_packages+=(efibootmgr)
+		system_packages+=(efibootmgr)
 	fi
 	pacstrap "$MOUNT_POINT" "${base_packages[@]}"
 	progress 22
@@ -309,7 +307,7 @@ install_base_system() {
 	if [[ "$INSTALL_SSH" == 'yes' ]]; then
 		extra_packages+=(openssh)
 	fi
-	run_chroot pacman -Syu --noconfirm "${gpu_packages[@]}" "${extra_packages[@]}"
+	run_chroot pacman -Syu --noconfirm "${system_packages[@]}" "${cpu_packages[@]}" "${gpu_packages[@]}" "${extra_packages[@]}"
 	progress 36
 }
 
