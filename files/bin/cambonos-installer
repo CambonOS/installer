@@ -283,6 +283,51 @@ run_chroot() {
 	arch-chroot "$MOUNT_POINT" "$@"
 }
 
+uefi_boot_entry_details() {
+	local line=$1 normalized entry_number
+	normalized=${line,,}
+	[[ "$line" =~ ^Boot([[:xdigit:]]{4})\*?[[:space:]]CambonOS[[:space:]] ]] || return 1
+	entry_number=${BASH_REMATCH[1]}
+	[[ "$normalized" == *'/file(\efi\cambonos\grubx64.efi)'* ]] || return 1
+	[[ "$normalized" =~ hd\([0-9]+,gpt,([[:xdigit:]-]+), ]] || return 1
+	printf '%s %s\n' "$entry_number" "${BASH_REMATCH[1]}"
+}
+
+ensure_uefi_boot_entry() {
+	local mount_point=${1:-$MOUNT_POINT}
+	local partition_number partuuid boot_entries line details entry_number entry_partuuid
+	local valid_entry=0
+	local -a old_entries=()
+	partition_number=$(lsblk -no PARTN "$EFI_PARTITION")
+	partuuid=$(blkid -s PARTUUID -o value "$EFI_PARTITION")
+	[[ -n "$partition_number" && -n "$partuuid" ]] || return 1
+	[[ -f "$mount_point/boot/EFI/CambonOS/grubx64.efi" ]] || return 1
+	partuuid=${partuuid,,}
+	boot_entries=$(run_chroot efibootmgr -v)
+	while IFS= read -r line; do
+		details=$(uefi_boot_entry_details "$line") || continue
+		read -r entry_number entry_partuuid <<< "$details"
+		if [[ "${entry_partuuid,,}" == "$partuuid" ]]; then
+			valid_entry=1
+		else
+			old_entries+=("$entry_number")
+		fi
+	done <<< "$boot_entries"
+	for entry_number in "${old_entries[@]}"; do
+		run_chroot efibootmgr --bootnum "$entry_number" --delete-bootnum
+	done
+	if [[ "$valid_entry" -eq 0 ]]; then
+		run_chroot efibootmgr --create --disk "$DISK" --part "$partition_number" --label CambonOS --loader '\EFI\CambonOS\grubx64.efi'
+	fi
+	boot_entries=$(run_chroot efibootmgr -v)
+	while IFS= read -r line; do
+		details=$(uefi_boot_entry_details "$line") || continue
+		read -r entry_number entry_partuuid <<< "$details"
+		[[ "${entry_partuuid,,}" == "$partuuid" ]] && return 0
+	done <<< "$boot_entries"
+	return 1
+}
+
 install_base_system() {
 	local -a base_packages system_packages cpu_packages extra_packages gpu_packages
 
@@ -421,11 +466,14 @@ EOF
 	progress 94
 
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
-		run_chroot grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=CambonOS
+		run_chroot grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=CambonOS --no-nvram
 	else
 		run_chroot grub-install --target=i386-pc "$DISK"
 	fi
 	run_chroot grub-mkconfig -o /boot/grub/grub.cfg
+	if [[ "$BOOT_MODE" == 'uefi' ]] && ! ensure_uefi_boot_entry; then
+		: > "$WORK_DIR/uefi-entry-warning"
+	fi
 	progress 100
 }
 
@@ -471,7 +519,11 @@ run_installation() {
 		show_error "La instalación falló. Registro completo: $WORK_DIR/install.log\n\n$(tail -n 12 "$WORK_DIR/install.log")"
 		return "$result"
 	fi
-	dialog --title "$TITLE" --msgbox '\nLa instalación de CambonOS ha finalizado correctamente. Puede reiniciar el equipo.' 8 76
+	if [[ -f "$WORK_DIR/uefi-entry-warning" ]]; then
+		dialog --title "$TITLE" --msgbox '\nLa instalación ha finalizado, pero no se pudo verificar la entrada UEFI de CambonOS. Revise las entradas con efibootmgr antes de reiniciar.' 8 76
+	else
+		dialog --title "$TITLE" --msgbox '\nLa instalación de CambonOS ha finalizado correctamente. Puede reiniciar el equipo.' 8 76
+	fi
 }
 
 main() {

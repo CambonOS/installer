@@ -10,7 +10,7 @@ class InstallerPackageTests(unittest.TestCase):
     def test_package_metadata_and_payload(self):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
-        self.assertIn("pkgrel=1", build)
+        self.assertIn("pkgrel=2", build)
         self.assertIn("'parted'", build)
         self.assertIn("/usr/share/cambonos-installer/configs", build)
         self.assertIn("printf '%s-%s\\n' \"$pkgver\" \"$pkgrel\"", build)
@@ -39,6 +39,76 @@ class InstallerPackageTests(unittest.TestCase):
         self.assertNotIn("installer/dialog.sh", installer)
         for path in ("dialog.sh", "parted.sh", "cambonos-install.sh"):
             self.assertFalse((ROOT / path).exists())
+
+    def test_uefi_boot_entry_parser_matches_cambonos_path_and_partition(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash",
+                "-c",
+                'source "$1"; '
+                'uefi_boot_entry_details "Boot0003* CambonOS HD(1,GPT,c5b92a8e-66b5-4175-89af-0a7ac23c31bd,0x800,0x200000)/File(\\EFI\\CambonOS\\grubx64.efi)"; '
+                'uefi_boot_entry_details "Boot0004* CambonOS HD(1,GPT,c5b92a8e-4988-46fb-8d25-f07739faf453,0x800,0x200000)/File(\\EFI\\CambonOS\\grubx64.efi)"; '
+                '! uefi_boot_entry_details "Boot0005* OtherOS HD(1,GPT,c5b92a8e-66b5-4175-89af-0a7ac23c31bd,0x800,0x200000)/File(\\EFI\\CambonOS\\grubx64.efi)"; '
+                '! uefi_boot_entry_details "Boot0006* CambonOS HD(1,GPT,c5b92a8e-66b5-4175-89af-0a7ac23c31bd,0x800,0x200000)/File(\\EFI\\OtherOS\\grubx64.efi)"',
+                "bash",
+                str(installer),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(
+            result.stdout.strip().splitlines(),
+            [
+                "0003 c5b92a8e-66b5-4175-89af-0a7ac23c31bd",
+                "0004 c5b92a8e-4988-46fb-8d25-f07739faf453",
+            ],
+        )
+
+    def test_uefi_boot_entry_replaces_stale_entry_and_verifies_new_partition(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash",
+                "-c",
+                "source \"$1\"\n"
+                "mount_point=$(mktemp -d)\n"
+                "trap 'rm -rf \"$mount_point\"' EXIT\n"
+                "mkdir -p \"$mount_point/boot/EFI/CambonOS\"\n"
+                "touch \"$mount_point/boot/EFI/CambonOS/grubx64.efi\"\n"
+                "EFI_PARTITION=/dev/sda1\nDISK=/dev/sda\n"
+                "created=0\nexisting_valid=0\nactions=()\n"
+                "backslash=$(printf '\\134')\n"
+                "lsblk() { printf '1\\n'; }\n"
+                "blkid() { printf 'c5b92a8e-66b5-4175-89af-0a7ac23c31bd\\n'; }\n"
+                "run_chroot() {\n"
+                "  if [[ \"$1 $2\" == 'efibootmgr -v' ]]; then\n"
+                "    printf 'Boot0003* CambonOS HD(1,GPT,c5b92a8e-4988-46fb-8d25-f07739faf453,0x800,0x200000)/File(%sEFI%sCambonOS%sgrubx64.efi)\\n' \"$backslash\" \"$backslash\" \"$backslash\"\n"
+                "    if ((created == 1 || existing_valid == 1)); then\n"
+                "      printf 'Boot0004* CambonOS HD(1,GPT,c5b92a8e-66b5-4175-89af-0a7ac23c31bd,0x800,0x200000)/File(%sEFI%sCambonOS%sgrubx64.efi)\\n' \"$backslash\" \"$backslash\" \"$backslash\"\n"
+                "    fi\n"
+                "  elif [[ \"$2\" == '--bootnum' ]]; then\n"
+                "    actions+=(\"delete:$3\")\n"
+                "  elif [[ \"$2\" == '--create' ]]; then\n"
+                "    actions+=(\"create:$4:$6\")\n"
+                "    created=1\n"
+                "  else\nreturn 1\nfi\n"
+                "}\n"
+                "ensure_uefi_boot_entry \"$mount_point\"\n"
+                "[[ \"${actions[*]}\" == 'delete:0003 create:/dev/sda:1' ]]\n"
+                "actions=()\ncreated=0\nexisting_valid=1\n"
+                "ensure_uefi_boot_entry \"$mount_point\"\n"
+                "[[ \"${actions[*]}\" == 'delete:0003' ]]\n",
+                "bash",
+                str(installer),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "")
 
     def test_account_name_normalization_and_password_requirements(self):
         installer = ROOT / "files" / "bin" / "cambonos-installer"

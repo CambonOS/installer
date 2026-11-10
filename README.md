@@ -15,6 +15,8 @@ libre contiguo disponible en un disco GPT iniciado en modo UEFI. El modo de
 espacio libre necesita una partición raíz de al menos 24 GiB y conserva las particiones existentes;
 la instalación limpia elimina todas las particiones del disco seleccionado.
 Revisa cuidadosamente el disco y el modo antes de confirmar.
+En UEFI, el instalador recrea la entrada de CambonOS apuntando a la partición
+EFI de la instalación actual y comprueba que la entrada haya quedado registrada.
 
 Durante la instalación se solicita el nombre del usuario una sola vez. Ese
 texto se conserva como nombre completo y se normaliza para el login: se pasa a
