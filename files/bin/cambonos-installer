@@ -79,7 +79,7 @@ require_commands() {
 }
 
 dialog_input() {
-	dialog --stdout --title "$TITLE" "\n$@"
+	dialog --stdout --title "$TITLE" "$@"
 }
 
 normalize_admin_user() {
