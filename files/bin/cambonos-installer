@@ -276,8 +276,13 @@ create_partitions() {
 }
 
 progress() {
-	printf '%s\n' "$1" >&3
+	local percent=$1 message=$2
+	((percent < PROGRESS_PERCENT)) && percent=$PROGRESS_PERCENT
+	PROGRESS_PERCENT=$percent
+	printf 'XXX\n%s\n%s\nXXX\n' "$percent" "$message" >&3
 }
+
+PROGRESS_PERCENT=0
 
 run_chroot() {
 	arch-chroot "$MOUNT_POINT" "$@"
@@ -331,9 +336,10 @@ ensure_uefi_boot_entry() {
 install_base_system() {
 	local -a base_packages system_packages cpu_packages extra_packages gpu_packages
 
+	progress 9 'Sincronizando la hora y seleccionando mirrors'
 	timedatectl set-ntp true
-	progress 2
 	reflector -l 10 -f 5 --save /etc/pacman.d/mirrorlist
+	progress 11 'Actualizando las claves de Arch Linux'
 	pacman --noconfirm -Sy archlinux-keyring
 
 	base_packages=(base linux linux-firmware cambonos-keyring cambonos-pacman)
@@ -348,8 +354,9 @@ install_base_system() {
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
 		system_packages+=(efibootmgr)
 	fi
+	progress 13 'Instalando el sistema base'
 	pacstrap "$MOUNT_POINT" "${base_packages[@]}"
-	progress 22
+	progress 22 'Detectando hardware y preparando controladores'
 
 	if ! grep -q '^\[multilib\]' "$MOUNT_POINT/etc/pacman.conf"; then
 		printf '\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> "$MOUNT_POINT/etc/pacman.conf"
@@ -369,14 +376,16 @@ install_base_system() {
 	if [[ "$INSTALL_SSH" == 'yes' ]]; then
 		extra_packages+=(openssh)
 	fi
+	progress 25 'Instalando paquetes del sistema y controladores'
 	run_chroot pacman -Syu --noconfirm "${system_packages[@]}" "${cpu_packages[@]}" "${gpu_packages[@]}" "${extra_packages[@]}"
-	progress 36
+	progress 36 'Paquetes del sistema instalados'
 }
 
 configure_system() {
 	local desktop_source="/root/$DESKTOP"
 	local -a services aur_packages
 
+	progress 42 'Copiando la configuracion y activando servicios'
 	cp -a "$DATA_DIR/." "$MOUNT_POINT/"
 	chmod 440 "$MOUNT_POINT/etc/sudoers"
 	if [[ -d /etc/NetworkManager/system-connections ]]; then
@@ -398,7 +407,7 @@ configure_system() {
 	run_chroot usermod -s /bin/zsh root
 	run_chroot passwd --lock root
 	run_chroot systemctl enable cpupower.service accounts-daemon.service NetworkManager.service ntpd.service systemd-resolved.service avahi-daemon.service systemd-homed.service
-	progress 43
+	progress 43 'Preparando el usuario de mantenimiento y AUR'
 
 	run_chroot groupadd --force updates
 	if ! run_chroot id updates >/dev/null 2>&1; then
@@ -416,13 +425,13 @@ configure_system() {
 		aur_packages=(xdg-user-dirs libpwquality)
 	fi
 	run_chroot su -s /bin/bash updates -c "yay --noconfirm -S ${aur_packages[*]}"
-	progress 54
+	progress 54 "Instalando el entorno de escritorio: $DESKTOP"
 
 	cp -a "$desktop_source" "$MOUNT_POINT/$DESKTOP"
 	run_chroot chown -R updates:updates "/$DESKTOP"
 	run_chroot su -s /bin/bash updates -c "cd /$DESKTOP && bash archie.sh"
 	rm -rf -- "$MOUNT_POINT/$DESKTOP"
-	progress 80
+	progress 80 'Configurando el firewall'
 
 	install -d "$MOUNT_POINT/etc/iptables"
 	cat > "$MOUNT_POINT/etc/iptables/iptables.rules" <<'EOF'
@@ -452,7 +461,7 @@ EOF
 		services+=(sshd.service)
 	fi
 	run_chroot systemctl enable "${services[@]}"
-	progress 85
+	progress 85 'Creando el usuario y configurando idioma y zona horaria'
 
 	run_chroot ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime
 	run_chroot hwclock --systohc
@@ -463,7 +472,7 @@ EOF
 	run_chroot chsh -s /usr/bin/nologin updates
 	run_chroot systemctl enable cambonos-upgrade.timer
 	run_chroot locale-gen
-	progress 94
+	progress 94 'Instalando GRUB y generando el menu de arranque'
 
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
 		run_chroot grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=CambonOS --no-nvram
@@ -474,31 +483,33 @@ EOF
 	if [[ "$BOOT_MODE" == 'uefi' ]] && ! ensure_uefi_boot_entry; then
 		: > "$WORK_DIR/uefi-entry-warning"
 	fi
-	progress 100
+	progress 100 'Instalacion completada'
 }
 
 perform_installation() {
+	progress 1 "Preparando las particiones en $DISK"
 	create_partitions
-	progress 3
+	progress 3 'Formateando la particion raiz'
 	mkfs.ext4 -F "$ROOT_PARTITION"
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
 		mkfs.vfat -F32 "$EFI_PARTITION"
 	fi
+	progress 5 'Montando el sistema de destino'
 	mount "$ROOT_PARTITION" "$MOUNT_POINT"
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
 		install -d "$MOUNT_POINT/boot"
 		mount "$EFI_PARTITION" "$MOUNT_POINT/boot"
 	fi
-	progress 8
+	progress 8 'Particiones montadas; iniciando la instalacion base'
 
 	install_base_system
-	progress 38
+	progress 38 'Creando el archivo de intercambio'
 	fallocate -l 4G "$MOUNT_POINT/swapfile"
 	chmod 600 "$MOUNT_POINT/swapfile"
 	mkswap -U clear "$MOUNT_POINT/swapfile"
 	swapon "$MOUNT_POINT/swapfile"
 	genfstab -U "$MOUNT_POINT" >> "$MOUNT_POINT/etc/fstab"
-	progress 41
+	progress 41 'Configurando el sistema instalado'
 
 	configure_system
 }

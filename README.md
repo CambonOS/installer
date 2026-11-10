@@ -25,6 +25,10 @@ hasta 32 caracteres y usar solo letras ASCII, números, guiones o guiones bajos;
 no puede comenzar por guion. La contraseña requiere al menos 8 caracteres,
 una minúscula, una mayúscula, un número y un símbolo distinto de un espacio.
 
+Durante la instalación, la barra muestra la etapa activa para que las
+operaciones largas no parezcan detenidas. El porcentaje es orientativo y avanza
+por etapas; no representa una medición continua del trabajo restante.
+
 Para construirlo desde este repositorio en Arch Linux:
 
 ```sh

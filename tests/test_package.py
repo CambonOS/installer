@@ -10,7 +10,7 @@ class InstallerPackageTests(unittest.TestCase):
     def test_package_metadata_and_payload(self):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
-        self.assertIn("pkgrel=2", build)
+        self.assertIn("pkgrel=3", build)
         self.assertIn("'parted'", build)
         self.assertIn("/usr/share/cambonos-installer/configs", build)
         self.assertIn("printf '%s-%s\\n' \"$pkgver\" \"$pkgrel\"", build)
@@ -39,6 +39,36 @@ class InstallerPackageTests(unittest.TestCase):
         self.assertNotIn("installer/dialog.sh", installer)
         for path in ("dialog.sh", "parted.sh", "cambonos-install.sh"):
             self.assertFalse((ROOT / path).exists())
+
+    def test_progress_emits_gauge_messages_without_regressing(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash",
+                "-c",
+                'source "$1"; exec 3>&1; '
+                'progress 12 "Instalando paquetes"; '
+                'progress 8 "Continua la instalacion"',
+                "bash",
+                str(installer),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(
+            result.stdout.splitlines(),
+            [
+                "XXX",
+                "12",
+                "Instalando paquetes",
+                "XXX",
+                "XXX",
+                "12",
+                "Continua la instalacion",
+                "XXX",
+            ],
+        )
 
     def test_uefi_boot_entry_parser_matches_cambonos_path_and_partition(self):
         installer = ROOT / "files" / "bin" / "cambonos-installer"
