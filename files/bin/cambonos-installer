@@ -434,7 +434,7 @@ perform_installation() {
 	progress 3
 	mkfs.ext4 -F "$ROOT_PARTITION"
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
-		mkfs.vfat -F 32 "$EFI_PARTITION"
+		mkfs.vfat -F32 "$EFI_PARTITION"
 	fi
 	mount "$ROOT_PARTITION" "$MOUNT_POINT"
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
