@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import tempfile
 import unittest
@@ -12,7 +13,7 @@ class InstallerPackageTests(unittest.TestCase):
     def test_package_metadata_and_payload(self):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
-        self.assertIn("pkgrel=4", build)
+        self.assertIn("pkgrel=5", build)
         self.assertIn("'curl'", build)
         self.assertIn("'networkmanager'", build)
         self.assertIn("'parted'", build)
@@ -135,7 +136,7 @@ class InstallerPackageTests(unittest.TestCase):
 
     def test_installation_flow_lives_in_the_single_entrypoint(self):
         installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()
-        self.assertIn('readonly TITLE="CambonOS Installer ${PACKAGE_VERSION}"', installer)
+        self.assertIn('readonly TITLE=" CambonOS Installer ${PACKAGE_VERSION} "', installer)
         self.assertIn('PACKAGE_VERSION=$(<"$VERSION_FILE")', installer)
         self.assertIn("collect_options()", installer)
         self.assertIn("create_partitions()", installer)
@@ -144,6 +145,23 @@ class InstallerPackageTests(unittest.TestCase):
         self.assertNotIn("installer/dialog.sh", installer)
         for path in ("dialog.sh", "parted.sh", "cambonos-install.sh"):
             self.assertFalse((ROOT / path).exists())
+
+    def test_dialog_prompts_start_with_a_newline(self):
+        installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()
+        widgets = re.finditer(
+            r"--(?:menu|inputbox|passwordbox|yesno|msgbox|infobox|programbox|gauge)\s+",
+            installer,
+        )
+        count = 0
+        for widget in widgets:
+            count += 1
+            with self.subTest(widget=widget.group().strip(), position=widget.start()):
+                prompt = re.match(r"(['\"])(.*?)\1", installer[widget.end():])
+                self.assertIsNotNone(prompt)
+                self.assertTrue(prompt.group(2).startswith(r"\n"))
+        self.assertGreater(count, 0)
+        self.assertIn('confirmation="Equipo:', installer)
+        self.assertIn('--yesno "\\n$confirmation"', installer)
 
     def test_progress_emits_gauge_messages_without_regressing(self):
         installer = ROOT / "files" / "bin" / "cambonos-installer"
@@ -166,11 +184,11 @@ class InstallerPackageTests(unittest.TestCase):
             [
                 "XXX",
                 "12",
-                "Instalando paquetes",
+                "\\nInstalando paquetes",
                 "XXX",
                 "XXX",
                 "12",
-                "Continua la instalacion",
+                "\\nContinua la instalacion",
                 "XXX",
             ],
         )

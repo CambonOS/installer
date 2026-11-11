@@ -238,7 +238,7 @@ collect_options() {
 	fi
 
 	local confirmation
-	confirmation="\nEquipo: $HOSTNAME\nUsuario: $ADMIN_USER\nEscritorio: $DESKTOP\nServidor SSH: $INSTALL_SSH\nModo: $MODE\nArranque: $BOOT_MODE\nDisco: $DISK\n\n"
+	confirmation="Equipo: $HOSTNAME\nUsuario: $ADMIN_USER\nEscritorio: $DESKTOP\nServidor SSH: $INSTALL_SSH\nModo: $MODE\nArranque: $BOOT_MODE\nDisco: $DISK\n\n"
 	if [[ "$MODE" == 'clean' ]]; then
 		confirmation+="ATENCIÓN: se borrarán todas las particiones y los datos del disco.\n\n"
 	fi
@@ -330,7 +330,7 @@ progress() {
 	local percent=$1 message=$2
 	((percent < PROGRESS_PERCENT)) && percent=$PROGRESS_PERCENT
 	PROGRESS_PERCENT=$percent
-	printf 'XXX\n%s\n%s\nXXX\n' "$percent" "$message" >&3
+	printf 'XXX\n%s\n\\n%s\nXXX\n' "$percent" "$message" >&3
 }
 
 PROGRESS_PERCENT=0
