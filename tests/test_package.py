@@ -1,4 +1,6 @@
+import os
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -10,7 +12,9 @@ class InstallerPackageTests(unittest.TestCase):
     def test_package_metadata_and_payload(self):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
-        self.assertIn("pkgrel=3", build)
+        self.assertIn("pkgrel=4", build)
+        self.assertIn("'curl'", build)
+        self.assertIn("'networkmanager'", build)
         self.assertIn("'parted'", build)
         self.assertIn("/usr/share/cambonos-installer/configs", build)
         self.assertIn("printf '%s-%s\\n' \"$pkgver\" \"$pkgrel\"", build)
@@ -27,6 +31,107 @@ class InstallerPackageTests(unittest.TestCase):
         ):
             with self.subTest(path=path.name):
                 subprocess.run(["bash", "-n", str(path)], check=True)
+
+    def test_network_retries_and_opens_nmtui(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash", "-c",
+                'source "$1"; checks=0; nmtui_calls=0; '
+                'systemctl() { :; }; sleep() { :; }; dialog() { :; }; '
+                'curl() { checks=$((checks + 1)); '
+                '[[ "$*" == *https://geo.mirror.pkgbuild.com/core/os/x86_64/core.db* ]] && ((checks > 5)); }; '
+                'nmtui() { nmtui_calls=$((nmtui_calls + 1)); }; '
+                'prepare_network; test "$checks" -eq 6 && test "$nmtui_calls" -eq 1',
+                "network-test", str(installer),
+            ],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_update_displays_output_and_preserves_pacman_status(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        for expected_status in (0, 42):
+            with self.subTest(status=expected_status):
+                result = subprocess.run(
+                    [
+                        "bash", "-c",
+                        'source "$1"; simulated_status=$2; '
+                        'dialog() { if [[ "$*" == *--programbox* ]]; then cat; fi; }; '
+                        'pacman() { printf "download progress\\n"; return "$simulated_status"; }; '
+                        'show_error() { printf "ERROR: %s\\n" "$1"; }; '
+                        'update_installer || result=$?; exit "${result:-0}"',
+                        "update-test", str(installer), str(expected_status),
+                    ],
+                    capture_output=True, text=True,
+                )
+                self.assertEqual(result.returncode, expected_status, result.stderr)
+                self.assertIn("download progress", result.stdout)
+                self.assertEqual("ERROR:" in result.stdout, expected_status != 0)
+
+    def test_update_failure_does_not_restart(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash", "-c",
+                'source "$1"; prepare_network() { :; }; update_installer() { return 42; }; '
+                'exec() { printf "unexpected restart\\n"; exit 99; }; '
+                'prepare_installer || exit "$?"',
+                "failure-test", str(installer),
+            ],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 42, result.stderr)
+        self.assertNotIn("unexpected restart", result.stdout)
+
+    def test_update_reports_temporary_directory_failure(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash", "-c",
+                'source "$1"; mktemp() { return 1; }; '
+                'show_error() { printf "ERROR: %s\\n" "$1"; }; '
+                'pacman() { printf "unexpected pacman\\n"; }; '
+                'update_installer || exit "$?"',
+                "temporary-directory-test", str(installer),
+            ],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn("directorio temporal", result.stdout)
+        self.assertNotIn("unexpected pacman", result.stdout)
+
+    def test_successful_update_restarts_once_and_clears_marker(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        with tempfile.TemporaryDirectory() as directory:
+            replacement = Path(directory) / "replacement"
+            replacement.write_text(
+                '#!/bin/bash\n'
+                'source "$INSTALLER_SOURCE"\n'
+                'prepare_network() { exit 91; }\n'
+                'update_installer() { exit 92; }\n'
+                'prepare_installer "$@"\n'
+                'printf "resumed:%s:%s\\n" "${CAMBONOS_INSTALLER_UPDATED-unset}" "$*"\n'
+            )
+            replacement.chmod(0o755)
+            environment = os.environ.copy()
+            environment.update(INSTALLER_SOURCE=str(installer), RESTART_TARGET=str(replacement))
+            environment.pop("CAMBONOS_INSTALLER_UPDATED", None)
+            result = subprocess.run(
+                [
+                    "bash", "-c",
+                    'source "$INSTALLER_SOURCE"; '
+                    'prepare_network() { printf "network\\n"; }; '
+                    'update_installer() { printf "update\\n"; }; '
+                    'exec() { printf "restart:%s\\n" "$1"; shift; builtin exec "$RESTART_TARGET" "$@"; }; '
+                    'prepare_installer sample',
+                ],
+                env=environment, capture_output=True, text=True,
+            )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.splitlines(), [
+            "network", "update", "restart:/usr/bin/cambonos-installer", "resumed:unset:sample",
+        ])
 
     def test_installation_flow_lives_in_the_single_entrypoint(self):
         installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()

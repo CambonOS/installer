@@ -1,12 +1,12 @@
 pkgname=cambonos-installer
 pkgver=0.1.6
-pkgrel=3
+pkgrel=4
 pkgdesc="CambonOS live system installer"
 arch=('any')
 url="https://github.com/CambonOS/cambonos-installer"
 license=('GPL-3.0-only')
-depends=('arch-install-scripts' 'bash' 'coreutils' 'dialog' 'dosfstools'
-         'e2fsprogs' 'gawk' 'pacman' 'parted' 'pciutils' 'reflector'
+depends=('arch-install-scripts' 'bash' 'coreutils' 'curl' 'dialog' 'dosfstools'
+         'e2fsprogs' 'gawk' 'networkmanager' 'pacman' 'parted' 'pciutils' 'reflector'
          'systemd' 'util-linux')
 
 package() {

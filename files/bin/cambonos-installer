@@ -82,6 +82,57 @@ dialog_input() {
 	dialog --stdout --title "$TITLE" "$@"
 }
 
+prepare_network() {
+	local failed_network_checks=0
+	systemctl start NetworkManager.service >/dev/null 2>&1 || true
+	sleep 2
+	while true; do
+		dialog --title "$TITLE" --sleep 1 --infobox '\nChecking Arch Linux mirror connection...' 5 72 || true
+		if curl --fail --silent --show-error --head --connect-timeout 5 --max-time 10 'https://geo.mirror.pkgbuild.com/core/os/x86_64/core.db' >/dev/null 2>&1; then
+			return 0
+		fi
+		((failed_network_checks += 1))
+		if ((failed_network_checks >= 5)); then
+			dialog --title "$TITLE" --msgbox '\nNetwork is still unavailable. Configure it with nmtui.' 8 76 || true
+			nmtui || true
+			failed_network_checks=0
+		fi
+	done
+}
+
+update_installer() {
+	local update_dir update_pid update_status=0
+	if ! update_dir=$(mktemp -d); then
+		show_error 'No se pudo preparar el directorio temporal de la actualización.'
+		return 1
+	fi
+	if ! mkfifo "$update_dir/pacman-output"; then
+		rmdir -- "$update_dir"
+		show_error 'No se pudo preparar la salida de la actualización.'
+		return 1
+	fi
+	pacman -Syu --noconfirm cambonos-installer >"$update_dir/pacman-output" 2>&1 &
+	update_pid=$!
+	dialog --title "$TITLE" --programbox '\nUpdating CambonOS installer...' 20 76 < "$update_dir/pacman-output" || true
+	wait "$update_pid" || update_status=$?
+	rm -f -- "$update_dir/pacman-output"
+	rmdir -- "$update_dir"
+	if ((update_status != 0)); then
+		show_error 'No se pudo actualizar cambonos-installer desde el repositorio de CambonOS.'
+	fi
+	return "$update_status"
+}
+
+prepare_installer() {
+	if [[ ${CAMBONOS_INSTALLER_UPDATED:-} == 1 ]]; then
+		unset CAMBONOS_INSTALLER_UPDATED
+		return 0
+	fi
+	prepare_network
+	update_installer || return $?
+	CAMBONOS_INSTALLER_UPDATED=1 exec /usr/bin/cambonos-installer "$@"
+}
+
 normalize_admin_user() {
 	local username=${1,,}
 	username=${username// /-}
@@ -546,9 +597,10 @@ main() {
 	fi
 	[[ $EUID -eq 0 ]] || fail 'Ejecute el instalador como root desde el sistema live.'
 	[[ -d "$DATA_DIR/etc" && -d "$DATA_DIR/usr" ]] || fail "No se encuentra el árbol de configuración: $DATA_DIR"
-	require_commands dialog lsblk awk sed parted partprobe udevadm mkfs.vfat mkfs.ext4 mount mountpoint umount timedatectl reflector pacman pacstrap arch-chroot genfstab mkswap swapon fallocate lspci systemctl install cp find chown chmod useradd groupadd passwd chsh visudo git makepkg grub-mkconfig
+	require_commands dialog curl nmtui lsblk awk sed parted partprobe udevadm mkfs.vfat mkfs.ext4 mount mountpoint umount timedatectl reflector pacman pacstrap arch-chroot genfstab mkswap swapon fallocate lspci systemctl install cp find chown chmod useradd groupadd passwd chsh visudo git makepkg grub-mkconfig
 	[[ ! -e "$MOUNT_POINT" ]] || [[ -d "$MOUNT_POINT" ]] || fail "$MOUNT_POINT existe y no es un directorio."
 	mountpoint -q "$MOUNT_POINT" && fail "$MOUNT_POINT ya está montado. Desmóntelo antes de iniciar el instalador."
+	prepare_installer "$@" || return $?
 	collect_options || return 0
 	[[ -f "/root/$DESKTOP/archie.sh" ]] || fail "No se encuentra /root/$DESKTOP/archie.sh en el sistema live."
 	run_installation
