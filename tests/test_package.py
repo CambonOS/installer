@@ -293,6 +293,19 @@ class InstallerPackageTests(unittest.TestCase):
         self.assertEqual(source.count("Nombre del usuario (se usará también para iniciar sesión):"), 1)
         self.assertNotIn("Usuario administrador (login):", source)
 
+    def test_ci_notifies_packages_only_after_tests_pass(self):
+        workflow = (ROOT / ".github" / "workflows" / "notify-packages.yml").read_text()
+        self.assertIn("branches:\n      - dev\n      - main", workflow)
+        test_step = workflow.index("python -m unittest discover -s tests -v")
+        notify_step = workflow.index("Notify cambonos-packages")
+        self.assertLess(test_step, notify_step)
+        self.assertIn("secrets.CAMBONOS_PACKAGES_DISPATCH_TOKEN", workflow)
+        self.assertIn("repos/CambonOS/cambonos-packages/dispatches", workflow)
+        self.assertIn('event_type: "external-package-updated"', workflow)
+        for field in ("repository", "branch", "commit"):
+            with self.subTest(field=field):
+                self.assertIn(f"{field}: ${field}", workflow)
+
     def test_base_and_grub_packages_replace_individual_dependencies(self):
         installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()
         bootstrap_packages = installer.split("base_packages=(", 1)[1].split(")", 1)[0].split()
