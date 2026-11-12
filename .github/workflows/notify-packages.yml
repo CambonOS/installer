@@ -32,7 +32,8 @@ jobs:
           set -Eeuo pipefail
           payload="$(jq -n \
             --arg repository "${GITHUB_REPOSITORY}" \
+            --arg package "cambonos-installer" \
             --arg branch "${GITHUB_REF_NAME}" \
             --arg commit "${GITHUB_SHA}" \
-            '{event_type: "external-package-updated", client_payload: {repository: $repository, branch: $branch, commit: $commit}}')"
+            '{event_type: "external-package-updated", client_payload: {repository: $repository, package: $package, branch: $branch, commit: $commit}}')"
           gh api --method POST repos/CambonOS/cambonos-packages/dispatches --input - <<<"${payload}"
