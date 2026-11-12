@@ -13,7 +13,7 @@ class InstallerPackageTests(unittest.TestCase):
     def test_package_metadata_and_payload(self):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
-        self.assertIn("pkgrel=5", build)
+        self.assertIn("pkgrel=1", build)
         self.assertIn("'curl'", build)
         self.assertIn("'networkmanager'", build)
         self.assertIn("'parted'", build)
