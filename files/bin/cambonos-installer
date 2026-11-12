@@ -2,7 +2,12 @@
 
 set -Eeuo pipefail
 
-readonly TITLE='CambonOS Installer'
+readonly VERSION_FILE='/usr/share/cambonos-installer/version'
+PACKAGE_VERSION='development'
+if [[ -r "$VERSION_FILE" ]]; then
+	PACKAGE_VERSION=$(<"$VERSION_FILE")
+fi
+readonly TITLE=" CambonOS Installer ${PACKAGE_VERSION} "
 readonly MOUNT_POINT='/mnt'
 readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 if [[ -d "$SCRIPT_DIR/../configs/etc" && -d "$SCRIPT_DIR/../configs/usr" ]]; then
@@ -40,7 +45,7 @@ EOF
 show_error() {
 	local message=$1
 	if command -v dialog >/dev/null 2>&1 && [[ -t 0 && -t 1 ]]; then
-		dialog --title "$TITLE" --msgbox "$message" 8 76 || true
+		dialog --title "$TITLE" --msgbox "\n$message" 8 76 || true
 	else
 		printf '%s\n' "$message" >&2
 	fi
@@ -77,6 +82,73 @@ dialog_input() {
 	dialog --stdout --title "$TITLE" "$@"
 }
 
+prepare_network() {
+	local failed_network_checks=0
+	systemctl start NetworkManager.service >/dev/null 2>&1 || true
+	sleep 2
+	while true; do
+		dialog --title "$TITLE" --sleep 1 --infobox '\nChecking Arch Linux mirror connection...' 5 72 || true
+		if curl --fail --silent --show-error --head --connect-timeout 5 --max-time 10 'https://geo.mirror.pkgbuild.com/core/os/x86_64/core.db' >/dev/null 2>&1; then
+			return 0
+		fi
+		((failed_network_checks += 1))
+		if ((failed_network_checks >= 5)); then
+			dialog --title "$TITLE" --msgbox '\nNetwork is still unavailable. Configure it with nmtui.' 8 76 || true
+			nmtui || true
+			failed_network_checks=0
+		fi
+	done
+}
+
+update_installer() {
+	local update_dir update_pid update_status=0
+	if ! update_dir=$(mktemp -d); then
+		show_error 'No se pudo preparar el directorio temporal de la actualización.'
+		return 1
+	fi
+	if ! mkfifo "$update_dir/pacman-output"; then
+		rmdir -- "$update_dir"
+		show_error 'No se pudo preparar la salida de la actualización.'
+		return 1
+	fi
+	pacman -Syu --noconfirm cambonos-installer >"$update_dir/pacman-output" 2>&1 &
+	update_pid=$!
+	dialog --title "$TITLE" --programbox '\nUpdating CambonOS installer...' 20 76 < "$update_dir/pacman-output" || true
+	wait "$update_pid" || update_status=$?
+	rm -f -- "$update_dir/pacman-output"
+	rmdir -- "$update_dir"
+	if ((update_status != 0)); then
+		show_error 'No se pudo actualizar cambonos-installer desde el repositorio de CambonOS.'
+	fi
+	return "$update_status"
+}
+
+prepare_installer() {
+	if [[ ${CAMBONOS_INSTALLER_UPDATED:-} == 1 ]]; then
+		unset CAMBONOS_INSTALLER_UPDATED
+		return 0
+	fi
+	prepare_network
+	update_installer || return $?
+	CAMBONOS_INSTALLER_UPDATED=1 exec /usr/bin/cambonos-installer "$@"
+}
+
+normalize_admin_user() {
+	local username=${1,,}
+	username=${username// /-}
+	printf '%s' "$username"
+}
+
+valid_admin_user() {
+	[[ ${#1} -le 32 && "$1" =~ ^[a-z_][a-z0-9_-]*$ ]]
+}
+
+password_meets_requirements() {
+	local password=$1
+	[[ ${#password} -ge 8 && "$password" =~ [a-z] && "$password" =~ [A-Z] && \
+		"$password" =~ [0-9] && "$password" =~ [^a-zA-Z0-9[:space:]] ]]
+}
+
 choose_disk() {
 	local device size model
 	local -a disks=() options=()
@@ -103,30 +175,31 @@ collect_options() {
 		if [[ "$HOSTNAME" =~ ^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$ ]]; then
 			break
 		fi
-		dialog --title "$TITLE" --msgbox 'El nombre debe tener hasta 63 caracteres, usar letras minúsculas, números o guiones y no empezar ni terminar con guion.' 8 76
+		dialog --title "$TITLE" --msgbox '\nEl nombre debe tener hasta 63 caracteres, usar letras minúsculas, números o guiones y no empezar ni terminar con guion.' 8 76
 	done
 
 	while true; do
-		ADMIN_USER=$(dialog_input --inputbox '\nUsuario administrador (login):' 9 72 'administrador') || return 1
-		ADMIN_USER=${ADMIN_USER,,}
-		if [[ "$ADMIN_USER" =~ ^[a-z_][a-z0-9_-]*[$]?$ ]]; then
+		ADMIN_NAME=$(dialog_input --inputbox '\nNombre del usuario (se usará también para iniciar sesión):' 9 72 'Administrador') || return 1
+		ADMIN_USER=$(normalize_admin_user "$ADMIN_NAME")
+		if valid_admin_user "$ADMIN_USER"; then
 			break
 		fi
-		dialog --title "$TITLE" --msgbox 'El usuario debe comenzar por una letra minúscula o guion bajo y solo contener letras, números, guiones o guiones bajos.' 8 76
+		dialog --title "$TITLE" --msgbox '\nEl nombre debe generar un usuario Linux válido de hasta 32 caracteres: letras, números, guiones o guiones bajos; no puede empezar por guion. Los espacios se convierten en guiones.' 9 76
 	done
-
-	ADMIN_NAME=$(dialog_input --inputbox '\nNombre completo del usuario:' 9 72 'Administrador') || return 1
-	[[ -n "$ADMIN_NAME" ]] || return 1
 
 	while true; do
 		ADMIN_PASSWORD=$(dialog_input --passwordbox '\nContraseña del usuario:' 9 72) || return 1
 		password_confirmation=$(dialog_input --passwordbox '\nRepetir contraseña:' 9 72) || return 1
-		if [[ -n "$ADMIN_PASSWORD" && "$ADMIN_PASSWORD" == "$password_confirmation" ]]; then
+		if [[ "$ADMIN_PASSWORD" != "$password_confirmation" ]]; then
+			unset password_confirmation
+			dialog --title "$TITLE" --msgbox '\nLas contraseñas no coinciden. Inténtelo de nuevo.' 7 72
+		elif ! password_meets_requirements "$ADMIN_PASSWORD"; then
+			unset password_confirmation
+			dialog --title "$TITLE" --msgbox '\nLa contraseña debe tener al menos 8 caracteres e incluir una minúscula, una mayúscula, un número y un símbolo (no cuentan los espacios).' 8 76
+		else
 			unset password_confirmation
 			break
 		fi
-		unset password_confirmation
-		dialog --title "$TITLE" --msgbox 'La contraseña está vacía o no coincide. Inténtelo de nuevo.' 7 72
 	done
 
 	desktops=(1 'Cambon18/XFCE (Recomendado)' 2 'Cambon18/Qtile')
@@ -165,12 +238,12 @@ collect_options() {
 	fi
 
 	local confirmation
-	confirmation="\nEquipo: $HOSTNAME\nUsuario: $ADMIN_USER\nEscritorio: $DESKTOP\nServidor SSH: $INSTALL_SSH\nModo: $MODE\nArranque: $BOOT_MODE\nDisco: $DISK\n\n"
+	confirmation="Equipo: $HOSTNAME\nUsuario: $ADMIN_USER\nEscritorio: $DESKTOP\nServidor SSH: $INSTALL_SSH\nModo: $MODE\nArranque: $BOOT_MODE\nDisco: $DISK\n\n"
 	if [[ "$MODE" == 'clean' ]]; then
 		confirmation+="ATENCIÓN: se borrarán todas las particiones y los datos del disco.\n\n"
 	fi
 	confirmation+='¿Desea comenzar la instalación?'
-	dialog --title "$TITLE" --yesno "$confirmation" 18 84 || return 1
+	dialog --title "$TITLE" --yesno "\n$confirmation" 18 84 || return 1
 }
 
 find_free_region() {
@@ -254,37 +327,87 @@ create_partitions() {
 }
 
 progress() {
-	printf '%s\n' "$1" >&3
+	local percent=$1 message=$2
+	((percent < PROGRESS_PERCENT)) && percent=$PROGRESS_PERCENT
+	PROGRESS_PERCENT=$percent
+	printf 'XXX\n%s\n\\n%s\nXXX\n' "$percent" "$message" >&3
 }
+
+PROGRESS_PERCENT=0
 
 run_chroot() {
 	arch-chroot "$MOUNT_POINT" "$@"
 }
 
-install_base_system() {
-	local -a base_packages extra_packages gpu_packages
-	local cpu_packages
+uefi_boot_entry_details() {
+	local line=$1 normalized entry_number
+	normalized=${line,,}
+	[[ "$line" =~ ^Boot([[:xdigit:]]{4})\*?[[:space:]]CambonOS[[:space:]] ]] || return 1
+	entry_number=${BASH_REMATCH[1]}
+	[[ "$normalized" == *'/file(\efi\cambonos\grubx64.efi)'* ]] || return 1
+	[[ "$normalized" =~ hd\([0-9]+,gpt,([[:xdigit:]-]+), ]] || return 1
+	printf '%s %s\n' "$entry_number" "${BASH_REMATCH[1]}"
+}
 
+ensure_uefi_boot_entry() {
+	local mount_point=${1:-$MOUNT_POINT}
+	local partition_number partuuid boot_entries line details entry_number entry_partuuid
+	local valid_entry=0
+	local -a old_entries=()
+	partition_number=$(lsblk -no PARTN "$EFI_PARTITION")
+	partuuid=$(blkid -s PARTUUID -o value "$EFI_PARTITION")
+	[[ -n "$partition_number" && -n "$partuuid" ]] || return 1
+	[[ -f "$mount_point/boot/EFI/CambonOS/grubx64.efi" ]] || return 1
+	partuuid=${partuuid,,}
+	boot_entries=$(run_chroot efibootmgr -v)
+	while IFS= read -r line; do
+		details=$(uefi_boot_entry_details "$line") || continue
+		read -r entry_number entry_partuuid <<< "$details"
+		if [[ "${entry_partuuid,,}" == "$partuuid" ]]; then
+			valid_entry=1
+		else
+			old_entries+=("$entry_number")
+		fi
+	done <<< "$boot_entries"
+	for entry_number in "${old_entries[@]}"; do
+		run_chroot efibootmgr --bootnum "$entry_number" --delete-bootnum
+	done
+	if [[ "$valid_entry" -eq 0 ]]; then
+		run_chroot efibootmgr --create --disk "$DISK" --part "$partition_number" --label CambonOS --loader '\EFI\CambonOS\grubx64.efi'
+	fi
+	boot_entries=$(run_chroot efibootmgr -v)
+	while IFS= read -r line; do
+		details=$(uefi_boot_entry_details "$line") || continue
+		read -r entry_number entry_partuuid <<< "$details"
+		[[ "${entry_partuuid,,}" == "$partuuid" ]] && return 0
+	done <<< "$boot_entries"
+	return 1
+}
+
+install_base_system() {
+	local -a base_packages system_packages cpu_packages extra_packages gpu_packages
+
+	progress 9 'Sincronizando la hora y seleccionando mirrors'
 	timedatectl set-ntp true
-	progress 2
 	reflector -l 10 -f 5 --save /etc/pacman.d/mirrorlist
+	progress 11 'Actualizando las claves de Arch Linux'
 	pacman --noconfirm -Sy archlinux-keyring
 
-	base_packages=(linux linux-headers linux-firmware base lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf git wget base-devel sudo ntfs-3g dosfstools exfatprogs cpupower rsync accountsservice cambonos-release cambonos-branding cambonos-fastfetch cambonos-plymouth cambonos-shell-prompt cambonos-zsh cambonos-keyring cambonos-pacman grub os-prober zsh iptables avahi)
+	base_packages=(base linux linux-firmware cambonos-keyring cambonos-pacman)
+	system_packages=(linux-headers lsb-release tree htop xclip micro vim man man-db man-pages man-pages-es bash-completion networkmanager ntp systemd-resolvconf git wget base-devel sudo ntfs-3g dosfstools exfatprogs cpupower rsync accountsservice cambonos-base cambonos-plymouth cambonos-grub zsh iptables avahi)
 	if grep -q 'Intel' /proc/cpuinfo; then
-		cpu_packages='intel-ucode'
+		cpu_packages=(intel-ucode)
 	elif grep -q 'AMD' /proc/cpuinfo; then
-		cpu_packages='amd-ucode'
+		cpu_packages=(amd-ucode)
 	else
-		cpu_packages='amd-ucode intel-ucode'
+		cpu_packages=(amd-ucode intel-ucode)
 	fi
-	read -r -a extra_packages <<< "$cpu_packages"
-	base_packages+=("${extra_packages[@]}")
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
-		base_packages+=(efibootmgr)
+		system_packages+=(efibootmgr)
 	fi
+	progress 13 'Instalando el sistema base'
 	pacstrap "$MOUNT_POINT" "${base_packages[@]}"
-	progress 22
+	progress 22 'Detectando hardware y preparando controladores'
 
 	if ! grep -q '^\[multilib\]' "$MOUNT_POINT/etc/pacman.conf"; then
 		printf '\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> "$MOUNT_POINT/etc/pacman.conf"
@@ -304,14 +427,16 @@ install_base_system() {
 	if [[ "$INSTALL_SSH" == 'yes' ]]; then
 		extra_packages+=(openssh)
 	fi
-	run_chroot pacman -Syu --noconfirm "${gpu_packages[@]}" "${extra_packages[@]}"
-	progress 36
+	progress 25 'Instalando paquetes del sistema y controladores'
+	run_chroot pacman -Syu --noconfirm "${system_packages[@]}" "${cpu_packages[@]}" "${gpu_packages[@]}" "${extra_packages[@]}"
+	progress 36 'Paquetes del sistema instalados'
 }
 
 configure_system() {
 	local desktop_source="/root/$DESKTOP"
 	local -a services aur_packages
 
+	progress 42 'Copiando la configuracion y activando servicios'
 	cp -a "$DATA_DIR/." "$MOUNT_POINT/"
 	chmod 440 "$MOUNT_POINT/etc/sudoers"
 	if [[ -d /etc/NetworkManager/system-connections ]]; then
@@ -333,7 +458,7 @@ configure_system() {
 	run_chroot usermod -s /bin/zsh root
 	run_chroot passwd --lock root
 	run_chroot systemctl enable cpupower.service accounts-daemon.service NetworkManager.service ntpd.service systemd-resolved.service avahi-daemon.service systemd-homed.service
-	progress 43
+	progress 43 'Preparando el usuario de mantenimiento y AUR'
 
 	run_chroot groupadd --force updates
 	if ! run_chroot id updates >/dev/null 2>&1; then
@@ -351,13 +476,13 @@ configure_system() {
 		aur_packages=(xdg-user-dirs libpwquality)
 	fi
 	run_chroot su -s /bin/bash updates -c "yay --noconfirm -S ${aur_packages[*]}"
-	progress 54
+	progress 54 "Instalando el entorno de escritorio: $DESKTOP"
 
 	cp -a "$desktop_source" "$MOUNT_POINT/$DESKTOP"
 	run_chroot chown -R updates:updates "/$DESKTOP"
 	run_chroot su -s /bin/bash updates -c "cd /$DESKTOP && bash archie.sh"
 	rm -rf -- "$MOUNT_POINT/$DESKTOP"
-	progress 80
+	progress 80 'Configurando el firewall'
 
 	install -d "$MOUNT_POINT/etc/iptables"
 	cat > "$MOUNT_POINT/etc/iptables/iptables.rules" <<'EOF'
@@ -387,7 +512,7 @@ EOF
 		services+=(sshd.service)
 	fi
 	run_chroot systemctl enable "${services[@]}"
-	progress 85
+	progress 85 'Creando el usuario y configurando idioma y zona horaria'
 
 	run_chroot ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime
 	run_chroot hwclock --systohc
@@ -398,39 +523,44 @@ EOF
 	run_chroot chsh -s /usr/bin/nologin updates
 	run_chroot systemctl enable cambonos-upgrade.timer
 	run_chroot locale-gen
-	progress 94
+	progress 94 'Instalando GRUB y generando el menu de arranque'
 
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
-		run_chroot grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=CambonOS
+		run_chroot grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=CambonOS --no-nvram
 	else
 		run_chroot grub-install --target=i386-pc "$DISK"
 	fi
 	run_chroot grub-mkconfig -o /boot/grub/grub.cfg
-	progress 100
+	if [[ "$BOOT_MODE" == 'uefi' ]] && ! ensure_uefi_boot_entry; then
+		: > "$WORK_DIR/uefi-entry-warning"
+	fi
+	progress 100 'Instalacion completada'
 }
 
 perform_installation() {
+	progress 1 "Preparando las particiones en $DISK"
 	create_partitions
-	progress 3
+	progress 3 'Formateando la particion raiz'
 	mkfs.ext4 -F "$ROOT_PARTITION"
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
-		mkfs.vfat -F 32 "$EFI_PARTITION"
+		mkfs.vfat -F32 "$EFI_PARTITION"
 	fi
+	progress 5 'Montando el sistema de destino'
 	mount "$ROOT_PARTITION" "$MOUNT_POINT"
 	if [[ "$BOOT_MODE" == 'uefi' ]]; then
 		install -d "$MOUNT_POINT/boot"
 		mount "$EFI_PARTITION" "$MOUNT_POINT/boot"
 	fi
-	progress 8
+	progress 8 'Particiones montadas; iniciando la instalacion base'
 
 	install_base_system
-	progress 38
+	progress 38 'Creando el archivo de intercambio'
 	fallocate -l 4G "$MOUNT_POINT/swapfile"
 	chmod 600 "$MOUNT_POINT/swapfile"
 	mkswap -U clear "$MOUNT_POINT/swapfile"
 	swapon "$MOUNT_POINT/swapfile"
 	genfstab -U "$MOUNT_POINT" >> "$MOUNT_POINT/etc/fstab"
-	progress 41
+	progress 41 'Configurando el sistema instalado'
 
 	configure_system
 }
@@ -444,14 +574,18 @@ run_installation() {
 		perform_installation
 	) > "$WORK_DIR/install.log" 2>&1 &
 	local worker=$!
-	dialog --title "$TITLE" --gauge 'Instalando CambonOS...' 7 76 0 < "$WORK_DIR/progress" || true
+	dialog --title "$TITLE" --gauge '\nInstalando CambonOS...' 7 76 0 < "$WORK_DIR/progress" || true
 	wait "$worker" || result=$?
 	if ((result != 0)); then
 		KEEP_WORK_DIR=1
 		show_error "La instalación falló. Registro completo: $WORK_DIR/install.log\n\n$(tail -n 12 "$WORK_DIR/install.log")"
 		return "$result"
 	fi
-	dialog --title "$TITLE" --msgbox 'La instalación de CambonOS ha finalizado correctamente. Puede reiniciar el equipo.' 8 76
+	if [[ -f "$WORK_DIR/uefi-entry-warning" ]]; then
+		dialog --title "$TITLE" --msgbox '\nLa instalación ha finalizado, pero no se pudo verificar la entrada UEFI de CambonOS. Revise las entradas con efibootmgr antes de reiniciar.' 8 76
+	else
+		dialog --title "$TITLE" --msgbox '\nLa instalación de CambonOS ha finalizado correctamente. Puede reiniciar el equipo.' 8 76
+	fi
 }
 
 main() {
@@ -463,9 +597,10 @@ main() {
 	fi
 	[[ $EUID -eq 0 ]] || fail 'Ejecute el instalador como root desde el sistema live.'
 	[[ -d "$DATA_DIR/etc" && -d "$DATA_DIR/usr" ]] || fail "No se encuentra el árbol de configuración: $DATA_DIR"
-	require_commands dialog lsblk awk sed parted partprobe udevadm mkfs.vfat mkfs.ext4 mount mountpoint umount timedatectl reflector pacman pacstrap arch-chroot genfstab mkswap swapon fallocate lspci systemctl install cp find chown chmod useradd groupadd passwd chsh visudo git makepkg grub-mkconfig
+	require_commands dialog curl nmtui lsblk awk sed parted partprobe udevadm mkfs.vfat mkfs.ext4 mount mountpoint umount timedatectl reflector pacman pacstrap arch-chroot genfstab mkswap swapon fallocate lspci systemctl install cp find chown chmod useradd groupadd passwd chsh visudo git makepkg grub-mkconfig
 	[[ ! -e "$MOUNT_POINT" ]] || [[ -d "$MOUNT_POINT" ]] || fail "$MOUNT_POINT existe y no es un directorio."
 	mountpoint -q "$MOUNT_POINT" && fail "$MOUNT_POINT ya está montado. Desmóntelo antes de iniciar el instalador."
+	prepare_installer "$@" || return $?
 	collect_options || return 0
 	[[ -f "/root/$DESKTOP/archie.sh" ]] || fail "No se encuentra /root/$DESKTOP/archie.sh en el sistema live."
 	run_installation

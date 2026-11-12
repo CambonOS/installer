@@ -1,4 +1,7 @@
+import os
+import re
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -11,8 +14,12 @@ class InstallerPackageTests(unittest.TestCase):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
         self.assertIn("pkgrel=5", build)
+        self.assertIn("'curl'", build)
+        self.assertIn("'networkmanager'", build)
         self.assertIn("'parted'", build)
         self.assertIn("/usr/share/cambonos-installer/configs", build)
+        self.assertIn("printf '%s-%s\\n' \"$pkgver\" \"$pkgrel\"", build)
+        self.assertIn('/usr/share/cambonos-installer/version', build)
         self.assertIn('cp -a "$startdir/files/configs/."', build)
         self.assertTrue((ROOT / "files" / "configs" / "etc").is_dir())
         self.assertTrue((ROOT / "files" / "configs" / "usr").is_dir())
@@ -26,8 +33,111 @@ class InstallerPackageTests(unittest.TestCase):
             with self.subTest(path=path.name):
                 subprocess.run(["bash", "-n", str(path)], check=True)
 
+    def test_network_retries_and_opens_nmtui(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash", "-c",
+                'source "$1"; checks=0; nmtui_calls=0; '
+                'systemctl() { :; }; sleep() { :; }; dialog() { :; }; '
+                'curl() { checks=$((checks + 1)); '
+                '[[ "$*" == *https://geo.mirror.pkgbuild.com/core/os/x86_64/core.db* ]] && ((checks > 5)); }; '
+                'nmtui() { nmtui_calls=$((nmtui_calls + 1)); }; '
+                'prepare_network; test "$checks" -eq 6 && test "$nmtui_calls" -eq 1',
+                "network-test", str(installer),
+            ],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_update_displays_output_and_preserves_pacman_status(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        for expected_status in (0, 42):
+            with self.subTest(status=expected_status):
+                result = subprocess.run(
+                    [
+                        "bash", "-c",
+                        'source "$1"; simulated_status=$2; '
+                        'dialog() { if [[ "$*" == *--programbox* ]]; then cat; fi; }; '
+                        'pacman() { printf "download progress\\n"; return "$simulated_status"; }; '
+                        'show_error() { printf "ERROR: %s\\n" "$1"; }; '
+                        'update_installer || result=$?; exit "${result:-0}"',
+                        "update-test", str(installer), str(expected_status),
+                    ],
+                    capture_output=True, text=True,
+                )
+                self.assertEqual(result.returncode, expected_status, result.stderr)
+                self.assertIn("download progress", result.stdout)
+                self.assertEqual("ERROR:" in result.stdout, expected_status != 0)
+
+    def test_update_failure_does_not_restart(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash", "-c",
+                'source "$1"; prepare_network() { :; }; update_installer() { return 42; }; '
+                'exec() { printf "unexpected restart\\n"; exit 99; }; '
+                'prepare_installer || exit "$?"',
+                "failure-test", str(installer),
+            ],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 42, result.stderr)
+        self.assertNotIn("unexpected restart", result.stdout)
+
+    def test_update_reports_temporary_directory_failure(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash", "-c",
+                'source "$1"; mktemp() { return 1; }; '
+                'show_error() { printf "ERROR: %s\\n" "$1"; }; '
+                'pacman() { printf "unexpected pacman\\n"; }; '
+                'update_installer || exit "$?"',
+                "temporary-directory-test", str(installer),
+            ],
+            capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn("directorio temporal", result.stdout)
+        self.assertNotIn("unexpected pacman", result.stdout)
+
+    def test_successful_update_restarts_once_and_clears_marker(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        with tempfile.TemporaryDirectory() as directory:
+            replacement = Path(directory) / "replacement"
+            replacement.write_text(
+                '#!/bin/bash\n'
+                'source "$INSTALLER_SOURCE"\n'
+                'prepare_network() { exit 91; }\n'
+                'update_installer() { exit 92; }\n'
+                'prepare_installer "$@"\n'
+                'printf "resumed:%s:%s\\n" "${CAMBONOS_INSTALLER_UPDATED-unset}" "$*"\n'
+            )
+            replacement.chmod(0o755)
+            environment = os.environ.copy()
+            environment.update(INSTALLER_SOURCE=str(installer), RESTART_TARGET=str(replacement))
+            environment.pop("CAMBONOS_INSTALLER_UPDATED", None)
+            result = subprocess.run(
+                [
+                    "bash", "-c",
+                    'source "$INSTALLER_SOURCE"; '
+                    'prepare_network() { printf "network\\n"; }; '
+                    'update_installer() { printf "update\\n"; }; '
+                    'exec() { printf "restart:%s\\n" "$1"; shift; builtin exec "$RESTART_TARGET" "$@"; }; '
+                    'prepare_installer sample',
+                ],
+                env=environment, capture_output=True, text=True,
+            )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.splitlines(), [
+            "network", "update", "restart:/usr/bin/cambonos-installer", "resumed:unset:sample",
+        ])
+
     def test_installation_flow_lives_in_the_single_entrypoint(self):
         installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()
+        self.assertIn('readonly TITLE=" CambonOS Installer ${PACKAGE_VERSION} "', installer)
+        self.assertIn('PACKAGE_VERSION=$(<"$VERSION_FILE")', installer)
         self.assertIn("collect_options()", installer)
         self.assertIn("create_partitions()", installer)
         self.assertIn("perform_installation()", installer)
@@ -35,6 +145,195 @@ class InstallerPackageTests(unittest.TestCase):
         self.assertNotIn("installer/dialog.sh", installer)
         for path in ("dialog.sh", "parted.sh", "cambonos-install.sh"):
             self.assertFalse((ROOT / path).exists())
+
+    def test_dialog_prompts_start_with_a_newline(self):
+        installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()
+        widgets = re.finditer(
+            r"--(?:menu|inputbox|passwordbox|yesno|msgbox|infobox|programbox|gauge)\s+",
+            installer,
+        )
+        count = 0
+        for widget in widgets:
+            count += 1
+            with self.subTest(widget=widget.group().strip(), position=widget.start()):
+                prompt = re.match(r"(['\"])(.*?)\1", installer[widget.end():])
+                self.assertIsNotNone(prompt)
+                self.assertTrue(prompt.group(2).startswith(r"\n"))
+        self.assertGreater(count, 0)
+        self.assertIn('confirmation="Equipo:', installer)
+        self.assertIn('--yesno "\\n$confirmation"', installer)
+
+    def test_progress_emits_gauge_messages_without_regressing(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash",
+                "-c",
+                'source "$1"; exec 3>&1; '
+                'progress 12 "Instalando paquetes"; '
+                'progress 8 "Continua la instalacion"',
+                "bash",
+                str(installer),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(
+            result.stdout.splitlines(),
+            [
+                "XXX",
+                "12",
+                "\\nInstalando paquetes",
+                "XXX",
+                "XXX",
+                "12",
+                "\\nContinua la instalacion",
+                "XXX",
+            ],
+        )
+
+    def test_uefi_boot_entry_parser_matches_cambonos_path_and_partition(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash",
+                "-c",
+                'source "$1"; '
+                'uefi_boot_entry_details "Boot0003* CambonOS HD(1,GPT,c5b92a8e-66b5-4175-89af-0a7ac23c31bd,0x800,0x200000)/File(\\EFI\\CambonOS\\grubx64.efi)"; '
+                'uefi_boot_entry_details "Boot0004* CambonOS HD(1,GPT,c5b92a8e-4988-46fb-8d25-f07739faf453,0x800,0x200000)/File(\\EFI\\CambonOS\\grubx64.efi)"; '
+                '! uefi_boot_entry_details "Boot0005* OtherOS HD(1,GPT,c5b92a8e-66b5-4175-89af-0a7ac23c31bd,0x800,0x200000)/File(\\EFI\\CambonOS\\grubx64.efi)"; '
+                '! uefi_boot_entry_details "Boot0006* CambonOS HD(1,GPT,c5b92a8e-66b5-4175-89af-0a7ac23c31bd,0x800,0x200000)/File(\\EFI\\OtherOS\\grubx64.efi)"',
+                "bash",
+                str(installer),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(
+            result.stdout.strip().splitlines(),
+            [
+                "0003 c5b92a8e-66b5-4175-89af-0a7ac23c31bd",
+                "0004 c5b92a8e-4988-46fb-8d25-f07739faf453",
+            ],
+        )
+
+    def test_uefi_boot_entry_replaces_stale_entry_and_verifies_new_partition(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash",
+                "-c",
+                "source \"$1\"\n"
+                "mount_point=$(mktemp -d)\n"
+                "trap 'rm -rf \"$mount_point\"' EXIT\n"
+                "mkdir -p \"$mount_point/boot/EFI/CambonOS\"\n"
+                "touch \"$mount_point/boot/EFI/CambonOS/grubx64.efi\"\n"
+                "EFI_PARTITION=/dev/sda1\nDISK=/dev/sda\n"
+                "created=0\nexisting_valid=0\nactions=()\n"
+                "backslash=$(printf '\\134')\n"
+                "lsblk() { printf '1\\n'; }\n"
+                "blkid() { printf 'c5b92a8e-66b5-4175-89af-0a7ac23c31bd\\n'; }\n"
+                "run_chroot() {\n"
+                "  if [[ \"$1 $2\" == 'efibootmgr -v' ]]; then\n"
+                "    printf 'Boot0003* CambonOS HD(1,GPT,c5b92a8e-4988-46fb-8d25-f07739faf453,0x800,0x200000)/File(%sEFI%sCambonOS%sgrubx64.efi)\\n' \"$backslash\" \"$backslash\" \"$backslash\"\n"
+                "    if ((created == 1 || existing_valid == 1)); then\n"
+                "      printf 'Boot0004* CambonOS HD(1,GPT,c5b92a8e-66b5-4175-89af-0a7ac23c31bd,0x800,0x200000)/File(%sEFI%sCambonOS%sgrubx64.efi)\\n' \"$backslash\" \"$backslash\" \"$backslash\"\n"
+                "    fi\n"
+                "  elif [[ \"$2\" == '--bootnum' ]]; then\n"
+                "    actions+=(\"delete:$3\")\n"
+                "  elif [[ \"$2\" == '--create' ]]; then\n"
+                "    actions+=(\"create:$4:$6\")\n"
+                "    created=1\n"
+                "  else\nreturn 1\nfi\n"
+                "}\n"
+                "ensure_uefi_boot_entry \"$mount_point\"\n"
+                "[[ \"${actions[*]}\" == 'delete:0003 create:/dev/sda:1' ]]\n"
+                "actions=()\ncreated=0\nexisting_valid=1\n"
+                "ensure_uefi_boot_entry \"$mount_point\"\n"
+                "[[ \"${actions[*]}\" == 'delete:0003' ]]\n",
+                "bash",
+                str(installer),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "")
+
+    def test_account_name_normalization_and_password_requirements(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        result = subprocess.run(
+            [
+                "bash",
+                "-c",
+                'source "$1"; '
+                'printf "%s\\n" "$(normalize_admin_user "Ana Maria Lopez")"; '
+                'valid_admin_user "ana-maria-lopez"; '
+                '! valid_admin_user "ana.lopez" || exit 1; '
+                '! valid_admin_user "-ana" || exit 1; '
+                '! valid_admin_user "abcdefghijklmnopqrstuvwxyz1234567" || exit 1; '
+                'password_meets_requirements "Cambonos9!"; '
+                '! password_meets_requirements "cambonos9!" || exit 1; '
+                '! password_meets_requirements "Cambonos!" || exit 1; '
+                '! password_meets_requirements "Cambonos9 " || exit 1; '
+                '! password_meets_requirements "Cambonos9" || exit 1',
+                "bash",
+                str(installer),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.stdout.strip(), "ana-maria-lopez")
+
+        source = installer.read_text()
+        self.assertEqual(source.count("Nombre del usuario (se usará también para iniciar sesión):"), 1)
+        self.assertNotIn("Usuario administrador (login):", source)
+
+    def test_ci_notifies_packages_only_after_tests_pass(self):
+        workflow = (ROOT / ".github" / "workflows" / "notify-packages.yml").read_text()
+        self.assertIn("branches:\n      - dev\n      - main", workflow)
+        test_step = workflow.index("python -m unittest discover -s tests -v")
+        notify_step = workflow.index("Notify cambonos-packages")
+        self.assertLess(test_step, notify_step)
+        self.assertIn("secrets.CAMBONOS_PACKAGES_DISPATCH_TOKEN", workflow)
+        self.assertIn("repos/CambonOS/cambonos-packages/dispatches", workflow)
+        self.assertIn('event_type: "external-package-updated"', workflow)
+        for field in ("repository", "branch", "commit"):
+            with self.subTest(field=field):
+                self.assertIn(f"{field}: ${field}", workflow)
+
+    def test_base_and_grub_packages_replace_individual_dependencies(self):
+        installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()
+        bootstrap_packages = installer.split("base_packages=(", 1)[1].split(")", 1)[0].split()
+        system_packages = installer.split("system_packages=(", 1)[1].split(")", 1)[0].split()
+
+        self.assertEqual(
+            bootstrap_packages,
+            ["base", "linux", "linux-firmware", "cambonos-keyring", "cambonos-pacman"],
+        )
+        self.assertIn("cambonos-base", system_packages)
+        self.assertIn("cambonos-grub", system_packages)
+        for package in (
+            "cambonos-release",
+            "cambonos-branding",
+            "cambonos-fastfetch",
+            "cambonos-shell-prompt",
+            "cambonos-zsh",
+            "grub",
+            "os-prober",
+        ):
+            with self.subTest(package=package):
+                self.assertNotIn(package, bootstrap_packages)
+                self.assertNotIn(package, system_packages)
+        for package in system_packages:
+            with self.subTest(installed_after_pacstrap=package):
+                self.assertNotIn(package, bootstrap_packages)
+        self.assertIn('"${system_packages[@]}"', installer)
+        self.assertIn('run_chroot pacman -Syu --noconfirm', installer)
 
     def test_sudoers_mode_is_fixed_before_validation(self):
         installer = (ROOT / "files" / "bin" / "cambonos-installer").read_text()
