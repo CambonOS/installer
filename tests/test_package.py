@@ -272,14 +272,14 @@ class InstallerPackageTests(unittest.TestCase):
                 'source "$1"; '
                 'printf "%s\\n" "$(normalize_admin_user "Ana Maria Lopez")"; '
                 'valid_admin_user "ana-maria-lopez"; '
-                '! valid_admin_user "ana.lopez"; '
-                '! valid_admin_user "-ana"; '
-                '! valid_admin_user "abcdefghijklmnopqrstuvwxyz1234567"; '
+                '! valid_admin_user "ana.lopez" || exit 1; '
+                '! valid_admin_user "-ana" || exit 1; '
+                '! valid_admin_user "abcdefghijklmnopqrstuvwxyz1234567" || exit 1; '
                 'password_meets_requirements "Cambonos9!"; '
-                '! password_meets_requirements "cambonos9!"; '
-                '! password_meets_requirements "Cambonos!"; '
-                '! password_meets_requirements "Cambonos9 "; '
-                '! password_meets_requirements "Cambonos9"',
+                '! password_meets_requirements "cambonos9!" || exit 1; '
+                '! password_meets_requirements "Cambonos!" || exit 1; '
+                '! password_meets_requirements "Cambonos9 " || exit 1; '
+                '! password_meets_requirements "Cambonos9" || exit 1',
                 "bash",
                 str(installer),
             ],
