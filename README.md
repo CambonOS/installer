@@ -25,6 +25,12 @@ Revisa cuidadosamente el disco y el modo antes de confirmar.
 En UEFI, el instalador recrea la entrada de CambonOS apuntando a la partición
 EFI de la instalación actual y comprueba que la entrada haya quedado registrada.
 
+El menú ofrece Cambon18/XFCE, Cambon18/Qtile y CambonOS/XFCE. Esta última opción
+instala el metapaquete `cambonos-xfce` mediante Pacman y selecciona su sesión en
+LightDM. Antes de particionar, comprueba que el paquete esté disponible en el
+canal del paquete `cambonos-pacman` elegido para el sistema de destino. Las dos
+opciones Cambon18 siguen requiriendo sus fuentes y `archie.sh` en el live.
+
 Durante la instalación se solicita el nombre del usuario una sola vez. Ese
 texto se conserva como nombre completo y se normaliza para el login: se pasa a
 minúsculas y cada espacio se convierte en `-`. El login resultante debe tener

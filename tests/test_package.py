@@ -33,6 +33,123 @@ class InstallerPackageTests(unittest.TestCase):
             with self.subTest(path=path.name):
                 subprocess.run(["bash", "-n", str(path)], check=True)
 
+    def test_desktop_menu_keeps_legacy_options_and_adds_cambonos_xfce(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        for selection, desktop in (("1", "xfce"), ("2", "qtile"), ("3", "cambonos-xfce")):
+            with self.subTest(selection=selection):
+                result = subprocess.run(
+                    [
+                        "bash", "-c",
+                        'source "$1"; selection=$2; '
+                        'dialog_input() { case "$*" in '
+                        '*"Nombre del equipo"*) printf test-host ;; '
+                        '*"Nombre del usuario"*) printf Testuser ;; '
+                        '*--passwordbox*) printf "Password9!" ;; '
+                        '*"Seleccione el entorno"*) '
+                        '[[ "$*" == *"Cambon18/XFCE"* && "$*" == *"Cambon18/Qtile"* && "$*" == *"CambonOS/XFCE"* ]] || return 1; '
+                        'printf "%s" "$selection" ;; '
+                        '*"Modo de instalación"*) printf clean ;; '
+                        '*) return 1 ;; esac; }; '
+                        'dialog() { [[ "$*" != *"¿Desea instalar el servidor SSH?"* ]]; }; '
+                        'choose_disk() { DISK=/dev/test; }; '
+                        'collect_options; printf "%s\\n" "$DESKTOP"',
+                        "menu-test", str(installer), selection,
+                    ], capture_output=True, text=True,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(result.stdout.strip(), desktop)
+
+    def test_cambonos_xfce_preflight_checks_the_destination_channel(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        for repository in ("cambonos", "cambonos-testing"):
+            for available in ("yes", "no"):
+                with self.subTest(repository=repository, available=available):
+                    result = subprocess.run(
+                        [
+                            "bash", "-c",
+                            'source "$1"; DESKTOP=cambonos-xfce; repository=$2; available=$3; '
+                            'pacman() { case "$1" in '
+                            '-Sp) [[ "$*" == "-Sp --nodeps --print-format %r cambonos-pacman" ]] || return 2; '
+                            'printf "%s\\n" "$repository" ;; '
+                            '-Si) [[ "$2" == "$repository/cambonos-xfce" && "$available" == yes ]] ;; '
+                            '*) return 2 ;; esac; }; '
+                            'check_desktop_source; printf "%s\\n" "$DESKTOP_REPOSITORY"',
+                            "preflight-test", str(installer), repository, available,
+                        ], capture_output=True, text=True,
+                    )
+                    self.assertEqual(result.returncode, 0 if available == "yes" else 1, result.stderr)
+                    if available == "yes":
+                        self.assertEqual(result.stdout.strip(), repository)
+                    else:
+                        self.assertIn("no está disponible", result.stderr)
+
+    def test_legacy_desktop_preflight_requires_archie(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        with tempfile.TemporaryDirectory() as directory:
+            for desktop in ("xfce", "qtile"):
+                source = Path(directory) / desktop
+                source.mkdir()
+                for available in (False, True):
+                    with self.subTest(desktop=desktop, available=available):
+                        if available:
+                            (source / "archie.sh").touch()
+                        result = subprocess.run(
+                            [
+                                "bash", "-c",
+                                'source "$1"; DESKTOP=$2; '
+                                'pacman() { exit 99; }; check_desktop_source "$3"',
+                                "legacy-preflight-test", str(installer), desktop, directory,
+                            ], capture_output=True, text=True,
+                        )
+                        self.assertEqual(result.returncode, 0 if available else 1, result.stderr)
+                        if not available:
+                            self.assertIn("archie.sh", result.stderr)
+
+    def test_cambonos_xfce_installation_and_failure(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        for repository in ("cambonos", "cambonos-testing"):
+            for install_status in (0, 42):
+                with self.subTest(repository=repository, install_status=install_status):
+                    with tempfile.TemporaryDirectory() as directory:
+                        result = subprocess.run(
+                            [
+                                "bash", "-c",
+                                'source "$1"; DESKTOP=cambonos-xfce; DESKTOP_REPOSITORY=$2; install_status=$3; '
+                                'run_chroot() { printf "%s\\n" "$*"; return "$install_status"; }; '
+                                'cp() { exit 99; }; install_desktop "$4"',
+                                "desktop-test", str(installer), repository, str(install_status), directory,
+                            ], capture_output=True, text=True,
+                        )
+                        session = Path(directory) / "etc/lightdm/lightdm.conf.d/60-cambonos-xfce-session.conf"
+                        self.assertEqual(result.returncode, install_status, result.stderr)
+                        self.assertEqual(result.stdout.strip(), f"pacman -Syu --noconfirm {repository}/cambonos-xfce")
+                        self.assertEqual(session.exists(), install_status == 0)
+                        if install_status == 0:
+                            self.assertEqual(session.read_text(), "[Seat:*]\nuser-session=cambonos-xfce\n")
+
+    def test_legacy_desktop_installation_still_runs_archie(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        for desktop in ("xfce", "qtile"):
+            with self.subTest(desktop=desktop):
+                result = subprocess.run(
+                    [
+                        "bash", "-c",
+                        'source "$1"; DESKTOP=$2; '
+                        'cp() { printf "copy:%s\\n" "$*"; }; '
+                        'rm() { printf "remove:%s\\n" "$*"; }; '
+                        'run_chroot() { printf "chroot:%s\\n" "$*"; }; '
+                        'install_desktop /temporary-target',
+                        "legacy-desktop-test", str(installer), desktop,
+                    ], capture_output=True, text=True,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(result.stdout.splitlines(), [
+                    f"copy:-a /root/{desktop} /temporary-target/{desktop}",
+                    f"chroot:chown -R updates:updates /{desktop}",
+                    f"chroot:su -s /bin/bash updates -c cd /{desktop} && bash archie.sh",
+                    f"remove:-rf -- /temporary-target/{desktop}",
+                ])
+
     def test_network_retries_and_opens_nmtui(self):
         installer = ROOT / "files" / "bin" / "cambonos-installer"
         result = subprocess.run(
