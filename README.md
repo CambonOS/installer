@@ -12,7 +12,7 @@ Está destinado al entorno live de CambonOS y debe ejecutarse como root.
 
 Al iniciar el instalador, se activa NetworkManager y se comprueba la conexión al
 mirror geo de Arch. Tras cinco fallos se abre `nmtui` y se vuelve a intentar.
-Después se ejecuta `pacman -Syu --noconfirm cambonos-installer` y se muestra su
+Después se ejecuta `pacman -Sy --noconfirm cambonos-installer` y se muestra su
 salida; si falla, la instalación no continúa. Tras una actualización correcta,
 el instalador se reinicia una vez para usar la versión instalada, incluso si no
 había una versión nueva. La opción `--help` no realiza estas operaciones.

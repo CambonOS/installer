@@ -13,7 +13,7 @@ class InstallerPackageTests(unittest.TestCase):
     def test_package_metadata_and_payload(self):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
-        self.assertIn("pkgrel=1", build)
+        self.assertIn("pkgrel=2", build)
         self.assertIn("'curl'", build)
         self.assertIn("'networkmanager'", build)
         self.assertIn("'parted'", build)
@@ -176,7 +176,7 @@ class InstallerPackageTests(unittest.TestCase):
                         "bash", "-c",
                         'source "$1"; simulated_status=$2; '
                         'dialog() { if [[ "$*" == *--programbox* ]]; then cat; fi; }; '
-                        'pacman() { printf "download progress\\n"; return "$simulated_status"; }; '
+                        'pacman() { printf "pacman args: %s\\n" "$*"; printf "download progress\\n"; return "$simulated_status"; }; '
                         'show_error() { printf "ERROR: %s\\n" "$1"; }; '
                         'update_installer || result=$?; exit "${result:-0}"',
                         "update-test", str(installer), str(expected_status),
@@ -184,6 +184,7 @@ class InstallerPackageTests(unittest.TestCase):
                     capture_output=True, text=True,
                 )
                 self.assertEqual(result.returncode, expected_status, result.stderr)
+                self.assertIn("pacman args: -Sy --noconfirm cambonos-installer", result.stdout)
                 self.assertIn("download progress", result.stdout)
                 self.assertEqual("ERROR:" in result.stdout, expected_status != 0)
 

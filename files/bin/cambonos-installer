@@ -112,7 +112,7 @@ update_installer() {
 		show_error 'No se pudo preparar la salida de la actualización.'
 		return 1
 	fi
-	pacman -Syu --noconfirm cambonos-installer >"$update_dir/pacman-output" 2>&1 &
+	pacman -Sy --noconfirm cambonos-installer >"$update_dir/pacman-output" 2>&1 &
 	update_pid=$!
 	dialog --title "$TITLE" --programbox '\nUpdating CambonOS installer...' 20 76 < "$update_dir/pacman-output" || true
 	wait "$update_pid" || update_status=$?
