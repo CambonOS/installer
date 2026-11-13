@@ -12,7 +12,7 @@ Está destinado al entorno live de CambonOS y debe ejecutarse como root.
 
 Al iniciar el instalador, se activa NetworkManager y se comprueba la conexión al
 mirror geo de Arch. Tras cinco fallos se abre `nmtui` y se vuelve a intentar.
-Después se ejecuta `pacman -Syu --noconfirm cambonos-installer` y se muestra su
+Después se ejecuta `pacman -Sy --noconfirm cambonos-installer` y se muestra su
 salida; si falla, la instalación no continúa. Tras una actualización correcta,
 el instalador se reinicia una vez para usar la versión instalada, incluso si no
 había una versión nueva. La opción `--help` no realiza estas operaciones.
@@ -24,6 +24,12 @@ la instalación limpia elimina todas las particiones del disco seleccionado.
 Revisa cuidadosamente el disco y el modo antes de confirmar.
 En UEFI, el instalador recrea la entrada de CambonOS apuntando a la partición
 EFI de la instalación actual y comprueba que la entrada haya quedado registrada.
+
+El menú ofrece Cambon18/XFCE, Cambon18/Qtile y CambonOS/XFCE. Esta última opción
+instala el metapaquete `cambonos-xfce` mediante Pacman y selecciona su sesión en
+LightDM. Antes de particionar, comprueba que el paquete esté disponible en el
+canal del paquete `cambonos-pacman` elegido para el sistema de destino. Las dos
+opciones Cambon18 siguen requiriendo sus fuentes y `archie.sh` en el live.
 
 Durante la instalación se solicita el nombre del usuario una sola vez. Ese
 texto se conserva como nombre completo y se normaliza para el login: se pasa a

@@ -30,6 +30,7 @@ ADMIN_USER=''
 ADMIN_NAME=''
 ADMIN_PASSWORD=''
 DESKTOP=''
+DESKTOP_REPOSITORY=''
 INSTALL_SSH='no'
 GPU=''
 
@@ -111,7 +112,7 @@ update_installer() {
 		show_error 'No se pudo preparar la salida de la actualización.'
 		return 1
 	fi
-	pacman -Syu --noconfirm cambonos-installer >"$update_dir/pacman-output" 2>&1 &
+	pacman -Sy --noconfirm cambonos-installer >"$update_dir/pacman-output" 2>&1 &
 	update_pid=$!
 	dialog --title "$TITLE" --programbox '\nUpdating CambonOS installer...' 20 76 < "$update_dir/pacman-output" || true
 	wait "$update_pid" || update_status=$?
@@ -202,11 +203,12 @@ collect_options() {
 		fi
 	done
 
-	desktops=(1 'Cambon18/XFCE (Recomendado)' 2 'Cambon18/Qtile')
+	desktops=(1 'Cambon18/XFCE (Recomendado)' 2 'Cambon18/Qtile' 3 'CambonOS/XFCE')
 	value=$(dialog_input --menu '\nSeleccione el entorno de escritorio:' 12 76 4 "${desktops[@]}") || return 1
 	case "$value" in
 		1) DESKTOP='xfce' ;;
 		2) DESKTOP='qtile' ;;
+		3) DESKTOP='cambonos-xfce' ;;
 		*) return 1 ;;
 	esac
 
@@ -244,6 +246,22 @@ collect_options() {
 	fi
 	confirmation+='¿Desea comenzar la instalación?'
 	dialog --title "$TITLE" --yesno "\n$confirmation" 18 84 || return 1
+}
+
+check_desktop_source() {
+	local desktop_root=${1:-/root}
+
+	if [[ "$DESKTOP" != 'cambonos-xfce' ]]; then
+		[[ -f "$desktop_root/$DESKTOP/archie.sh" ]] || fail "No se encuentra $desktop_root/$DESKTOP/archie.sh en el sistema live."
+		return 0
+	fi
+
+	DESKTOP_REPOSITORY=$(pacman -Sp --nodeps --print-format '%r' cambonos-pacman) || fail 'No se pudo determinar el canal de CambonOS para el sistema de destino.'
+	case "$DESKTOP_REPOSITORY" in
+		cambonos|cambonos-testing) ;;
+		*) fail 'No se pudo determinar el canal de CambonOS para el sistema de destino.' ;;
+	esac
+	pacman -Si "$DESKTOP_REPOSITORY/cambonos-xfce" >/dev/null || fail "El paquete cambonos-xfce no está disponible en $DESKTOP_REPOSITORY."
 }
 
 find_free_region() {
@@ -339,6 +357,13 @@ run_chroot() {
 	arch-chroot "$MOUNT_POINT" "$@"
 }
 
+install_yay_and_optional_optimus_manager() {
+	run_chroot su -s /bin/bash updates -c 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si'
+	if [[ "$GPU" == 'nvidia-hybrid' ]]; then
+		run_chroot su -s /bin/bash updates -c 'yay --noconfirm -S optimus-manager optimus-manager-qt'
+	fi
+}
+
 uefi_boot_entry_details() {
 	local line=$1 normalized entry_number
 	normalized=${line,,}
@@ -432,9 +457,24 @@ install_base_system() {
 	progress 36 'Paquetes del sistema instalados'
 }
 
-configure_system() {
+install_desktop() {
+	local mount_point=${1:-$MOUNT_POINT}
 	local desktop_source="/root/$DESKTOP"
-	local -a services aur_packages
+
+	if [[ "$DESKTOP" == 'cambonos-xfce' ]]; then
+		run_chroot pacman -Syu --noconfirm "$DESKTOP_REPOSITORY/cambonos-xfce"
+		install -d "$mount_point/etc/lightdm/lightdm.conf.d"
+		printf '[Seat:*]\nuser-session=cambonos-xfce\n' > "$mount_point/etc/lightdm/lightdm.conf.d/60-cambonos-xfce-session.conf"
+	else
+		cp -a "$desktop_source" "$mount_point/$DESKTOP"
+		run_chroot chown -R updates:updates "/$DESKTOP"
+		run_chroot su -s /bin/bash updates -c "cd /$DESKTOP && bash archie.sh"
+		rm -rf -- "$mount_point/$DESKTOP"
+	fi
+}
+
+configure_system() {
+	local -a services
 
 	progress 42 'Copiando la configuracion y activando servicios'
 	cp -a "$DATA_DIR/." "$MOUNT_POINT/"
@@ -469,19 +509,10 @@ configure_system() {
 	printf 'updates ALL=(ALL) NOPASSWD: ALL\n' > "$MOUNT_POINT/etc/sudoers.d/cambonos-updates"
 	chmod 440 "$MOUNT_POINT/etc/sudoers.d/cambonos-updates"
 	run_chroot visudo -c
-	run_chroot su -s /bin/bash updates -c 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si'
-	if [[ "$GPU" == 'nvidia-hybrid' ]]; then
-		aur_packages=(xdg-user-dirs libpwquality optimus-manager optimus-manager-qt)
-	else
-		aur_packages=(xdg-user-dirs libpwquality)
-	fi
-	run_chroot su -s /bin/bash updates -c "yay --noconfirm -S ${aur_packages[*]}"
+	install_yay_and_optional_optimus_manager
 	progress 54 "Instalando el entorno de escritorio: $DESKTOP"
 
-	cp -a "$desktop_source" "$MOUNT_POINT/$DESKTOP"
-	run_chroot chown -R updates:updates "/$DESKTOP"
-	run_chroot su -s /bin/bash updates -c "cd /$DESKTOP && bash archie.sh"
-	rm -rf -- "$MOUNT_POINT/$DESKTOP"
+	install_desktop
 	progress 80 'Configurando el firewall'
 
 	install -d "$MOUNT_POINT/etc/iptables"
@@ -602,7 +633,7 @@ main() {
 	mountpoint -q "$MOUNT_POINT" && fail "$MOUNT_POINT ya está montado. Desmóntelo antes de iniciar el instalador."
 	prepare_installer "$@" || return $?
 	collect_options || return 0
-	[[ -f "/root/$DESKTOP/archie.sh" ]] || fail "No se encuentra /root/$DESKTOP/archie.sh en el sistema live."
+	check_desktop_source
 	run_installation
 }
 
