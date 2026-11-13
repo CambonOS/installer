@@ -13,7 +13,7 @@ class InstallerPackageTests(unittest.TestCase):
     def test_package_metadata_and_payload(self):
         build = (ROOT / "PKGBUILD").read_text()
         self.assertIn("pkgname=cambonos-installer", build)
-        self.assertIn("pkgrel=2", build)
+        self.assertIn("pkgrel=3", build)
         self.assertIn("'curl'", build)
         self.assertIn("'networkmanager'", build)
         self.assertIn("'parted'", build)
@@ -24,6 +24,32 @@ class InstallerPackageTests(unittest.TestCase):
         self.assertTrue((ROOT / "files" / "configs" / "etc").is_dir())
         self.assertTrue((ROOT / "files" / "configs" / "usr").is_dir())
         self.assertTrue((ROOT / "LICENSE").is_file())
+
+    def test_yay_is_built_for_all_installs_and_only_used_for_hybrid_nvidia(self):
+        installer = ROOT / "files" / "bin" / "cambonos-installer"
+        for gpu, expected_calls in (
+            ("intel", 1),
+            ("nvidia-hybrid", 2),
+        ):
+            with self.subTest(gpu=gpu):
+                result = subprocess.run(
+                    [
+                        "bash", "-c",
+                        'source "$1"; GPU=$2; '
+                        'run_chroot() { printf "%s\\n" "$*"; }; '
+                        'install_yay_and_optional_optimus_manager',
+                        "yay-install-test", str(installer), gpu,
+                    ], capture_output=True, text=True,
+                )
+                calls = result.stdout.splitlines()
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(len(calls), expected_calls)
+                self.assertIn("makepkg --noconfirm -si", calls[0])
+                if gpu == "nvidia-hybrid":
+                    self.assertIn(
+                        "yay --noconfirm -S optimus-manager optimus-manager-qt",
+                        calls[1],
+                    )
 
     def test_entrypoints_have_valid_bash_syntax(self):
         for path in (

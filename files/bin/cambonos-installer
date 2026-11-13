@@ -357,6 +357,13 @@ run_chroot() {
 	arch-chroot "$MOUNT_POINT" "$@"
 }
 
+install_yay_and_optional_optimus_manager() {
+	run_chroot su -s /bin/bash updates -c 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si'
+	if [[ "$GPU" == 'nvidia-hybrid' ]]; then
+		run_chroot su -s /bin/bash updates -c 'yay --noconfirm -S optimus-manager optimus-manager-qt'
+	fi
+}
+
 uefi_boot_entry_details() {
 	local line=$1 normalized entry_number
 	normalized=${line,,}
@@ -467,7 +474,7 @@ install_desktop() {
 }
 
 configure_system() {
-	local -a services aur_packages
+	local -a services
 
 	progress 42 'Copiando la configuracion y activando servicios'
 	cp -a "$DATA_DIR/." "$MOUNT_POINT/"
@@ -502,13 +509,7 @@ configure_system() {
 	printf 'updates ALL=(ALL) NOPASSWD: ALL\n' > "$MOUNT_POINT/etc/sudoers.d/cambonos-updates"
 	chmod 440 "$MOUNT_POINT/etc/sudoers.d/cambonos-updates"
 	run_chroot visudo -c
-	run_chroot su -s /bin/bash updates -c 'cd /tmp && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg --noconfirm -si'
-	if [[ "$GPU" == 'nvidia-hybrid' ]]; then
-		aur_packages=(xdg-user-dirs libpwquality optimus-manager optimus-manager-qt)
-	else
-		aur_packages=(xdg-user-dirs libpwquality)
-	fi
-	run_chroot su -s /bin/bash updates -c "yay --noconfirm -S ${aur_packages[*]}"
+	install_yay_and_optional_optimus_manager
 	progress 54 "Instalando el entorno de escritorio: $DESKTOP"
 
 	install_desktop
